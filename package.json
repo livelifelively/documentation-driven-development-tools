@@ -1,0 +1,23 @@
+{
+  "name": "ddd-tools",
+  "version": "1.0.0",
+  "description": "A collection of useful tools for my projects.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "analyze": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "tsx": "^4.20.3",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "glob": "^11.0.3",
+    "gray-matter": "^4.0.3"
+  }
+}
