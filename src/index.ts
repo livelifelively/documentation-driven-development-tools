@@ -1,1 +1,1 @@
-export * from './tools/hello-world';
+export * from './modules/hello-world';
