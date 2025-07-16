@@ -128,7 +128,18 @@ graph TD
 
 <!-- (Optional) Describe the existing system before the changes in this epic are implemented. -->
 
-#### ✅ 4.1.1 Components
+#### ✅ 4.1.1 Data Models
+
+<!-- "As-is" data structures (ER diagrams). -->
+
+```mermaid
+erDiagram
+    ENTITY {
+        string attribute
+    }
+```
+
+#### ✅ 4.1.2 Components
 
 <!-- "As-is" component diagram. -->
 
@@ -137,18 +148,36 @@ graph TD
     A_current([Component A]) --> B_current([Component B]);
 ```
 
-#### ✅ 4.1.2 Data Flow
+#### ✅ 4.1.3 Data Flow
 
 <!-- "As-is" data flow diagram. -->
 
 ```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [Data Payload]
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 
-#### ✅ 4.1.3 Control Flow
+#### ✅ 4.1.4 Control Flow
 
 <!-- "As-is" sequence of interactions. -->
 
@@ -160,7 +189,7 @@ sequenceDiagram
     System-->>User: [Returns Result]
 ```
 
-#### ✅ 4.1.4 Integration Points
+#### ✅ 4.1.5 Integration Points
 
 <!-- "As-is" key integration points. -->
 
@@ -171,7 +200,18 @@ sequenceDiagram
 
 <!-- Describe the proposed "to-be" state of the system after this epic is implemented. -->
 
-#### ✅ 4.2.1 Components
+#### ✅ 4.2.1 Data Models
+
+<!-- "To-be" data structures (ER diagrams). -->
+
+```mermaid
+erDiagram
+    ENTITY {
+        string attribute
+    }
+```
+
+#### ✅ 4.2.2 Components
 
 <!-- "To-be" component diagram. -->
 
@@ -180,18 +220,36 @@ graph TD
     A_new([Component A]) --> B_new([Component B]);
 ```
 
-#### ✅ 4.2.2 Data Flow
+#### ✅ 4.2.3 Data Flow
 
 <!-- "To-be" data flow diagram. -->
 
 ```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [New Data Payload]
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 
-#### ✅ 4.2.3 Control Flow
+#### ✅ 4.2.4 Control Flow
 
 <!-- "To-be" sequence of interactions. -->
 
@@ -203,14 +261,14 @@ sequenceDiagram
     System-->>User: [New Result]
 ```
 
-#### ✅ 4.2.4 Integration Points
+#### ✅ 4.2.5 Integration Points
 
 <!-- "To-be" key integration points. -->
 
 - **Trigger:** [Description of the new trigger.]
 - **Input Data:** [Description of the new input data.]
 
-#### ✅ 4.2.5 Exposed API
+#### ✅ 4.2.6 Exposed API
 
 <!-- "To-be" exposed API surface. -->
 
@@ -220,15 +278,24 @@ sequenceDiagram
 
 #### ✅ 4.4.1 Performance
 
-- [Performance requirement 1]
+| ID      | Requirement                                                       | Priority  |
+| :------ | :---------------------------------------------------------------- | :-------- |
+| PERF-01 | API endpoints must respond in < 200ms (95th percentile).          | 🟥 High   |
+| PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
 
 #### ✅ 4.4.2 Security
 
-- [Security requirement 1]
+| ID     | Requirement                                                              | Priority |
+| :----- | :----------------------------------------------------------------------- | :------- |
+| SEC-01 | All sensitive user data must be encrypted at rest using AES-256.         | 🟥 High  |
+| SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High  |
 
 #### ✅ 4.4.3 Reliability
 
-- [Reliability requirement 1]
+| ID     | Requirement                                               | Priority |
+| :----- | :-------------------------------------------------------- | :------- |
+| REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High  |
+| REL-02 | All database transactions must be atomic and durable.     | 🟥 High  |
 
 ---
 

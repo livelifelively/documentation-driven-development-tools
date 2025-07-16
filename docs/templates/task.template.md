@@ -107,10 +107,28 @@ graph TD
 <!-- "As-is" data flow diagram. -->
 
 ```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [Data Payload]
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 
 #### ✅ 4.1.3 Control Flow
@@ -150,10 +168,28 @@ graph TD
 <!-- "To-be" data flow diagram. -->
 
 ```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [New Data Payload]
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 
 #### ✅ 4.2.3 Control Flow
@@ -185,15 +221,24 @@ sequenceDiagram
 
 #### ✅ 4.4.1 Performance
 
-- [Performance requirement 1]
+| ID      | Requirement                                                       | Priority  |
+| :------ | :---------------------------------------------------------------- | :-------- |
+| PERF-01 | API endpoints must respond in < 200ms (95th percentile).          | 🟥 High   |
+| PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
 
 #### ✅ 4.4.2 Security
 
-- [Security requirement 1]
+| ID     | Requirement                                                              | Priority |
+| :----- | :----------------------------------------------------------------------- | :------- |
+| SEC-01 | All sensitive user data must be encrypted at rest using AES-256.         | 🟥 High  |
+| SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High  |
 
 #### ✅ 4.4.3 Reliability
 
-- [Reliability requirement 1]
+| ID     | Requirement                                               | Priority |
+| :----- | :-------------------------------------------------------- | :------- |
+| REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High  |
+| REL-02 | All database transactions must be atomic and durable.     | 🟥 High  |
 
 ---
 

@@ -566,15 +566,33 @@ This family answers **how** the system works from a high-level, **black-box pers
 
 #### 4.x.3 Data Flow
 
-- **Description**: A diagram showing how data moves between components.
-- **Content Format**: Mermaid `graph` or `sequenceDiagram`.
+- **Description**: A diagram showing how data moves between components, with numbered steps to indicate the sequence of actions.
+- **Content Format**: Mermaid `graph` diagram. The labels on the connectors should be numbered (e.g., `"1 - Action"`).
 - **Example**:
+
   ```mermaid
-  graph LR
-      User --"JSON payload"--> ServiceA
-      ServiceA --"Writes to"--> DB1[(Database)]
-      ServiceA --"Publishes event"--> MessageQueue
-      MessageQueue --"Event consumed by"--> ServiceB
+  graph TD
+      subgraph "Input"
+          A[Component A]
+      end
+
+      subgraph "System"
+          B(Component B)
+          C(Component C)
+      end
+
+      subgraph "External Resource"
+          D[Database]
+      end
+
+      subgraph "Output"
+          E[Component D]
+      end
+
+      A -- "1 - Invoke with" --> B
+      B -- "2 - Process" --> C
+      C -- "3 - Write to" --> D
+      C -- "4 - Return" --> E
   ```
 
 #### 4.x.4 Control Flow
@@ -654,32 +672,38 @@ This family answers **how** the system works from a high-level, **black-box pers
 
 ##### 4.4.1 Performance
 
-- **Description**: Defines the performance-related NFRs, such as response times, throughput, and resource utilization.
-- **Content Format**: Markdown list.
+- **Description**: Defines the performance-related NFRs, such as response times, throughput, and resource utilization, in a prioritized table.
+- **Content Format**: Markdown table.
 - **Example**:
   ```md
-  - The user login API endpoint must respond in < 200ms under normal load (95th percentile).
-  - The system must support 100 concurrent users without performance degradation.
+  | ID      | Requirement                                                       | Priority  |
+  | :------ | :---------------------------------------------------------------- | :-------- |
+  | PERF-01 | API endpoints must respond in < 200ms (95th percentile).          | 🟥 High   |
+  | PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
   ```
 
 ##### 4.4.2 Security
 
-- **Description**: Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards.
-- **Content Format**: Markdown list.
+- **Description**: Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards, in a prioritized table.
+- **Content Format**: Markdown table.
 - **Example**:
   ```md
-  - All sensitive user data must be encrypted at rest using AES-256.
-  - Access to administrative endpoints must be restricted to users with the 'Admin' role.
+  | ID     | Requirement                                                              | Priority |
+  | :----- | :----------------------------------------------------------------------- | :------- |
+  | SEC-01 | All sensitive user data must be encrypted at rest using AES-256.         | 🟥 High  |
+  | SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High  |
   ```
 
 ##### 4.4.3 Reliability
 
-- **Description**: Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery.
-- **Content Format**: Markdown list.
+- **Description**: Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery, in a prioritized table.
+- **Content Format**: Markdown table.
 - **Example**:
   ```md
-  - The service must maintain 99.9% uptime, measured monthly.
-  - All database transactions must be atomic and durable.
+  | ID     | Requirement                                               | Priority |
+  | :----- | :-------------------------------------------------------- | :------- |
+  | REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High  |
+  | REL-02 | All database transactions must be atomic and durable.     | 🟥 High  |
   ```
 
 #### 4.4.4 Permission Model

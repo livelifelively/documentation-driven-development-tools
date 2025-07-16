@@ -157,7 +157,18 @@ sequenceDiagram
 
 <!-- Describe the existing system before the changes in this project are implemented. Optional for "greenfield" work. -->
 
-#### ✅ 4.1.1 Components
+#### ❓ 4.1.1 Data Models
+
+<!-- "As-is" data structures (ER diagrams). -->
+
+```mermaid
+erDiagram
+    ENTITY {
+        string attribute
+    }
+```
+
+#### ✅ 4.1.2 Components
 
 <!-- Provide a diagram of the main "as-is" components and their relationships. -->
 
@@ -166,11 +177,70 @@ graph TD
     A_current([Component A]) --> B_current([Component B]);
 ```
 
+#### ❓ 4.1.3 Data Flow
+
+<!-- "As-is" data flow diagram. -->
+
+```mermaid
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
+```
+
+#### ❓ 4.1.4 Control Flow
+
+<!-- "As-is" sequence of interactions. -->
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant System
+    User->>System: [Initiates Action]
+    System-->>User: [Returns Result]
+```
+
+#### ❓ 4.1.5 Integration Points
+
+<!-- "As-is" key integration points. -->
+
+- **Trigger:** [Description of the current trigger.]
+- **Input Data:** [Description of the current input data.]
+
 ### ✅ 4.2 Target Architecture
 
 <!-- Describe the proposed "to-be" state of the system after this project is implemented. -->
 
-#### ✅ 4.2.1 Components
+#### ❓ 4.2.1 Data Models
+
+<!-- "To-be" data structures (ER diagrams). -->
+
+```mermaid
+erDiagram
+    ENTITY {
+        string attribute
+    }
+```
+
+#### ✅ 4.2.2 Components
 
 <!-- Provide a diagram of the main "to-be" components and their relationships. -->
 
@@ -179,6 +249,60 @@ graph TD
     A_new([Component A]) --> B_new([Component B]);
 ```
 
+#### ❓ 4.2.3 Data Flow
+
+<!-- "To-be" data flow diagram. -->
+
+```mermaid
+graph TD
+    subgraph "Input"
+        A[Component A]
+    end
+
+    subgraph "System"
+        B(Component B)
+        C(Component C)
+    end
+
+    subgraph "External Resource"
+        D[Database]
+    end
+
+    subgraph "Output"
+        E[Component D]
+    end
+
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
+```
+
+#### ❓ 4.2.4 Control Flow
+
+<!-- "To-be" sequence of interactions. -->
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant System
+    User->>System: [New Action]
+    System-->>User: [New Result]
+```
+
+#### ❓ 4.2.5 Integration Points
+
+<!-- "To-be" key integration points. -->
+
+- **Trigger:** [Description of the new trigger.]
+- **Input Data:** [Description of the new input data.]
+
+#### ❓ 4.2.6 Exposed API
+
+<!-- "To-be" exposed API surface. -->
+
+- `[METHOD] /api/endpoint`: [Description of the endpoint.]
+
 ### ✅ 4.3 Tech Stack & Deployment
 
 <!-- Document the key technologies and deployment strategy for this project. -->
@@ -186,6 +310,31 @@ graph TD
 - **Language**: [e.g., TypeScript]
 - **Framework**: [e.g., Next.js]
 - **Deployment**: [e.g., Vercel]
+
+### ❓ 4.4 Non-Functional Requirements
+
+<!-- Container for high-level quality attributes and constraints. -->
+
+#### ❓ 4.4.1 Performance
+
+| ID      | Requirement                                                       | Priority  |
+| :------ | :---------------------------------------------------------------- | :-------- |
+| PERF-01 | API endpoints must respond in < 200ms (95th percentile).          | 🟥 High   |
+| PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
+
+#### ❓ 4.4.2 Security
+
+| ID     | Requirement                                                              | Priority |
+| :----- | :----------------------------------------------------------------------- | :------- |
+| SEC-01 | All sensitive user data must be encrypted at rest using AES-256.         | 🟥 High  |
+| SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High  |
+
+#### ❓ 4.4.3 Reliability
+
+| ID     | Requirement                                               | Priority |
+| :----- | :-------------------------------------------------------- | :------- |
+| REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High  |
+| REL-02 | All database transactions must be atomic and durable.     | 🟥 High  |
 
 ### ❓ 4.4.4 Permission Model
 
