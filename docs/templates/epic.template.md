@@ -1,6 +1,6 @@
 # Epic: [Epic Name]
 
-<!-- This document defines a complete feature, including its business justification, architectural design, and implementation plan. It is decomposed into a series of tasks. -->
+<!-- This document defines a complete, independent feature, including its business justification, architectural design, and implementation plan. It should be testable on its own, with dependencies on other epics limited to well-defined integration points. -->
 
 ---
 
@@ -25,9 +25,11 @@
 
 ### ✅ 2.1 Overview
 
-<!-- Provide a one-to-three sentence summary of the epic's identity, mission, and boundaries. -->
+<!-- Provide a concise, bulleted list outlining the epic's identity, mission, and boundaries. -->
 
-[A concise paragraph explaining the epic's core identity, its primary contribution to the system, and what it is responsible for.]
+- **Core Function**: [A brief description of the epic's primary responsibility.]
+- **Key Capability**: [A specific function or capability the epic provides.]
+- **Business Value**: [The value this epic delivers to the business or user.]
 
 ### ✅ 2.2 Business Context
 
@@ -230,77 +232,37 @@ sequenceDiagram
 
 ---
 
-## ✅ 5 Detailed Design
+## ✅ 5 Maintenance and Monitoring
 
-### ❓ 5.1 Current Detailed Design
+### ❓ 5.1 Current Maintenance and Monitoring
 
 <!-- (Optional) Describe the existing internal implementation details. -->
 
-#### ✅ 5.1.1 Data Models
-
-<!-- "As-is" data structures. -->
-
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string field_name
-    }
-```
-
-#### ✅ 5.1.2 Class Diagrams
-
-<!-- "As-is" static structure of classes. -->
-
-```mermaid
-classDiagram
-    classA <|-- classB
-```
-
-#### ✅ 5.1.3 Error Handling
+#### ✅ 5.1.1 Error Handling
 
 <!-- "As-is" error handling strategy. -->
 
 - [Current error handling mechanism.]
 
-#### ✅ 5.1.4 Logging & Monitoring
+#### ✅ 5.1.2 Logging & Monitoring
 
 <!-- "As-is" observability strategy. -->
 
 - [Current logging and monitoring setup.]
 
-### ✅ 5.2 Target Detailed Design
+### ✅ 5.2 Target Maintenance and Monitoring
 
 <!-- Describe the proposed "to-be" internal implementation details. -->
 
-#### ✅ 5.2.1 Data Models
-
-<!-- "To-be" data structures. -->
-
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string new_field_name
-    }
-```
-
-#### ✅ 5.2.2 Class Diagrams
-
-<!-- "To-be" static structure of classes. -->
-
-```mermaid
-classDiagram
-    classC <|-- classD
-```
-
-#### ✅ 5.2.3 Error Handling
+#### ✅ 5.2.1 Error Handling
 
 <!-- "To-be" error handling strategy. -->
 
-- [New error handling mechanism.]
+| Error Type       | Trigger                 | Action         | User Feedback                    |
+| :--------------- | :---------------------- | :------------- | :------------------------------- |
+| **[Error Type]** | [Trigger for the error] | [Action taken] | `[User-facing feedback message]` |
 
-#### ✅ 5.2.4 Logging & Monitoring
+#### ✅ 5.2.2 Logging & Monitoring
 
 <!-- "To-be" observability strategy. -->
 
@@ -352,12 +314,13 @@ classDiagram
 
 - **[Error Type]**: [Response plan, e.g., Trigger PagerDuty alert.]
 
-### ✅ 7.4 Deployment Steps
+### ✅ 7.5 Local Test Commands
 
-<!-- A checklist for deploying this feature to production. -->
+<!-- CLI commands to run tests locally for this epic. -->
 
-1. [ ] Step 1
-2. [ ] Step 2
+```bash
+yarn jest [path/to/this/epic/test.ts]
+```
 
 ---
 

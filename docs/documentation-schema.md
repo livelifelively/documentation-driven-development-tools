@@ -13,22 +13,41 @@
 | ❓     | Optional (recommended) |
 | ➖     | Not applicable / omit  |
 
+> **Note on Usage in Document Headings:**
+> In addition to their meaning in the schema tables below, these icons are used in the headings of the actual `*.md` files to indicate the **completion status** of a section.
+>
+> - `## ✅ [Section Name]`: Indicates the section is considered **complete**.
+> - `## ❓ [Section Name]`: Indicates the section is **incomplete, a placeholder, or needs review**.
+> - `## ➖ [Section Name]`: Indicates the section is **not applicable** and has been intentionally omitted.
+
 ---
 
 ## Family Index
 
-| #   | Family (Anchor)                                      | Primary Question Answered                                        | Project | Module | Epic | Task |
-| --- | ---------------------------------------------------- | ---------------------------------------------------------------- | :-----: | :----: | :--: | :--: |
-| 1   | [Meta & Governance](#meta--governance)               | How critical is this work, what is its current status?           |   ✅    |   ✅   |  ✅  |  ✅  |
-| 2   | [Business & Scope](#business--scope)                 | Why are we doing this?                                           |   ✅    |   ✅   |  ✅  |  ✅  |
-| 3   | [Planning & Decomposition](#planning--decomposition) | What are we building, in what order?                             |   ✅    |   ✅   |  ✅  |  ❓  |
-| 4   | [High-Level Design](#high-level-design)              | What are the high-level components and interactions? (Black-Box) |   ✅    |   ✅   |  ✅  |  ✅  |
-| 5   | [Detailed Design](#detailed-design)                  | What are the internal details needed to build it? (White-Box)    |   ❓    |   ✅   |  ✅  |  ✅  |
-| 6   | [Implementation Guidance](#implementation--guidance) | What are the practical steps?                                    |   ❓    |   ✅   |  ✅  |  ✅  |
-| 7   | [Quality & Operations](#quality--operations)         | How do we validate & run it?                                     |   ✅    |   ✅   |  ✅  |  ✅  |
-| 8   | [Reference](#reference)                              | What other info might we need?                                   |   ❓    |   ❓   |  ❓  |  ❓  |
+| #   | Family (Anchor)                                           | Primary Question Answered                                        | Project | Module | Epic | Task |
+| --- | --------------------------------------------------------- | ---------------------------------------------------------------- | :-----: | :----: | :--: | :--: |
+| 1   | [Meta & Governance](#meta--governance)                    | How critical is this work, what is its current status?           |   ✅    |   ✅   |  ✅  |  ✅  |
+| 2   | [Business & Scope](#business--scope)                      | Why are we doing this?                                           |   ✅    |   ✅   |  ✅  |  ✅  |
+| 3   | [Planning & Decomposition](#planning--decomposition)      | What are we building, in what order?                             |   ✅    |   ✅   |  ✅  |  ❓  |
+| 4   | [High-Level Design](#high-level-design)                   | What are the high-level components and interactions? (Black-Box) |   ✅    |   ✅   |  ✅  |  ✅  |
+| 5   | [Maintenance and Monitoring](#maintenance-and-monitoring) | What are the internal details needed to build it? (White-Box)    |   ❓    |   ✅   |  ✅  |  ✅  |
+| 6   | [Implementation Guidance](#implementation--guidance)      | What are the practical steps?                                    |   ❓    |   ✅   |  ✅  |  ✅  |
+| 7   | [Quality & Operations](#quality--operations)              | How do we validate & run it?                                     |   ✅    |   ✅   |  ✅  |  ✅  |
+| 8   | [Reference](#reference)                                   | What other info might we need?                                   |   ❓    |   ❓   |  ❓  |  ❓  |
 
 Each plan document now begins with a **family heading** (`## Business & Scope`, etc.). An artefact includes a family only if it has relevant content; otherwise the heading may read `None (inherits from parent)`.
+
+---
+
+## Context Inheritance Protocol
+
+The 4-tier hierarchy is not just an organizational tool; it is a strict protocol for context inheritance. To correctly interpret any document, it is **mandatory** to have first processed its parent.
+
+- To understand a **Module**, you must first read the **Project**.
+- To understand an **Epic**, you must first read its parent **Module** (and by extension, the **Project**).
+- To understand a **Task**, you must first read its parent **Epic**.
+
+This top-down traversal is the only way to gather the complete context required for implementation, as information is progressively narrowed and not repeated at lower levels. Automated tools and LLMs **MUST** enforce this reading order.
 
 ---
 
@@ -128,12 +147,14 @@ Explains **why** the artefact exists, who it serves, and what success looks like
 
 #### 2.1 Overview
 
-- **Description**: Provide a concise elevator-pitch: _what_ this artefact delivers and _why it matters_.
-- **Content Format**: Plain text.
+- **Description**: Provide a concise, bulleted list outlining _what_ this artefact delivers and _why it matters_.
+- **Content Format**: Markdown bulleted list.
 - **Example**:
 
   ```md
-  This epic implements a robust, multi-level logging system to provide deep observability into the document processing pipeline. It ensures that both operational errors and business events are captured, categorized, and routed to the appropriate monitoring tools, enabling proactive issue resolution and performance analysis.
+  - **Core Function**: Implements a robust, multi-level logging system for the document processing pipeline.
+  - **Key Capability**: Ensures both operational errors and business events are captured, categorized, and routed to monitoring tools.
+  - **Business Value**: Enables proactive issue resolution and performance analysis.
   ```
 
 #### 2.2 Business Context
@@ -393,20 +414,22 @@ This family answers **how** the system works from a high-level, **black-box pers
 | **4**   | `null`    | Architecture & Design       |  `##`   |   ✅    |   ✅   |  ✅  |  ✅  | The main family heading.                                                 |
 | 4.0     | 4         | Guiding Principles          |  `###`  |   ❓    |   ❓   |  ➖  |  ➖  | High-level architectural rules or constraints that govern the artefact.  |
 | 4.1     | 4         | Current Architecture        |  `###`  |   ✅    |   ✅   |  ✅  |  ❓  | Describes the existing system. Optional for new ("greenfield") projects. |
-| 4.1.1   | 4.1       | Components                  | `####`  |   ✅    |   ✅   |  ✅  |  ✅  | "As-is" component diagram.                                               |
-| 4.1.2   | 4.1       | Data Flow                   | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" data flow diagram.                                               |
-| 4.1.3   | 4.1       | Control Flow                | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" sequence of interactions.                                        |
-| 4.1.4   | 4.1       | Integration Points          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" key integration points.                                          |
-| 4.1.4.1 | 4.1.4     | Upstream Integrations       | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" Systems/data this artefact consumes.                             |
-| 4.1.4.2 | 4.1.4     | Downstream Integrations     | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" Systems/data this artefact produces.                             |
+| 4.1.1   | 4.1       | Data Models                 | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" data structures (ER diagrams).                                   |
+| 4.1.2   | 4.1       | Components                  | `####`  |   ✅    |   ✅   |  ✅  |  ✅  | "As-is" component diagram (class, graph, or C4).                         |
+| 4.1.3   | 4.1       | Data Flow                   | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" data flow diagram.                                               |
+| 4.1.4   | 4.1       | Control Flow                | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" sequence of interactions.                                        |
+| 4.1.5   | 4.1       | Integration Points          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" key integration points.                                          |
+| 4.1.5.1 | 4.1.5     | Upstream Integrations       | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" Systems/data this artefact consumes.                             |
+| 4.1.5.2 | 4.1.5     | Downstream Integrations     | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" Systems/data this artefact produces.                             |
 | 4.2     | 4         | Target Architecture         |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | Describes the proposed "to-be" state.                                    |
-| 4.2.1   | 4.2       | Components                  | `####`  |   ✅    |   ✅   |  ✅  |  ✅  | "To-be" component diagram.                                               |
-| 4.2.2   | 4.2       | Data Flow                   | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" data flow diagram.                                               |
-| 4.2.3   | 4.2       | Control Flow                | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" sequence of interactions.                                        |
-| 4.2.4   | 4.2       | Integration Points          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | Container for Upstream/Downstream definitions.                           |
-| 4.2.4.1 | 4.2.4     | Upstream Integrations       | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | Systems/data this artefact consumes.                                     |
-| 4.2.4.2 | 4.2.4     | Downstream Integrations     | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | Systems/data this artefact produces.                                     |
-| 4.2.5   | 4.2       | Exposed API                 | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" exposed API surface.                                             |
+| 4.2.1   | 4.2       | Data Models                 | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" data structures (ER diagrams).                                   |
+| 4.2.2   | 4.2       | Components                  | `####`  |   ✅    |   ✅   |  ✅  |  ✅  | "To-be" component diagram (class).                                       |
+| 4.2.3   | 4.2       | Data Flow                   | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" data flow diagram.                                               |
+| 4.2.4   | 4.2       | Control Flow                | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" sequence of interactions.                                        |
+| 4.2.5   | 4.2       | Integration Points          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | Container for Upstream/Downstream definitions.                           |
+| 4.2.5.1 | 4.2.5     | Upstream Integrations       | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | Systems/data this artefact consumes.                                     |
+| 4.2.5.2 | 4.2.5     | Downstream Integrations     | `#####` |   ❓    |   ✅   |  ✅  |  ✅  | Systems/data this artefact produces.                                     |
+| 4.2.6   | 4.2       | Exposed API                 | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" exposed API surface.                                             |
 | 4.3     | 4         | Tech Stack & Deployment     |  `###`  |   ✅    |   ❓   |  ❓  |  ❓  | Key technologies and deployment strategy.                                |
 | 4.4     | 4         | Non-Functional Requirements |  `###`  |   ❓    |   ❓   |  ✅  |  ✅  | Container for high-level quality attributes and constraints.             |
 | 4.4.1   | 4.4       | Performance                 | `####`  |   ❓    |   ❓   |  ✅  |  ✅  | Defines performance-related NFRs.                                        |
@@ -428,19 +451,120 @@ This family answers **how** the system works from a high-level, **black-box pers
   - **Event-Driven**: Communication between major components should be asynchronous and event-driven where possible.
   ```
 
-#### 4.x.1 Components
+#### 4.x.1 Data Models
 
-- **Description**: A diagram illustrating the main components and their relationships.
-- **Content Format**: Mermaid `graph` or `C4Context` diagram.
+- **Description**: The structure of data at a high level, often represented as an Entity-Relationship Diagram. This section defines the core data entities and their relationships before detailing the components that manage them.
+- **Content Format**: Mermaid `erDiagram`.
 - **Example**:
   ```mermaid
-  graph TD
-      A[Client] --> B{Load Balancer}
-      B --> C[Service A]
-      B --> D[Service B]
+  erDiagram
+  LOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"
+  LOG_PAYLOAD {
+    string id PK
+    LogLevel level
+    string message
+    string timeISO8601
+    string stack
+    string componentStack
+    json context
+  }
+  LOGGER_CONFIG {
+    LogLevel minLevel
+  }
+  TRANSPORT_CONFIG {
+    string name
+    string endpoint
+  }
+  ENV_VAR {
+    string NEXT_PUBLIC_LOG_LEVEL PK
+  }
+  ENV_VAR ||--|| LOGGER_CONFIG : "overrides"
   ```
 
-#### 4.x.2 Data Flow
+#### 4.x.2 Components
+
+- **Description**: A diagram illustrating the main components and their relationships. The term "component" is used broadly and does not necessarily map to a class; it represents a logical block of functionality.
+- **Content Format**: Mermaid `classDiagram` diagram.
+- **Example**:
+
+```mermaid
+  classDiagram
+  direction LR
+
+      class LogPayload {
+          <<type>>
+          +LogLevel level
+          +string message
+          +string timeISO8601
+          +string stack
+          +string componentStack
+          +Record<string,any> context
+      }
+
+      class ClientLogger {
+          <<interface>>
+          +log(payload: LogPayload): Promise<void>
+      }
+
+      class ConsoleTransport {
+          +log(payload: LogPayload): Promise<void>
+      }
+
+      class HttpTransport {
+          +string endpoint
+          +log(payload: LogPayload): Promise<void>
+      }
+
+      class CompositeLogger {
+          +ClientLogger[] delegates
+          +log(payload: LogPayload): Promise<void>
+      }
+
+      class LoggerConfig {
+          +LogLevel minLevel
+          +TransportConfig[] transports
+      }
+
+      class TransportConfig {
+          +string name
+          +string endpoint
+      }
+
+      class LoggerFactory {
+          +create(config: LoggerConfig): ClientLogger
+      }
+
+      class BuildLogPayload {
+          <<function>>
+      }
+
+      class SingleCallGuard {
+          <<function>>
+      }
+
+      class AppErrorBoundary {
+          +ClientLogger logger
+          +componentDidCatch(error, info): void
+      }
+
+      %% Inheritance / Implementation
+      ClientLogger <|.. ConsoleTransport
+      ClientLogger <|.. HttpTransport
+      ClientLogger <|.. CompositeLogger
+
+      %% Associations / Composition
+      CompositeLogger o-- ClientLogger : delegates
+      LoggerFactory --> LoggerConfig
+      LoggerFactory --> ClientLogger : returns
+      LoggerFactory --> TransportConfig
+      AppErrorBoundary --> ClientLogger : uses
+      AppErrorBoundary --> SingleCallGuard : guards
+      BuildLogPayload --> LogPayload : returns
+      AppErrorBoundary ..> BuildLogPayload : builds
+
+```
+
+#### 4.x.3 Data Flow
 
 - **Description**: A diagram showing how data moves between components.
 - **Content Format**: Mermaid `graph` or `sequenceDiagram`.
@@ -453,7 +577,7 @@ This family answers **how** the system works from a high-level, **black-box pers
       MessageQueue --"Event consumed by"--> ServiceB
   ```
 
-#### 4.x.3 Control Flow
+#### 4.x.4 Control Flow
 
 - **Description**: A diagram showing the sequence of interactions between components.
 - **Content Format**: Mermaid `sequenceDiagram`.
@@ -469,12 +593,12 @@ This family answers **how** the system works from a high-level, **black-box pers
       API-->>User: { token: "..." }
   ```
 
-#### 4.x.4 Integration Points
+#### 4.x.5 Integration Points
 
 - **Description**: A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections.
 - **Content Format**: Container section; content is in child sections.
 
-##### 4.x.4.1 Upstream Integrations
+##### 4.x.5.1 Upstream Integrations
 
 - **Description**: Defines how this artefact is triggered and what data it receives from other systems.
 - **Content Format**: Markdown list or table.
@@ -484,7 +608,7 @@ This family answers **how** the system works from a high-level, **black-box pers
   - **Input Data**: Receives `documentId` and `userId` from the client.
   ```
 
-##### 4.x.4.2 Downstream Integrations
+##### 4.x.5.2 Downstream Integrations
 
 - **Description**: Defines what happens when this artefact completes its work and what data it sends to other systems.
 - **Content Format**: Markdown list or table.
@@ -494,7 +618,7 @@ This family answers **how** the system works from a high-level, **black-box pers
   - **Output Data**: The event payload includes `documentId` and `status: 'COMPLETED'`.
   ```
 
-#### 4.x.5 Exposed API
+#### 4.x.6 Exposed API
 
 - **Description**: The API surface this component exposes to consumers.
 - **Content Format**: OpenAPI/Swagger snippet, or a Markdown table.
@@ -572,84 +696,42 @@ This family answers **how** the system works from a high-level, **black-box pers
   | **Viewer**  | - Read-only access to completed documents                    | For stakeholders or external users. |
   ```
 
-## 5 Detailed Design <a id="detailed-design"></a>
+## 5 Maintenance and Monitoring <a id="maintenance-and-monitoring"></a>
 
 ### 5.1 Rationale
 
-This family answers **how** the system works from a detailed, **white-box perspective**. It provides the internal implementation details necessary for developers to build the components defined in the High-Level Design.
+This family answers **how** the system is maintained and monitored. It provides the internal implementation details necessary for developers to build the components defined in the High-Level Design.
 
 ### 5.2 Depth Matrix
 
-| ID    | Parent ID | Section Name            | Heading | Project | Module | Epic | Task | Notes                                                                    |
-| :---- | :-------- | :---------------------- | :-----: | :-----: | :----: | :--: | :--: | :----------------------------------------------------------------------- |
-| **5** | `null`    | Detailed Design         |  `##`   |   ❓    |   ✅   |  ✅  |  ✅  | The main family heading.                                                 |
-| 5.1   | 5         | Current Detailed Design |  `###`  |   ❓    |   ✅   |  ✅  |  ❓  | Describes the existing system. Optional for new ("greenfield") projects. |
-| 5.1.1 | 5.1       | Data Models             | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" data structures.                                                 |
-| 5.1.2 | 5.1       | Class Diagrams          | `####`  |   ❓    |   ❓   |  ✅  |  ✅  | "As-is" static structure of classes.                                     |
-| 5.1.3 | 5.1       | Error Handling          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" error handling strategy.                                         |
-| 5.1.4 | 5.1       | Logging & Monitoring    | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" observability strategy.                                          |
-| 5.2   | 5         | Target Detailed Design  |  `###`  |   ❓    |   ✅   |  ✅  |  ✅  | Describes the proposed "to-be" state.                                    |
-| 5.2.1 | 5.2       | Data Models             | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" data structures.                                                 |
-| 5.2.2 | 5.2       | Class Diagrams          | `####`  |   ❓    |   ❓   |  ✅  |  ✅  | "To-be" static structure of classes.                                     |
-| 5.2.3 | 5.2       | Error Handling          | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" error handling strategy.                                         |
-| 5.2.4 | 5.2       | Logging & Monitoring    | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" observability strategy.                                          |
+| ID    | Parent ID | Section Name                       | Heading | Project | Module | Epic | Task | Notes                                                                    |
+| :---- | :-------- | :--------------------------------- | :-----: | :-----: | :----: | :--: | :--: | :----------------------------------------------------------------------- |
+| **5** | `null`    | Maintenance and Monitoring         |  `##`   |   ❓    |   ✅   |  ✅  |  ✅  | The main family heading.                                                 |
+| 5.1   | 5         | Current Maintenance and Monitoring |  `###`  |   ❓    |   ✅   |  ✅  |  ❓  | Describes the existing system. Optional for new ("greenfield") projects. |
+| 5.1.1 | 5.1       | Error Handling                     | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" error handling strategy.                                         |
+| 5.1.2 | 5.1       | Logging & Monitoring               | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "As-is" observability strategy.                                          |
+| 5.2   | 5         | Target Maintenance and Monitoring  |  `###`  |   ❓    |   ✅   |  ✅  |  ✅  | Describes the proposed "to-be" state.                                    |
+| 5.2.1 | 5.2       | Error Handling                     | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" error handling strategy.                                         |
+| 5.2.2 | 5.2       | Logging & Monitoring               | `####`  |   ❓    |   ✅   |  ✅  |  ✅  | "To-be" observability strategy.                                          |
 
 ### 5.3 Field Details
 
 > **Note**: The fields for `Current Detailed Design` (5.1.x) and `Target Detailed Design` (5.2.x) are identical in format. The examples below use the `Target` sections, but apply equally to the `Current` sections.
 
-#### 5.x.1 Data Models
+#### 5.x.1 Error Handling
 
-- **Description**: The structure of data (e.g., a database schema, API payload, or class definition).
-- **Content Format**: Mermaid `erDiagram`, JSON/YAML/SQL code block, or a Markdown table.
-- **Example**:
-  ```mermaid
-  erDiagram
-    LOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"
-    LOG_PAYLOAD {
-      string id PK
-      LogLevel level
-      string message
-      string timeISO8601
-      string stack
-      string componentStack
-      json context
-    }
-    LOGGER_CONFIG {
-      LogLevel minLevel
-    }
-    TRANSPORT_CONFIG {
-      string name
-      string endpoint
-    }
-  ```
-
-#### 5.x.2 Class Diagrams
-
-- **Description**: A diagram showing the static structure, attributes, and methods of classes and their relationships.
-- **Content Format**: Mermaid `classDiagram`.
-- **Example**:
-  ```mermaid
-  classDiagram
-      Logger <|-- FileLogger
-      Logger <|-- ConsoleLogger
-      Logger: +log(message)
-      FileLogger: +filePath
-      ConsoleLogger: +logToStdErr
-  ```
-
-#### 5.x.3 Error Handling
-
-- **Description**: The strategy for managing and communicating errors.
-- **Content Format**: Markdown list or table.
+- **Description**: The strategy for managing and communicating errors, often best represented as a table detailing the condition, trigger, action, and feedback.
+- **Content Format**: Markdown table.
 - **Example**:
   ```md
-  - All API responses use the standard `ApiError` schema on failure.
-  - 4xx errors are logged as `WARN` and returned to the client.
-  - 5xx errors are logged as `ERROR`, trigger an alert, and return a generic error message.
+  | Error Type                  | Trigger                                       | Action                  | User Feedback                                                             |
+  | :-------------------------- | :-------------------------------------------- | :---------------------- | :------------------------------------------------------------------------ |
+  | **File System Error**       | Cannot read a required file or directory.     | Abort with exit code 1. | `ERROR: Cannot access [path]. Please check permissions.`                  |
+  | **Schema Validation Error** | A document violates the canonical schema.     | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].`        |
+  | **API/Network Error**       | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
   ```
 
-#### 5.x.4 Logging & Monitoring
+#### 5.x.2 Logging & Monitoring
 
 - **Description**: The strategy for system observability.
 - **Content Format**: Markdown list or table.
@@ -747,8 +829,8 @@ This family defines how we ensure the system is correct, reliable, and observabl
 | 7.1   | 7         | Testing Strategy / Requirements |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | The approach to testing and specific testing requirements. |
 | 7.2   | 7         | Configuration                   |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | How the system is configured in different environments.    |
 | 7.3   | 7         | Alerting & Response             |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | How to respond to alerts and operational logs.             |
-| 7.4   | 7         | Deployment Steps                |  `###`  |   ❓    |   ❓   |  ✅  |  ✅  | Manual steps required for deployment, if any.              |
-| 7.5   | 7         | Local Test Commands             |  `###`  |   ➖    |   ➖   |  ➖  |  ✅  | CLI commands to run tests locally.                         |
+| 7.4   | 7         | Deployment Steps                |  `###`  |   ✅    |   ✅   |  ➖  |  ➖  | Manual steps required for deployment, if any.              |
+| 7.5   | 7         | Local Test Commands             |  `###`  |   ➖    |   ➖   |  ✅  |  ✅  | CLI commands to run tests locally.                         |
 
 ### 7.3 Field Details
 

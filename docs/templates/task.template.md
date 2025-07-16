@@ -33,9 +33,11 @@
 
 ### ✅ 2.1 Overview
 
-<!-- Provide a one-to-three sentence summary of what this task delivers and why it matters. -->
+<!-- Provide a concise, bulleted list outlining what this task delivers and why it matters. -->
 
-[A concise paragraph explaining the task's goal and its contribution to the parent epic.]
+- **Core Function**: [A brief description of the task's primary responsibility.]
+- **Key Capability**: [A specific function or capability the task provides.]
+- **Business Value**: [The value this task delivers to the business or user.]
 
 ### ❓ 2.2 Business Context
 
@@ -195,77 +197,37 @@ sequenceDiagram
 
 ---
 
-## ✅ 5 Detailed Design
+## ✅ 5 Maintenance and Monitoring
 
-### ❓ 5.1 Current Detailed Design
+### ❓ 5.1 Current Maintenance and Monitoring
 
 <!-- (Optional) Describe the existing internal implementation details. -->
 
-#### ✅ 5.1.1 Data Models
-
-<!-- "As-is" data structures. -->
-
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string field_name
-    }
-```
-
-#### ✅ 5.1.2 Class Diagrams
-
-<!-- "As-is" static structure of classes. -->
-
-```mermaid
-classDiagram
-    classA <|-- classB
-```
-
-#### ✅ 5.1.3 Error Handling
+#### ✅ 5.1.1 Error Handling
 
 <!-- "As-is" error handling strategy. -->
 
 - [Current error handling mechanism.]
 
-#### ✅ 5.1.4 Logging & Monitoring
+#### ✅ 5.1.2 Logging & Monitoring
 
 <!-- "As-is" observability strategy. -->
 
 - [Current logging and monitoring setup.]
 
-### ✅ 5.2 Target Detailed Design
+### ✅ 5.2 Target Maintenance and Monitoring
 
 <!-- Describe the proposed "to-be" internal implementation details. -->
 
-#### ✅ 5.2.1 Data Models
-
-<!-- "To-be" data structures. -->
-
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string new_field_name
-    }
-```
-
-#### ✅ 5.2.2 Class Diagrams
-
-<!-- "To-be" static structure of classes. -->
-
-```mermaid
-classDiagram
-    classC <|-- classD
-```
-
-#### ✅ 5.2.3 Error Handling
+#### ✅ 5.2.1 Error Handling
 
 <!-- "To-be" error handling strategy. -->
 
-- [New error handling mechanism.]
+| Error Type       | Trigger                 | Action         | User Feedback                    |
+| :--------------- | :---------------------- | :------------- | :------------------------------- |
+| **[Error Type]** | [Trigger for the error] | [Action taken] | `[User-facing feedback message]` |
 
-#### ✅ 5.2.4 Logging & Monitoring
+#### ✅ 5.2.2 Logging & Monitoring
 
 <!-- "To-be" observability strategy. -->
 
@@ -340,13 +302,6 @@ export const add = (a: number, b: number): number => a + b;
 <!-- How to respond to alerts and operational logs originating from this task. -->
 
 - **[Error Type]**: [Response plan, e.g., Trigger PagerDuty alert.]
-
-### ✅ 7.4 Deployment Steps
-
-<!-- Manual steps required for deployment, if any. -->
-
-1.  [ ] Step 1
-2.  [ ] Step 2
 
 ### ✅ 7.5 Local Test Commands
 
