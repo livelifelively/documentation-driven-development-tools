@@ -24,21 +24,26 @@
 
 ### ✅ 2.1 Overview
 
-- **Core Function**: Validates the in-memory model of the documentation against the canonical schema.
-- **Key Capability**: Ensures that all documentation adheres to the defined structure, preventing data corruption and ensuring consistency.
-- **Business Value**: Guarantees the reliability of the data fed into the monitoring dashboard and other downstream tools.
+- **Core Function**: Validates the in-memory `ProjectModel` (from the Parser epic) against the rules defined in the canonical `documentation-schema.md`.
+- **Key Capability**: Acts as a strict quality gate, ensuring that all documentation artifacts are structurally sound and complete before being used by downstream tools.
+- **Business Value**: Guarantees the integrity and reliability of the data fed into the monitoring dashboard. By enforcing standards at the commit level, it prevents "garbage in, garbage out" and builds trust in the automated reporting.
 
 ### ✅ 2.2.4 User Stories
 
-- As a **DDD Developer**, I want the tool to validate every parsed document against the official schema, so that I can be confident the data is structured correctly.
-- As a **DDD Developer**, I want the commit to fail if any document is not compliant with the schema, so that I am forced to fix it immediately.
+- As a **DDD Developer**, I want the tool to validate that every document's content (e.g., required sections) conforms to the rules in `documentation-schema.md`, so that I can be confident the data is structured correctly.
+- As a **DDD Developer**, I want the tool to validate that every document's file path conforms to the project's hierarchical naming convention, so that files are not misplaced.
+- As a **DDD Developer**, I want the commit to fail instantly upon the first validation error, so that I am forced to fix issues immediately and prevent bad data from being committed.
+- As a **DDD Developer**, I want to receive a precise error message telling me exactly which file and which rule failed, so I can fix the problem quickly without guesswork.
 
-### ❓ 2.4 Acceptance Criteria
+### ✅ 2.4 Acceptance Criteria
 
-| ID   | Criterion                                   | Test Reference      |
-| ---- | ------------------------------------------- | ------------------- |
-| AC-1 | [A verifiable statement of behavior.]       | [Link to test file] |
-| AC-2 | [Another verifiable statement of behavior.] | [Link to test file] |
+| ID   | Corresponds to User Story                                                                                                                                       | Criterion                                                                                                                                    | Test Reference      |
+| :--- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :------------------ |
+| AC-1 | As a **DDD Developer**, I want the tool to validate that every document's content (e.g., required sections) conforms to the rules in `documentation-schema.md`. | The validator correctly identifies a document that is missing a required section as defined in the `documentation-schema.md`.                | `validator.test.ts` |
+| AC-2 | As a **DDD Developer**, I want the tool to validate that every document's file path conforms to the project's hierarchical naming convention.                   | The validator correctly identifies a document with a malformed file path (e.g., an epic inside the root `docs/` folder).                     | `validator.test.ts` |
+| AC-3 | As a **DDD Developer**, I want the commit to fail instantly upon the first validation error.                                                                    | The validator throws a specific, catchable error upon finding the first validation violation, which will cause the commit to abort.          | `validator.test.ts` |
+| AC-4 | As a **DDD Developer**, I want to receive a precise error message telling me exactly which file and which rule failed.                                          | The error message thrown upon validation failure contains the full file path and a human-readable description of the rule that was violated. | `validator.test.ts` |
+| AC-5 | As a **DDD Developer**, I want the tool to validate that every document's content. and file path conforms to the rules.                                         | The validator successfully approves a `ProjectModel` that is fully compliant with all content and path rules.                                | `validator.test.ts` |
 
 ---
 
@@ -48,20 +53,12 @@
 
 <!-- List the tasks that are actively planned for the current implementation cycle. -->
 
-| ID  | Task                               | Priority  | Priority Drivers                                                                                         | Status         | Depends On | Summary                          |
-| :-- | :--------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------- | :------------- | :--------- | :------------------------------- |
-| T1  | [Example Task 1](path/to/task1.md) | 🟥 High   | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | —          | A brief description of the task. |
-| T2  | [Example Task 2](path/to/task2.md) | 🟧 Medium | [UX-Noticeable_Friction](/docs/documentation-driven-development.md#ux-noticeable_friction)               | 💡 Not Started | T1         | Another brief description.       |
-
-#### Column Definitions
-
-- **ID**: A unique identifier for the task within the epic (e.g., T1, T2).
-- **Task**: A descriptive name for the task, linked to its `.task.md` file.
-- **Priority**: The priority level of the task (e.g., 🟥 High).
-- **Priority Drivers**: Links to the specific business or technical drivers that justify the priority.
-- **Status**: The current state of the task (e.g., 💡 Not Started).
-- **Depends On**: The ID of any task(s) that must be completed before this one can start.
-- **Summary**: A brief, one-sentence description of the task's objective.
+| ID  | Task                                                                  | Priority | Priority Drivers                                                                                       | Status         | Depends On                                                                                               | Summary                                                                        |
+| :-- | :-------------------------------------------------------------------- | :------- | :----------------------------------------------------------------------------------------------------- | :------------- | :------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| T1  | [Schema Loader](./m1-e2-t1-schema-loader.task.md)                     | 🟥 High  | [TEC-Dev_Productivity_Blocker](/docs/documentation-driven-development.md#tec-dev_productivity_blocker) | 💡 Not Started | —                                                                                                        | Create a utility to parse `documentation-schema.md` into an in-memory ruleset. |
+| T2  | [Content Validator](./m1-e2-t2-content-validator.task.md)             | 🟥 High  | [TEC-Dev_Productivity_Blocker](/docs/documentation-driven-development.md#tec-dev_productivity_blocker) | T1             | Implement logic to check a document's content against the loaded schema rules (e.g., required sections). |
+| T3  | [Hierarchy Validator](./m1-e2-t3-hierarchy-validator.task.md)         | 🟥 High  | [TEC-Dev_Productivity_Blocker](/docs/documentation-driven-development.md#tec-dev_productivity_blocker) | T1             | Implement logic to check a document's file path against the hierarchical naming conventions.             |
+| T4  | [Main Validator Function](./m1-e2-t4-main-validator-function.task.md) | 🟥 High  | [TEC-Dev_Productivity_Blocker](/docs/documentation-driven-development.md#tec-dev_productivity_blocker) | T2, T3         | Integrate all validation logic into a single function that processes the `ProjectModel`.                 |
 
 ### ✅ 3.2 Backlog / Icebox
 
@@ -73,9 +70,10 @@
 
 <!-- List any internal or external dependencies that could block the progress of this epic. -->
 
-| ID  | Dependency On     | Type                | Status  | Notes                             |
-| --- | ----------------- | ------------------- | ------- | --------------------------------- |
-| D-1 | [Dependency Name] | [Internal/External] | [✅/❌] | [Notes on the dependency status.] |
+| ID  | Dependency On                                            | Type     | Status         | Notes                                                                                |
+| --- | -------------------------------------------------------- | -------- | -------------- | ------------------------------------------------------------------------------------ |
+| D-1 | [E1: Documentation Parser](../m1-e1-parser/)             | Internal | 💡 Not Started | This epic cannot start until the Parser is complete and provides the `ProjectModel`. |
+| D-2 | [documentation-schema.md](../../documentation-schema.md) | Internal | ✅ Complete    | The canonical schema definition is required as the source of truth for all rules.    |
 
 ### ✅ 3.4 Decomposition Graph
 
@@ -83,13 +81,16 @@
 
 ```mermaid
 graph TD
-    subgraph Epic: [Epic Name]
-        T1["Task: First Task"]
-        T2["Task: Second Task"]
-        T3["Task: Third Task"]
+    subgraph Epic: E2 Schema Validator
+        T1["T1: Schema Loader"]
+        T2["T2: Content Validator"]
+        T3["T3: Hierarchy Validator"]
+        T4["T4: Main Validator Function"]
     end
-    T1 --> T2
-    T2 --> T3
+    T1 -- "Provides Schema Rules" --> T2
+    T1 -- "Provides Schema Rules" --> T3
+    T2 -- "Provides Content Validation Logic" --> T4
+    T3 -- "Provides Hierarchy Validation Logic" --> T4
 ```
 
 ---
@@ -100,185 +101,228 @@ graph TD
 
 <!-- (Optional) Describe the existing system before the changes in this epic are implemented. -->
 
-#### ✅ 4.1.1 Components
-
-<!-- "As-is" component diagram. -->
-
-```mermaid
-graph TD
-    A_current([Component A]) --> B_current([Component B]);
-```
-
-#### ✅ 4.1.2 Data Flow
-
-<!-- "As-is" data flow diagram. -->
-
-```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [Data Payload]
-```
-
-#### ✅ 4.1.3 Control Flow
-
-<!-- "As-is" sequence of interactions. -->
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant System
-    User->>System: [Initiates Action]
-    System-->>User: [Returns Result]
-```
-
-#### ✅ 4.1.4 Integration Points
-
-<!-- "As-is" key integration points. -->
-
-- **Trigger:** [Description of the current trigger.]
-- **Input Data:** [Description of the current input data.]
+This is a greenfield epic; there is no current architecture.
 
 ### ✅ 4.2 Target Architecture
 
 <!-- Describe the proposed "to-be" state of the system after this epic is implemented. -->
 
-#### ✅ 4.2.1 Components
+The validator will be implemented as a set of pure functions that receive the `ProjectModel` and the parsed schema rules, returning a boolean result or throwing a specific error upon failure.
 
-<!-- "To-be" component diagram. -->
+#### ✅ 4.2.1 Data Models
+
+While the `ProjectModel` from the parser provides the raw content, the **Validator's** key responsibility is to ensure specific, structured data points exist within that content. This epic is concerned with the schema of the _extracted data_, not just the document structure. The following model represents the data that must be validated and extracted.
+
+```mermaid
+erDiagram
+    VALIDATION_RULESET {
+        string source "Path to documentation-schema.md"
+    }
+    VALIDATION_RULESET ||--|{ DOCUMENT_TYPE_RULE : "defines"
+
+    DOCUMENT_TYPE_RULE {
+        string typeName "e.g., 'project', 'module', 'epic', 'task'"
+    }
+    DOCUMENT_TYPE_RULE ||--|{ REQUIRED_FIELD : "must-have"
+    DOCUMENT_TYPE_RULE ||--|{ HIERARCHY_RULE : "must-be-inside"
+
+    REQUIRED_FIELD {
+        string fieldName "e.g., 'status', 'priority'"
+        string dataType "e.g., 'string', 'date', 'enum'"
+        string allowedValues "For enum types, e.g., 'High, Medium, Low'"
+    }
+
+    HIERARCHY_RULE {
+        string expectedParentType "e.g., 'module' for an 'epic'"
+    }
+```
+
+#### ✅ 4.2.2 Components
+
+The component design reflects the schema-driven approach. The core `Validator` orchestrates a set of specialized sub-components, each responsible for a specific type of validation based on the loaded ruleset.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class `RulesetLoader` {
+        <<function>>
+        +loadRules(filePath): ValidationRuleset
+    }
+
+    class `FieldValidator` {
+        <<function>>
+        +validateFields(document, rules): boolean
+    }
+
+    class `HierarchyValidator` {
+        <<function>>
+        +validatePath(document, rules): boolean
+    }
+
+    class `Validator` {
+        <<function>>
+        +validate(projectModel): boolean
+    }
+
+    Validator --> RulesetLoader : "1. loads"
+    Validator --> FieldValidator : "2. uses"
+    Validator --> HierarchyValidator : "3. uses"
+```
+
+#### ✅ 4.2.3 Data Flow
+
+The data flow is sequential: the rules are loaded first, then the main `Validator` iterates through the `ProjectModel`, applying the rules using its specialized sub-validators.
 
 ```mermaid
 graph TD
-    A_new([Component A]) --> B_new([Component B]);
+    subgraph "Input Sources"
+        A["ProjectModel from E1 Parser"]
+        B["docs/documentation-schema-md"]
+    end
+
+    subgraph "Validation Process"
+        C("RulesetLoader")
+        D("Validator")
+        E("FieldValidator")
+        F("HierarchyValidator")
+    end
+
+    subgraph "Outputs"
+        G["Success (true)"]
+        H["Failure (ValidationError)"]
+    end
+
+    B -- "1 - Read by" --> C
+    C -- "2 - Provides ValidationRuleset to" --> D
+    A -- "3 - Provides ProjectModel to" --> D
+
+    D -- "4 - For each doc, uses" --> E
+    D -- "5 - For each doc, uses" --> F
+
+    D -- "6a - On success" --> G
+    D -- "6b - On failure" --> H
 ```
 
-#### ✅ 4.2.2 Data Flow
+#### ✅ 4.2.4 Control Flow
 
-<!-- "To-be" data flow diagram. -->
+The control flow is orchestrated by the main `Validator` function, which coordinates the loading of rules and the execution of the specialized validators.
 
 ```mermaid
 sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: [New Data Payload]
+    participant Caller
+    participant Validator
+    participant RulesetLoader
+    participant FieldValidator
+    participant HierarchyValidator
+
+    Caller->>Validator: validate(projectModel)
+    Validator->>RulesetLoader: loadRules()
+    RulesetLoader-->>Validator: validationRuleset
+    loop for each document in projectModel
+        Validator->>FieldValidator: validateFields(doc, validationRuleset)
+        alt Fields Invalid
+            FieldValidator-->>Validator: throws ValidationError
+            Validator-->>Caller: throws ValidationError
+        else Fields Valid
+            FieldValidator-->>Validator: true
+        end
+        Validator->>HierarchyValidator: validatePath(doc, validationRuleset)
+        alt Path Invalid
+            HierarchyValidator-->>Validator: throws ValidationError
+            Validator-->>Caller: throws ValidationError
+        else Path Valid
+            HierarchyValidator-->>Validator: true
+        end
+    end
+    Validator-->>Caller: true
 ```
 
-#### ✅ 4.2.3 Control Flow
+#### ✅ 4.2.5 Integration Points
 
-<!-- "To-be" sequence of interactions. -->
+- **Upstream (Input)**: The main `Validator` function is triggered by the `analyzer` script and receives the `ProjectModel` from the `E1: Parser`.
+- **Internal (Input)**: The `RulesetLoader` component reads the `docs/documentation-schema.md` file from the file system to build the `ValidationRuleset`.
+- **Downstream (Success)**: On successful validation of the entire `ProjectModel`, the function returns `true`, allowing the `analyzer` to proceed to the `E3: Transmitter` epic.
+- **Downstream (Failure)**: On the first validation failure, the function throws a `ValidationError`. This exception is caught by the `analyzer`'s main process, which then aborts the `git commit` and logs the specific error to the developer's console.
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant System
-    User->>System: [New Action]
-    System-->>User: [New Result]
+#### ✅ 4.2.6 Exposed API
+
+This epic exposes a single, focused function to the main `analyzer` process.
+
+```typescript
+/**
+ * Validates a project model against the canonical documentation schema.
+ *
+ * This function orchestrates the loading of validation rules and applies them
+ * to the entire project model. It will throw a specific `ValidationError`
+ * on the first rule violation it encounters.
+ *
+ * @param projectModel The complete project model generated by the E1: Parser.
+ * @returns A promise that resolves to `true` if the entire model is valid.
+ * @throws {ValidationError} Describes the specific file, rule, and reason for the failure.
+ */
+export async function validate(projectModel: ProjectModel): Promise<boolean>;
 ```
-
-#### ✅ 4.2.4 Integration Points
-
-<!-- "To-be" key integration points. -->
-
-- **Trigger:** [Description of the new trigger.]
-- **Input Data:** [Description of the new input data.]
-
-#### ✅ 4.2.5 Exposed API
-
-<!-- "To-be" exposed API surface. -->
-
-- `[METHOD] /api/endpoint`: [Description of the endpoint.]
 
 ### ✅ 4.4 Non-Functional Requirements
 
 #### ✅ 4.4.1 Performance
 
-- [Performance requirement 1]
+| ID      | Requirement                                                                                                                            | Priority  |
+| :------ | :------------------------------------------------------------------------------------------------------------------------------------- | :-------- |
+| PERF-01 | The entire validation process (including schema loading) for a 100-document project should complete in under 200ms.                    | 🟥 High   |
+| PERF-02 | The `RulesetLoader` must parse the `documentation-schema.md` in under 50ms to avoid adding significant overhead to the commit process. | 🟧 Medium |
 
 #### ✅ 4.4.2 Security
 
-- [Security requirement 1]
+| ID     | Requirement                                                                                                                             | Priority |
+| :----- | :-------------------------------------------------------------------------------------------------------------------------------------- | :------- |
+| SEC-01 | The `RulesetLoader` must not be vulnerable to injection attacks when parsing the schema file. It should only read, not execute content. | 🟥 High  |
+| SEC-02 | The validator must not execute any code or macros embedded within the documentation files being validated.                              | 🟥 High  |
 
 #### ✅ 4.4.3 Reliability
 
-- [Reliability requirement 1]
+| ID     | Requirement                                                                                                                                          | Priority  |
+| :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------- | :-------- |
+| REL-01 | The validator must be deterministic. Given the same `ProjectModel` and `documentation-schema.md`, it must produce the exact same outcome every time. | 🟥 High   |
+| REL-02 | The validator must fail gracefully with a `ValidationError` if the `documentation-schema.md` file is missing, malformed, or cannot be parsed.        | 🟥 High   |
+| REL-03 | The validator must correctly handle empty documents or documents with missing (but optional) sections without crashing.                              | 🟧 Medium |
 
 ---
 
-## ✅ 5 Detailed Design
+## ✅ 5 Maintenance and Monitoring
 
-### ❓ 5.1 Current Detailed Design
+### ❓ 5.1 Current Maintenance and Monitoring
 
 <!-- (Optional) Describe the existing internal implementation details. -->
 
-#### ✅ 5.1.1 Data Models
+This is a greenfield epic; there is no current maintenance and monitoring strategy.
 
-<!-- "As-is" data structures. -->
-
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string field_name
-    }
-```
-
-#### ✅ 5.1.2 Class Diagrams
-
-<!-- "As-is" static structure of classes. -->
-
-```mermaid
-classDiagram
-    classA <|-- classB
-```
-
-#### ✅ 5.1.3 Error Handling
-
-<!-- "As-is" error handling strategy. -->
-
-- [Current error handling mechanism.]
-
-#### ✅ 5.1.4 Logging & Monitoring
-
-<!-- "As-is" observability strategy. -->
-
-- [Current logging and monitoring setup.]
-
-### ✅ 5.2 Target Detailed Design
+### ✅ 5.2 Target Maintenance and Monitoring
 
 <!-- Describe the proposed "to-be" internal implementation details. -->
 
-#### ✅ 5.2.1 Data Models
+#### ✅ 5.2.1 Error Handling
 
-<!-- "To-be" data structures. -->
+The validator's primary role is to find errors, so its own error handling must be robust. It will throw a custom `ValidationError` to provide specific, actionable feedback to the developer.
 
-```mermaid
-erDiagram
-    [ENTITY_A] {
-      string id PK
-      string new_field_name
-    }
-```
+| Error Type                      | Trigger                                                                        | Action                        | User Feedback                                                                                                 |
+| :------------------------------ | :----------------------------------------------------------------------------- | :---------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| **Schema Not Found**            | The `docs/documentation-schema.md` file cannot be read.                        | Abort with `ValidationError`. | `ERROR: Cannot find or read 'docs/documentation-schema.md'. Please ensure the file exists.`                   |
+| **Malformed Schema**            | The `docs/documentation-schema.md` file is not valid markdown or is corrupted. | Abort with `ValidationError`. | `ERROR: Failed to parse 'docs/documentation-schema.md'. Check for syntax errors.`                             |
+| **Content Validation Failed**   | A document is missing a required field or has an invalid value.                | Abort with `ValidationError`. | `ERROR in [file]: Missing required field '[fieldName]'` or `ERROR in [file]: Invalid value for '[fieldName]'` |
+| **Hierarchy Validation Failed** | A document is in the wrong location (e.g., a task inside a project).           | Abort with `ValidationError`. | `ERROR in [file]: Invalid location. A '[docType]' cannot be a child of a '[parentDocType]'`                   |
 
-#### ✅ 5.2.2 Class Diagrams
+#### ✅ 5.2.2 Logging & Monitoring
 
-<!-- "To-be" static structure of classes. -->
+As a CLI tool running in a pre-commit hook, logging is the primary observability mechanism. All logs will be directed to the console.
 
-```mermaid
-classDiagram
-    classC <|-- classD
-```
-
-#### ✅ 5.2.3 Error Handling
-
-<!-- "To-be" error handling strategy. -->
-
-- [New error handling mechanism.]
-
-#### ✅ 5.2.4 Logging & Monitoring
-
-<!-- "To-be" observability strategy. -->
-
-- [New logging and monitoring setup.]
+| Level   | Condition                                                               | Log Message Example                                                            |
+| :------ | :---------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `DEBUG` | The `RulesetLoader` begins parsing the schema file.                     | `Loading validation rules from 'docs/documentation-schema.md'...`              |
+| `DEBUG` | The `Validator` begins processing a specific document.                  | `Validating document: [filePath]`                                              |
+| `INFO`  | The entire validation process completes successfully for all documents. | `Validation successful. All [count] documents conform to the schema.`          |
+| `ERROR` | Any error condition from the `5.2.1 Error Handling` table is triggered. | (Corresponds to the "User Feedback" column in the error handling table above.) |
 
 ---
 
@@ -286,17 +330,38 @@ classDiagram
 
 ### ✅ 6.1 Implementation Plan
 
-<!-- Describe the high-level, potentially phased rollout strategy for the tasks in this epic. -->
+The implementation will be phased to ensure foundational components are built and tested before dependent logic is created.
 
-1.  **Phase 1: [Name of First Phase]** - [Description of what will be built.]
-2.  **Phase 2: [Name of Second Phase]** - [Description of what will be built next.]
+| Phase                        | Scope / Deliverables                                                                                                                                          | Key Artifacts                                                                                                  | Exit Criteria                                                                                                                            |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1: Rule Foundation** | - Implement the `RulesetLoader` to parse the `documentation-schema.md`.<br>- Define the `ValidationRuleset` and related interfaces.                           | `src/modules/analyzer/validator/rules-loader.ts`<br>`src/modules/analyzer/validator/rules-model.ts`            | The loader can successfully parse the schema file and create a structured `ValidationRuleset` object without errors.                     |
+| **Phase 2: Core Validators** | - Implement the `FieldValidator` to check for required fields and data types.<br>- Implement the `HierarchyValidator` to check file paths.                    | `src/modules/analyzer/validator/field-validator.ts`<br>`src/modules/analyzer/validator/hierarchy-validator.ts` | Both validators correctly identify valid and invalid documents when tested in isolation with a mock `ValidationRuleset`.                 |
+| **Phase 3: Orchestration**   | - Implement the main `Validator` function.<br>- Integrate the `RulesetLoader`, `FieldValidator`, and `HierarchyValidator` to process the full `ProjectModel`. | `src/modules/analyzer/validator/index.ts`                                                                      | The main `validate` function correctly processes a full `ProjectModel` and returns `true` for a valid model or throws on an invalid one. |
 
-### ❓ 6.2 Implementation Log / Steps
+### ✅ 6.2 Implementation Log / Steps
 
-<!-- (Optional) A detailed, step-by-step log of the implementation process for this epic's tasks. -->
+This log provides a granular, step-by-step checklist for developers, corresponding to the tasks defined in the roadmap.
 
-- [ ] Task 1: [Description of step]
-- [ ] Task 2: [Description of step]
+- [ ] **Task T1: Schema Loader**
+  - [ ] Create `src/modules/analyzer/validator/rules-model.ts` to define the `ValidationRuleset` interfaces.
+  - [ ] Create `src/modules/analyzer/validator/rules-loader.ts`.
+  - [ ] Implement the `loadRules` function to read `docs/documentation-schema.md`.
+  - [ ] Add logic to parse the markdown and populate the `ValidationRuleset` object.
+- [ ] **Task T2: Content Validator**
+  - [ ] Create `src/modules/analyzer/validator/field-validator.ts`.
+  - [ ] Implement the `validateFields` function that takes a document and the `ValidationRuleset`.
+  - [ ] Add logic to check for the presence of required fields based on the rules.
+  - [ ] Add logic to validate data types (e.g., `date`, `enum`) for required fields.
+- [ ] **Task T3: Hierarchy Validator**
+  - [ ] Create `src/modules/analyzer/validator/hierarchy-validator.ts`.
+  - [ ] Implement the `validatePath` function that takes a document and the `ValidationRuleset`.
+  - [ ] Add logic to check the document's file path against the parent-child rules in the ruleset.
+- [ ] **Task T4: Main Validator Function**
+  - [ ] Create `src/modules/analyzer/validator/index.ts`.
+  - [ ] Implement the main `validate` function.
+  - [ ] Call `loadRules` to get the validation rules.
+  - [ ] Iterate through the `ProjectModel` and call `validateFields` and `validatePath` for each document.
+  - [ ] Ensure the function throws a `ValidationError` on the first failure.
 
 ---
 
@@ -304,34 +369,35 @@ classDiagram
 
 ### ✅ 7.1 Testing Strategy / Requirements
 
-<!-- Describe the approach for testing this epic. -->
+The testing strategy for the `E2: Schema Validator` epic is centered around creating a comprehensive set of test fixtures. These fixtures will represent various states of a documentation project: fully compliant, missing required sections, containing misplaced files, etc. By running the validator against these fixtures, we can assert that it correctly identifies both valid and invalid states, ensuring its reliability as a quality gate.
 
-| AC ID | Scenario          | Test Type   |
-| ----- | ----------------- | ----------- |
-| AC-1  | [Test scenario 1] | Unit        |
-| AC-2  | [Test scenario 2] | Integration |
+| AC ID      | Scenario                                                                                                                                   | Test Fixture                  | Test Type   | Notes                                                                                                                                                                  |
+| :--------- | :----------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC-5       | Validator successfully processes a fully compliant `ProjectModel` without throwing any errors.                                             | `fixtures/valid/`             | Integration | The test will parse a known-good fixture and assert that the `validate` function returns `true`.                                                                       |
+| AC-1       | Validator rejects a model where a document is missing a required section (e.g., an epic without a `Business & Scope` section).             | `fixtures/invalid-content/`   | Integration | The test will parse the fixture, run the validator, and assert that it throws a `ValidationError` with a message specifying the missing section.                       |
+| AC-2       | Validator rejects a model where a document is hierarchically misplaced (e.g., a `.task.md` file directly inside a `.module.md` directory). | `fixtures/invalid-hierarchy/` | Integration | The test will parse the fixture and assert that the validator throws a `ValidationError` with a message about the incorrect file path.                                 |
+| AC-3, AC-4 | Validator throws a `ValidationError` with a precise, human-readable error message upon failure.                                            | `fixtures/invalid-content/`   | Integration | This will be tested alongside AC-1 and AC-2. The test will inspect the thrown error to ensure it contains the file path and a clear description of the rule violation. |
 
 ### ✅ 7.2 Configuration
 
-<!-- Detail how the epic is configured in different environments. -->
+The `E2: Schema Validator` is designed as a pure, self-contained component. It has no independent configuration settings.
 
-| Environment | Setting Name     | Value          |
-| ----------- | ---------------- | -------------- |
-| Development | `[SETTING_NAME]` | `[dev_value]`  |
-| Production  | `[SETTING_NAME]` | `[prod_value]` |
+Its behavior is entirely determined by two inputs:
+
+1.  The `ProjectModel` provided by the `E1: Parser`.
+2.  The validation rules it loads from the canonical `docs/documentation-schema.md`.
+
+The operational context, such as log levels (`INFO`, `DEBUG`), is inherited from the main `analyzer` script that invokes it. This design ensures that the validator is predictable, deterministic, and easy to test in isolation.
 
 ### ✅ 7.3 Alerting & Response
 
 <!-- Define how to respond to alerts and operational logs originating from this epic. -->
 
-- **[Error Type]**: [Response plan, e.g., Trigger PagerDuty alert.]
-
-### ✅ 7.4 Deployment Steps
-
-<!-- A checklist for deploying this feature to production. -->
-
-1. [ ] Step 1
-2. [ ] Step 2
+| Error Condition                 | Relevant Modules | Response Plan                                                                                                                                                                 | Status         |
+| :------------------------------ | :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
+| **Schema Not Found/Malformed**  | `m1-analyzer`    | The developer must ensure `docs/documentation-schema.md` exists, is not corrupted, and is committed. The commit will be aborted until the file is accessible and parsable.    | 💡 Not Started |
+| **Content Validation Failed**   | `m1-analyzer`    | The developer must read the error message in the console, which will specify the exact file and rule that failed (e.g., missing section), and correct the documentation file. | 💡 Not Started |
+| **Hierarchy Validation Failed** | `m1-analyzer`    | The developer must read the error message, which will indicate an incorrectly placed file, and move the file to its correct parent directory in the documentation hierarchy.  | 💡 Not Started |
 
 ---
 
