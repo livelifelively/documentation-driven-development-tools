@@ -359,27 +359,29 @@ sequenceDiagram
 
 ### ✅ 7.1 Testing Strategy / Requirements
 
-<!-- Describe the approach for testing this epic. -->
+<!-- Describe the approach for testing this epic, mapping scenarios to Acceptance Criteria. -->
 
-| AC ID | Scenario          | Test Type   |
-| ----- | ----------------- | ----------- |
-| AC-1  | [Test scenario 1] | Unit        |
-| AC-2  | [Test scenario 2] | Integration |
+| AC ID | Scenario                                                     | Test Type   | Tools / Runner | Notes                                        |
+| :---- | :----------------------------------------------------------- | :---------- | :------------- | :------------------------------------------- |
+| AC-1  | [A scenario that validates the first acceptance criterion.]  | Unit        | Jest           | [Notes on how to set up or run this test.]   |
+| AC-2  | [A scenario that validates the second acceptance criterion.] | Integration | Jest, MSW      | [Notes on mocking or external dependencies.] |
 
 ### ✅ 7.2 Configuration
 
-<!-- Detail how the epic is configured in different environments. -->
+<!-- Detail how the epic is configured, including environment variables and configuration files. -->
 
-| Environment | Setting Name     | Value          |
-| ----------- | ---------------- | -------------- |
-| Development | `[SETTING_NAME]` | `[dev_value]`  |
-| Production  | `[SETTING_NAME]` | `[prod_value]` |
+| Setting Name     | Module Dependency | Source          | Override Method            | Notes                         |
+| :--------------- | :---------------- | :-------------- | :------------------------- | :---------------------------- |
+| `[SETTING_NAME]` | `[module-id]`     | `[config-file]` | `[ENV_VAR_NAME]` (Env Var) | [Description of the setting.] |
 
 ### ✅ 7.3 Alerting & Response
 
 <!-- Define how to respond to alerts and operational logs originating from this epic. -->
 
-- **[Error Type]**: [Response plan, e.g., Trigger PagerDuty alert.]
+| Error Condition             | Relevant Modules | Response Plan                                                                              | Status         |
+| :-------------------------- | :--------------- | :----------------------------------------------------------------------------------------- | :------------- |
+| **[A specific error type]** | `[module-id]`    | [A step-by-step plan for developers or on-call engineers to follow when this alert fires.] | 💡 Not Started |
+| **[Another error type]**    | `[module-id]`    | [Another response plan.]                                                                   | 💡 Not Started |
 
 ### ✅ 7.5 Local Test Commands
 
