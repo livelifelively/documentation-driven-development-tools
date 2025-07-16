@@ -209,6 +209,20 @@ The toolchain operates under the permission context of the developer's local env
 | ------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | **Developer** | - Read/Write access to the local file system within the repository.<br>- Git permissions to commit code. | The toolchain runs with the same permissions as the developer who invokes it. |
 
+---
+
+## ✅ 5 Maintenance and Monitoring
+
+### ✅ 5.1 Error Handling
+
+- [Error handling strategy for the project.]
+
+### ✅ 5.2 Logging & Monitoring
+
+- [Logging and monitoring strategy for the project.]
+
+---
+
 ## ✅ 7 Quality & Operations
 
 ### ✅ 7.1 Testing Strategy / Requirements
