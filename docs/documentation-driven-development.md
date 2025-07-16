@@ -47,9 +47,10 @@ This document establishes the **Documentation Driven Development (DDD) methodolo
   - [Documentation-First Enforcement](#documentation-first-enforcement)
   - [Common Principles Across All Levels](#common-principles-across-all-levels)
   - [Level-Specific Implementation Gates](#level-specific-implementation-gates)
-  - [Documentation Quality Standards](#documentation-quality-standards)
-  - [Common Iconography and Status Keys](#common-iconography-and-status-keys)
-  - [Priority Levels](#priority-levels)
+- [Documentation Quality Standards](#documentation-quality-standards)
+- [File and Directory Naming Convention](#file-and-directory-naming-convention)
+- [Common Iconography and Status Keys](#common-iconography-and-status-keys)
+- [Priority Levels](#priority-levels)
   - [Category-Specific Priority Matrix](#category-specific-priority-matrix)
   - [Practical Implementation Guidelines](#practical-implementation-guidelines)
   - [Practical Application Guide](#practical-application-guide)
@@ -219,7 +220,7 @@ flowchart LR
 
 #### **3. Epic-Level Documentation (THIRD)**
 
-- Define complete feature scope, user stories, and acceptance criteria
+- Define complete feature scope, user stories, and acceptance criteria. An epic represents a complete, independent feature set that delivers value. It should correspond to one or more user stories and be testable on its own. Dependencies on other epics should be limited to well-defined integration points, such as API contracts.
 - Document all epic-level design decisions and trade-offs
 - Plan and document component architecture for the feature
 - **No epic implementation until epic documentation is complete**
@@ -347,6 +348,26 @@ This approach ensures that context is inherited and built upon, not repeated. It
 **Consistent Structure:** All documents of the same type follow identical section structure for predictable implementation
 **Complete Specifications:** No ambiguity or gaps that would require implementation decisions
 **Authoritative Source:** When documentation and code conflict, documentation is correct by definition
+
+### **File and Directory Naming Convention**
+
+To ensure consistency and predictability, all documentation-related files and directories **MUST** follow a standardized naming convention. The convention is based on the artefact's position in the hierarchy.
+
+**Pattern:** `[parent-prefix]-[id]-[name]`
+
+- **`parent-prefix`**: The full ID of the parent artefact. This is omitted for modules.
+- **`id`**: The unique identifier for the current artefact (e.g., `m1`, `e1`, `t1`).
+- **`name`**: A short, descriptive, kebab-case name for the artefact.
+
+#### Examples
+
+| Level  | Directory Name                 | File Name                              |
+| :----- | :----------------------------- | :------------------------------------- |
+| Module | `m1-analyzer`                  | `m1-analyzer.module.md`                |
+| Epic   | `m1-e1-parser`                 | `m1-e1-parser.epic.md`                 |
+| Task   | `m1-e1-t1-file-system-scanner` | `m1-e1-t1-file-system-scanner.task.md` |
+
+This structure ensures that every file and directory is self-describing and its location in the project hierarchy can be determined from its name alone.
 
 ### **Common Iconography and Status Keys**
 
@@ -576,12 +597,13 @@ Code "exactly matches" documentation when:
 When processing requests under Documentation Driven Development:
 
 1. **Prioritize Interactive Dialogue**: Before generating substantial content or code, engage in a dialogue to clarify requirements and context. Ask clarifying questions to avoid making assumptions, especially for complex or ambiguous requests. Do not "jump the gun" by providing a complete solution without sufficient interaction.
-2. **Always Check Documentation First**: Before writing any code, verify complete documentation exists
-3. **Refuse Implementation Without Documentation**: Do not generate code if documentation is incomplete
-4. **Follow Exact Specifications**: Implement exactly as documented, no interpretation or improvisation
-5. **Document First, Then Code**: When changes are needed, update documentation before code generation
-6. **Validate Against Documentation**: Ensure generated code matches documented specifications precisely
-7. **Adopt the Correct Tone and Audience Focus**: All documentation should be written for a technical audience. The tone must be objective, fact-based, and precise. Avoid marketing language, hyperbole, or overly narrative styles. The goal is to produce clear, professional, and reliable technical documentation. Emojis may be used sparingly to convey status (e.g., ✅, ❌) or a calibrated, positive tone grounded in technical success.
+2. **Traverse Hierarchy Top-Down (MANDATORY)**: Before reading any document (Module, Epic, or Task), you **MUST** first read its direct parent to inherit context. The reading order must follow the hierarchy: `project.md` → `*.module.md` → `*.epic.md` → `*.task.md`. This ensures you have the full context before proceeding.
+3. **Always Check Documentation First**: Before writing any code, verify complete documentation exists
+4. **Refuse Implementation Without Documentation**: Do not generate code if documentation is incomplete
+5. **Follow Exact Specifications**: Implement exactly as documented, no interpretation or improvisation
+6. **Document First, Then Code**: When changes are needed, update documentation before code generation
+7. **Validate Against Documentation**: Ensure generated code matches documented specifications precisely
+8. **Adopt the Correct Tone and Audience Focus**: All documentation should be written for a technical audience. The tone must be objective, fact-based, and precise. Avoid marketing language, hyperbole, or overly narrative styles. The goal is to produce clear, professional, and reliable technical documentation. Emojis may be used sparingly to convey status (e.g., ✅, ❌) or a calibrated, positive tone grounded in technical success.
 
 #### **For Human Developers Implementing This Methodology**
 
