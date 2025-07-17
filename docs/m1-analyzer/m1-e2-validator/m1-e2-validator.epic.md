@@ -6,11 +6,12 @@
 
 ## ✅ 1 Meta & Governance
 
-### ✅ 1.1 Status Tracking
+### ✅ 1.2 Status
 
-<!-- Link to the live status document for this epic. -->
+<!-- This section is auto-populated and updated to track the document's lifecycle. -->
 
-[Link to Epic Status File](./m1-e2-validator-status.md)
+- **Created:** 2025-07-16 02:00
+- **Last Updated:** 2025-07-16 02:00
 
 ### ✅ 1.3 Priority Drivers
 
