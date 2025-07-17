@@ -59,51 +59,71 @@ Keeps humans **and** CI aware of health, urgency, and blockers at any zoom level
 
 ### 1.2 Depth Matrix
 
-| ID    | Parent ID | Section Name      | Heading | Project | Module | Epic | Task | Notes                                                                                              |
-| :---- | :-------- | :---------------- | :-----: | :-----: | :----: | :--: | :--: | :------------------------------------------------------------------------------------------------- |
-| **1** | `null`    | Meta & Governance |  `##`   |   ✅    |   ✅   |  ✅  |  ✅  | The main family heading.                                                                           |
-| 1.1   | 1         | Status Tracking   |  `###`  |   ✅    |   ✅   |  ✅  |  ➖  | Heading named _Status Tracking_ containing only the relative link to status file.                  |
-| 1.2   | 1         | Status            |  `###`  |   ➖    |   ➖   |  ➖  |  ✅  | A block with key metrics. This is distinct from the `1.1 Status Tracking` link in other documents. |
-| 1.3   | 1         | Priority Drivers  |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | Justification IDs; inherited unless overridden.                                                    |
+| ID    | Parent ID | Section Name      | Heading | Project | Module | Epic | Task | Notes                                                                      |
+| :---- | :-------- | :---------------- | :-----: | :-----: | :----: | :--: | :--: | :------------------------------------------------------------------------- |
+| **1** | `null`    | Meta & Governance |  `##`   |   ✅    |   ✅   |  ✅  |  ✅  | The main family heading.                                                   |
+| 1.2   | 1         | Status            |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | A block with key metrics, whose contents vary by level. See details below. |
+| 1.3   | 1         | Priority Drivers  |  `###`  |   ✅    |   ✅   |  ✅  |  ✅  | Justification IDs; inherited unless overridden.                            |
 
 ### 1.3 Field Details
 
-#### 1.1 Status Tracking
+#### 1.2 Status
 
-- **Description**: A single relative markdown link to the companion status file.
-- **Content Format**: Markdown link.
-- **Notes**: Plan documents **do not** embed live tables; they only point to them.
-- **Example**: `[Module Status](m1-module-status.md)`
-
-#### 1.2 Status (Task only)
-
-- **Description**: A section containing key status metrics for a task. This is the primary source of truth for status roll-ups.
+- **Description**: A section containing key status metrics for the artefact. The specific fields vary depending on the artefact's level in the hierarchy, providing more detail as you move from Project to Task.
 - **Content Format**: Markdown `###` heading followed by a bulleted list.
-- **Reference**: See `docs/templates/task.template.md`.
-- **Example**:
-  ```md
-  - **Current State:** 💡 Not Started
-  - **Priority:** 🟨 Medium
-  - **Progress:** 0%
-  - **Assignee**: @[username]
-  - **Planning Estimate:** 0
-  - **Est. Variance (pts):** 0
-  - **Created:** [YYYY-MM-DD]
-  - **Implementation Started:** [YYYY-MM-DD]
-  - **Completed:** [YYYY-MM-DD]
-  - **Last Updated:** [YYYY-MM-DD]
-  ```
-- **Sub-Field Details**:
-  - **Current State**: The operational status of the task (e.g., `✅ Done`, `⏳ In Progress`). See the standard status keys.
-  - **Priority**: The task's priority level (e.g., `🟥 High`).
-  - **Progress**: A percentage representing the completion of the task.
-  - **Assignee**: The person responsible for the task.
-  - **Planning Estimate**: The initial story point estimate assigned during planning. This should not change after work begins.
-  - **Est. Variance (pts)**: The difference between the final completed points and the `Planning Estimate`. A positive number indicates scope creep or underestimation; a negative number indicates overestimation.
-  - **Created**: The date the task document was created.
-  - **Implementation Started**: The date a developer began working on the task.
-  - **Completed**: The date the task was marked as `✅ Done`.
-  - **Last Updated**: The date this status block was last modified.
+- **Reference**: See the corresponding template file (e.g., `docs/templates/task.template.md`).
+
+##### Sub-Field Applicability Matrix
+
+| Field                      | Project | Module | Epic | Task | Notes                                                   |
+| :------------------------- | :-----: | :----: | :--: | :--: | :------------------------------------------------------ |
+| **Created**                |   ✅    |   ✅   |  ✅  |  ✅  | The creation timestamp of the document itself.          |
+| **Last Updated**           |   ✅    |   ✅   |  ✅  |  ✅  | The timestamp of the last modification to the document. |
+| **Current State**          |   ➖    |   ➖   |  ➖  |  ✅  | The operational status of the task.                     |
+| **Priority**               |   ➖    |   ➖   |  ➖  |  ✅  | The task's priority level.                              |
+| **Progress**               |   ➖    |   ➖   |  ➖  |  ✅  | A percentage representing the completion of the task.   |
+| **Assignee**               |   ➖    |   ➖   |  ➖  |  ✅  | The person responsible for the task.                    |
+| **Planning Estimate**      |   ➖    |   ➖   |  ➖  |  ✅  | The initial story point estimate.                       |
+| **Est. Variance (pts)**    |   ➖    |   ➖   |  ➖  |  ✅  | The difference between planned and final points.        |
+| **Implementation Started** |   ➖    |   ➖   |  ➖  |  ✅  | The timestamp when implementation work began.           |
+| **Completed**              |   ➖    |   ➖   |  ➖  |  ✅  | The timestamp when the task was marked as `✅ Done`.    |
+
+##### Examples
+
+**Example for Project, Module, or Epic:**
+
+```md
+- **Created:** [YYYY-MM-DD HH:MM]
+- **Last Updated:** [YYYY-MM-DD HH:MM]
+```
+
+**Example for Task:**
+
+```md
+- **Current State:** 💡 Not Started
+- **Priority:** 🟨 Medium
+- **Progress:** 0%
+- **Assignee**: @[username]
+- **Planning Estimate:** 0
+- **Est. Variance (pts):** 0
+- **Created:** [YYYY-MM-DD HH:MM]
+- **Implementation Started:** [YYYY-MM-DD HH:MM]
+- **Completed:** [YYYY-MM-DD HH:MM]
+- **Last Updated:** [YYYY-MM-DD HH:MM]
+```
+
+##### Sub-Field Details
+
+- **Created**: The timestamp when the document was created (e.g., `2023-10-27 14:30`).
+- **Last Updated**: The timestamp when this status block was last modified (e.g., `2023-10-27 15:00`).
+- **Current State**: The operational status of the task (e.g., `✅ Done`, `⏳ In Progress`). See the standard status keys.
+- **Priority**: The task's priority level (e.g., `🟥 High`).
+- **Progress**: A percentage representing the completion of the task.
+- **Assignee**: The person responsible for the task.
+- **Planning Estimate**: The initial story point estimate assigned during planning. This should not change after work begins.
+- **Est. Variance (pts)**: The difference between the final completed points and the `Planning Estimate`. A positive number indicates scope creep or underestimation; a negative number indicates overestimation.
+- **Implementation Started**: The timestamp when a developer began working on the task.
+- **Completed**: The timestamp when the task was marked as `✅ Done`.
 
 #### 1.3 Priority Drivers
 

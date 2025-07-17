@@ -6,11 +6,12 @@
 
 ## ✅ 1 Meta & Governance
 
-### ✅ 1.1 Status Tracking
+### ✅ 1.2 Status
 
-<!-- Link to the live status document for this module. -->
+<!-- This section is auto-populated and updated to track the document's lifecycle. -->
 
-[Link to Module Status File](./[module-id]-status.md)
+- **Created:** [YYYY-MM-DD HH:MM]
+- **Last Updated:** [YYYY-MM-DD HH:MM]
 
 ### ✅ 1.3 Priority Drivers
 
