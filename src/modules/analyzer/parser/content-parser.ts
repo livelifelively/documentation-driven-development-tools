@@ -30,17 +30,20 @@ export async function parseDocumentation(filePaths: string[]): Promise<ProjectMo
   // Step 1: Read all file contents asynchronously
   const fileContents = new Map<string, string>();
 
-  for (const filePath of filePaths) {
-    try {
-      logger.debug(`Parsing content from ${filePath}`);
-      const content = await fs.readFile(filePath, 'utf-8');
-      fileContents.set(filePath, content);
-    } catch (error) {
-      const errorMessage = `Cannot read file ${filePath}. Please check permissions.`;
-      logger.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-  }
+  // Read files in parallel to meet PERF-01 (<500 ms for 100 docs)
+  await Promise.all(
+    filePaths.map(async (filePath) => {
+      try {
+        logger.debug(`Parsing content from ${filePath}`);
+        const content = await fs.readFile(filePath, 'utf-8');
+        fileContents.set(filePath, content);
+      } catch (error) {
+        const errorMessage = `Cannot read file ${filePath}. Please check permissions.`;
+        logger.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+    })
+  );
 
   // Step 2: Create document models and organize by type
   const documents = new Map<string, Document>();
@@ -92,7 +95,6 @@ export async function parseDocumentation(filePaths: string[]): Promise<ProjectMo
   // Create a map to store all models for easy lookup
   const moduleModels = new Map<string, ModuleModel>();
   const epicModels = new Map<string, EpicModel>();
-  const taskModels = new Map<string, TaskModel>();
 
   // Step 5: Process modules
   for (const modulePath of moduleFiles) {
@@ -139,8 +141,6 @@ export async function parseDocumentation(filePaths: string[]): Promise<ProjectMo
     const taskModel: TaskModel = {
       ...taskDocument,
     };
-
-    taskModels.set(taskId, taskModel);
 
     // Find parent epic
     const parentEpic = epicModels.get(parentEpicId);
