@@ -25,9 +25,10 @@
 
 ### ✅ 2.1 Overview
 
-- **Core Function**: Validates the in-memory `ProjectModel` (from the Parser epic) against the rules defined in the canonical `documentation-schema.md`.
-- **Key Capability**: Acts as a strict quality gate, ensuring that all documentation artifacts are structurally sound and complete before being used by downstream tools.
-- **Business Value**: Guarantees the integrity and reliability of the data fed into the monitoring dashboard. By enforcing standards at the commit level, it prevents "garbage in, garbage out" and builds trust in the automated reporting.
+- **Core Function**: Validates the in-memory `ProjectModel` for **status integrity** (presence & correctness of the Meta & Governance → Status block) and **hierarchy integrity** (each document resides in the correct parent directory and follows naming conventions).
+- **Key Capability**: Acts as a strict quality gate **for status extraction and parent-child relationships only**, ensuring the Analyzer can trust the data it sends downstream.
+- **Business Value**: Guarantees that progress metrics and document relationships are reliable before transmitting to the monitoring dashboard, preventing "garbage in, garbage out" and building trust in automated reporting.
+- **Phase-1 Scope (MVP)**: Validation is **limited to** (a) completeness & correctness of the Status block bullet fields and (b) enforcement of hierarchical file placement. Full schema compliance for all other families is deferred to a future epic (`E4: Full Schema Compliance`).
 
 ### ✅ 2.2.4 User Stories
 
@@ -38,13 +39,13 @@
 
 ### ✅ 2.4 Acceptance Criteria
 
-| ID   | Corresponds to User Story                                                                                                                                       | Criterion                                                                                                                                    | Test Reference      |
-| :--- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :------------------ |
-| AC-1 | As a **DDD Developer**, I want the tool to validate that every document's content (e.g., required sections) conforms to the rules in `documentation-schema.md`. | The validator correctly identifies a document that is missing a required section as defined in the `documentation-schema.md`.                | `validator.test.ts` |
-| AC-2 | As a **DDD Developer**, I want the tool to validate that every document's file path conforms to the project's hierarchical naming convention.                   | The validator correctly identifies a document with a malformed file path (e.g., an epic inside the root `docs/` folder).                     | `validator.test.ts` |
-| AC-3 | As a **DDD Developer**, I want the commit to fail instantly upon the first validation error.                                                                    | The validator throws a specific, catchable error upon finding the first validation violation, which will cause the commit to abort.          | `validator.test.ts` |
-| AC-4 | As a **DDD Developer**, I want to receive a precise error message telling me exactly which file and which rule failed.                                          | The error message thrown upon validation failure contains the full file path and a human-readable description of the rule that was violated. | `validator.test.ts` |
-| AC-5 | As a **DDD Developer**, I want the tool to validate that every document's content. and file path conforms to the rules.                                         | The validator successfully approves a `ProjectModel` that is fully compliant with all content and path rules.                                | `validator.test.ts` |
+| ID   | Corresponds to User Story                                                                                                                                                                                  | Criterion                                                                                                                                     | Test Reference      |
+| :--- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- | :------------------ |
+| AC-1 | As a **DDD Developer**, I want the tool to validate that every document contains a complete Meta & Governance → **Status** block with all mandatory bullet fields, so that status extraction never breaks. | The validator correctly identifies a document that is missing the Status block **or any required bullet field**.                              | `validator.test.ts` |
+| AC-2 | As a **DDD Developer**, I want the tool to validate that every document's file path conforms to the project's hierarchical naming convention.                                                              | The validator correctly identifies a document with a malformed file path (e.g., an epic inside the root `docs/` folder).                      | `validator.test.ts` |
+| AC-3 | As a **DDD Developer**, I want the commit to fail instantly upon the first validation error.                                                                                                               | The validator throws a specific, catchable error upon finding the first validation violation, which will cause the commit to abort.           | `validator.test.ts` |
+| AC-4 | As a **DDD Developer**, I want to receive a precise error message telling me exactly which file and which rule failed.                                                                                     | The error message thrown upon validation failure contains the full file path and a human-readable description of the rule that was violated.  | `validator.test.ts` |
+| AC-5 | As a **DDD Developer**, I want the tool to validate that every document's Status block and file path are compliant, so that the Analyzer can proceed confidently.                                          | The validator successfully approves a `ProjectModel` that meets **both** Status-block and hierarchy rules (other schema aspects are ignored). | `validator.test.ts` |
 
 ---
 

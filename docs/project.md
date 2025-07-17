@@ -122,7 +122,10 @@ sequenceDiagram
 
 <!-- List the modules that are actively planned for the current implementation cycle. -->
 
-- [Module: Analyzer](./m1-analyzer/m1-analyzer.module.md)
+| ID  | Child Artefact                                          | Priority  | Priority Drivers                                                                                               | Status         | Depends On | Summary                                                                  |
+| :-- | :------------------------------------------------------ | :-------- | :------------------------------------------------------------------------------------------------------------- | :------------- | :--------- | :----------------------------------------------------------------------- |
+| M1  | [Module: Analyzer](./m1-analyzer/m1-analyzer.module.md) | 🟧 Medium | [TEC-Dev_Productivity_Blocker](/docs/documentation-driven-development.md#tec-dev_productivity_blocker)         | 💡 Not Started | D-1        | Analyzes the `docs/` directory to build a model of the project's state.  |
+| M2  | [Module: DDD Spec](./m2-ddd-spec/m2-ddd-spec.module.md) | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/documentation-driven-development.md#tec-dev_productivity_enhancement) | 💡 Not Started | —          | Provides a canonical JSON schema and generator tooling for the DDD spec. |
 
 ### ✅ 3.2 Backlog / Icebox
 
