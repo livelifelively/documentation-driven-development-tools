@@ -16,10 +16,10 @@
 - **Assignee**: @[username]
 - **Planning Estimate:** 0
 - **Est. Variance (pts):** 0
-- **Created:** 2025-07-17
-- **Implementation Started:** [YYYY-MM-DD]
-- **Completed:** [YYYY-MM-DD]
-- **Last Updated:** 2025-07-17
+- **Created:** 2025-07-17 02:00
+- **Implementation Started:** [YYYY-MM-DD HH:MM]
+- **Completed:** [YYYY-MM-DD HH:MM]
+- **Last Updated:** 2025-07-17 03:00
 
 ### ✅ 1.3 Priority Drivers
 
