@@ -1,7 +1,6 @@
 # Documentation Schema (Project → Module → Epic → Task)
 
-> This file defines **which information appears where** in our Documentation-Driven Development (DDD) hierarchy and **why**.
-> Use it as the canonical source when updating templates or building automation.
+This file defines **which information appears where** in our Documentation-Driven Development (DDD) hierarchy and **why**. Use it as the canonical source when updating templates or building automation.
 
 ---
 
