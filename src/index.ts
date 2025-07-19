@@ -88,7 +88,7 @@ export const fullSchema: SchemaFamily[] = [
 /**
  * Converts applicability to a symbol.
  */
-function getApplicabilitySymbol(applicability: 'required' | 'optional' | 'omitted'): string {
+export function getApplicabilitySymbol(applicability: 'required' | 'optional' | 'omitted'): string {
   switch (applicability) {
     case 'required':
       return '✅';
@@ -104,7 +104,7 @@ function getApplicabilitySymbol(applicability: 'required' | 'optional' | 'omitte
 /**
  * Renders a content element based on its type and rendering control
  */
-function renderContentElement(element: ContentElement, mode: 'human' | 'machine'): any {
+export function renderContentElement(element: ContentElement, mode: 'human' | 'machine'): any {
   const shouldRenderAsCodeBlock =
     mode === 'human' ? element.rendering.renderAsCodeBlockForHuman : element.rendering.renderAsCodeBlockForMachine;
 
@@ -569,7 +569,7 @@ function renderSection(section: Section): string {
   return `${title}\n\n${content}`;
 }
 
-function renderContent(content: any): string {
+export function renderContent(content: any): string {
   switch (content.type) {
     case 'heading':
       return renderHeading(content);

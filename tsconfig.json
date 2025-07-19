@@ -11,6 +11,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src", "schema", "scripts"],
+  "include": ["src", "schema", "scripts", "docs-old/modules"],
   "exclude": ["node_modules", "dist"]
 }
