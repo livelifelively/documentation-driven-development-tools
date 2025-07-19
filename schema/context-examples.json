@@ -1,0 +1,76 @@
+{
+  "contextInheritanceProtocol": {
+    "traversalProcess": {
+      "content": [
+        {
+          "type": "list",
+          "items": [
+            "**Identify the hierarchy chain** for your target document",
+            "**Read top-down** starting from the root Plan, progressively narrowing scope",
+            "**Each Plan adds specificity** to the context established by its parent",
+            "**Tasks inherit** the complete context chain from their parent Plan"
+          ],
+          "rendering": {
+            "renderAsCodeBlockForHuman": false,
+            "renderAsCodeBlockForMachine": true
+          }
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "For `p1-p2-t1-user-endpoints.task.md`:",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Read `project.plan.md` (broadest strategic context)",
+              "Read `p1-backend.plan.md` (backend-specific context)",
+              "Read `p1-p2-api.plan.md` (API-specific context)",
+              "Read `p1-p2-t1-user-endpoints.task.md` (implementation details)"
+            ],
+            "rendering": {
+              "renderAsCodeBlockForHuman": false,
+              "renderAsCodeBlockForMachine": true
+            }
+          }
+        ]
+      },
+      {
+        "title": "For `p1-t1-database-setup.task.md`:",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "Read `project.plan.md` (strategic context)",
+              "Read `p1-backend.plan.md` (backend context)",
+              "Read `p1-t1-database-setup.task.md` (implementation details)"
+            ],
+            "rendering": {
+              "renderAsCodeBlockForHuman": false,
+              "renderAsCodeBlockForMachine": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "legend": {
+    "statusExamples": {
+      "content": [
+        {
+          "type": "list",
+          "items": [
+            "`## ✅ [Section Name]`: Indicates the section is considered **complete**.",
+            "`## ❓ [Section Name]`: Indicates the section is **incomplete, a placeholder, or needs review**.",
+            "`## ➖ [Section Name]`: Indicates the section is **not applicable** and has been intentionally omitted."
+          ],
+          "rendering": {
+            "renderAsCodeBlockForHuman": true,
+            "renderAsCodeBlockForMachine": true
+          }
+        }
+      ]
+    }
+  }
+}

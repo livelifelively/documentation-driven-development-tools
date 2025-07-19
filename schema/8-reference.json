@@ -1,0 +1,49 @@
+{
+  "id": 8,
+  "name": "Reference",
+  "anchor": "reference",
+  "primaryQuestion": "What other info might we need?",
+  "rationale": "This family is a catch-all for supplementary information that doesn't fit into the other categories but is still relevant to the artefact.",
+  "applicability": {
+    "plan": "optional",
+    "task": "optional"
+  },
+  "notes": "Optional at all levels for supplementary information",
+  "sections": [
+    {
+      "id": "8.1",
+      "name": "Appendices/Glossary",
+      "headingLevel": 3,
+      "description": "A place for glossaries, appendices, or links to external resources.",
+      "contentFormat": "Markdown list or text.",
+      "applicability": {
+        "plan": "optional",
+        "task": "optional"
+      },
+      "notes": "Additional information or definitions.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "text",
+              "content": "**Glossary:**",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": false
+              }
+            },
+            {
+              "type": "list",
+              "items": ["**PII**: Personally Identifiable Information.", "**SSO**: Single Sign-On."],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

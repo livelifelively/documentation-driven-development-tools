@@ -1,0 +1,132 @@
+{
+  "id": 5,
+  "name": "Maintenance and Monitoring",
+  "anchor": "maintenance-and-monitoring",
+  "primaryQuestion": "What are the internal details needed to build it? (White-Box)",
+  "rationale": "This family answers how the system is maintained and monitored. It provides the internal implementation details necessary for developers to build the components defined in the High-Level Design.",
+  "applicability": {
+    "plan": "optional",
+    "task": "required"
+  },
+  "notes": "Optional for high-level Plans; Required for implementation Tasks",
+  "sections": [
+    {
+      "id": "5.1",
+      "name": "Current Maintenance and Monitoring",
+      "headingLevel": 3,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Existing observability analysis for planning. Task: Not applicable (inherits context from Plan)."
+    },
+    {
+      "id": "5.1.1",
+      "name": "Error Handling",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current error handling analysis. Task: Not applicable."
+    },
+    {
+      "id": "5.1.2",
+      "name": "Logging & Monitoring",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current observability analysis. Task: Not applicable."
+    },
+    {
+      "id": "5.2",
+      "name": "Target Maintenance and Monitoring",
+      "headingLevel": 3,
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target observability strategy. Task: Implementation requirements."
+    },
+    {
+      "id": "5.2.1",
+      "name": "Error Handling",
+      "headingLevel": 4,
+      "description": "The strategy for managing and communicating errors, often best represented as a table detailing the condition, trigger, action, and feedback.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target error handling strategy. Task: Specific error scenarios and implementation requirements.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["Error Type", "Trigger", "Action", "User Feedback"],
+              "rows": [
+                [
+                  "**File System Error**",
+                  "Cannot read a required file or directory.",
+                  "Abort with exit code 1.",
+                  "`ERROR: Cannot access [path]. Please check permissions.`"
+                ],
+                [
+                  "**Schema Validation Error**",
+                  "A document violates the canonical schema.",
+                  "Abort with exit code 1.",
+                  "`ERROR: Schema validation failed in [file]: [validation_details].`"
+                ],
+                [
+                  "**API/Network Error**",
+                  "External API is unreachable or returns > 299.",
+                  "Abort with exit code 1.",
+                  "`ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].`"
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5.2.2",
+      "name": "Logging & Monitoring",
+      "headingLevel": 4,
+      "description": "The strategy for system observability.",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target observability strategy. Task: Specific logging/monitoring implementation requirements.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Metrics**: Prometheus endpoint `/metrics` will be exposed.",
+                "**Logs**: Structured JSON logs sent to stdout for collection by Fluentd.",
+                "**Tracing**: OpenTelemetry SDK will be used for distributed tracing."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "id": 3,
+  "name": "Planning & Decomposition",
+  "anchor": "planning--decomposition",
+  "primaryQuestion": "What are we building, in what order?",
+  "rationale": "This family answers what we are building and in what order. It provides a clear breakdown of the work, defines the sequence of implementation, and explicitly lists any dependencies that could block progress. This ensures a predictable development flow and helps in resource allocation.",
+  "applicability": {
+    "plan": "required",
+    "task": "optional"
+  },
+  "notes": "Essential for Plans (roadmap of children); Optional for Tasks (dependencies only)",
+  "sections": [
+    {
+      "id": "3.1",
+      "name": "Roadmap (In-Focus Items)",
+      "headingLevel": 3,
+      "description": "A table of direct child Plans/Tasks that are currently planned for implementation in the active cycle.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Lists the immediate child Plans/Tasks being actively worked on.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Child Plan/Task", "Priority", "Priority Drivers", "Status", "Depends On", "Summary"],
+              "rows": [
+                [
+                  "P1",
+                  "[Backend Plan](p1-backend.plan.md)",
+                  "🟥 High",
+                  "[CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal)",
+                  "💡 Not Started",
+                  "—",
+                  "Core backend services and APIs."
+                ],
+                [
+                  "T1",
+                  "[Database Setup](p1-t1-database.task.md)",
+                  "🟧 Medium",
+                  "[TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker)",
+                  "💡 Not Started",
+                  "—",
+                  "Configure production database."
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.2",
+      "name": "Backlog / Icebox",
+      "headingLevel": 3,
+      "description": "A list of direct child Plans/Tasks that have been considered but are not scheduled for the current implementation cycle. This is crucial for capturing scope decisions.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Lists considered but de-scoped or deferred child Plans/Tasks.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Reporting Plan**: Deferred to Q4 due to dependency on new analytics service.",
+                "**Real-time Collaboration Features**: Moved to Icebox as it is outside the scope of the current MVP."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.3",
+      "name": "Dependencies",
+      "headingLevel": 3,
+      "description": "An explicit list of internal or external dependencies that must be resolved before this Plan/Task can be completed.",
+      "contentFormat": "Markdown table or list.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: External dependencies affecting this scope. Task: Other Tasks/Plans this implementation depends on.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Dependency On", "Type", "Status", "Affected Plans/Tasks", "Notes"],
+              "rows": [
+                [
+                  "D-1",
+                  "`shared-ui-library` v2.1+",
+                  "External",
+                  "❌ Blocked",
+                  "`p1-frontend`",
+                  "Awaiting release from Platform team."
+                ],
+                [
+                  "D-2",
+                  "Plan `p2-user-profiles`",
+                  "Internal",
+                  "✅ Complete",
+                  "`p3-reporting`",
+                  "User schema is now finalized."
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.4",
+      "name": "Decomposition Graph",
+      "headingLevel": 3,
+      "description": "A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation.",
+      "contentFormat": "Mermaid `graph` diagram.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "examples": [
+        {
+          "context": "Plan",
+          "content": [
+            {
+              "type": "mermaid",
+              "diagramType": "graph",
+              "content": "subgraph Plan: User Authentication\n        P1[\"Plan: Backend Auth\"]\n        T1[\"Task: Create UI form\"]\n        T2[\"Task: Implement validation\"]\n        T3[\"Task: Add API endpoint\"]\n        T4[\"Task: Write integration tests\"]\n    end\n    P1 --> T1\n    T1 --> T2\n    T2 --> T3\n    T3 --> T4",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

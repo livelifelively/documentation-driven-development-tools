@@ -1,0 +1,516 @@
+{
+  "id": 4,
+  "name": "High-Level Design",
+  "anchor": "high-level-design",
+  "primaryQuestion": "What are the high-level components and interactions? (Black-Box)",
+  "rationale": "This family answers how the system works from a high-level, black-box perspective. It describes the major components and their interactions without detailing their internal implementation. This allows for a clear understanding of the system's structure and boundaries.",
+  "applicability": {
+    "plan": "required",
+    "task": "required"
+  },
+  "notes": "Plans show architectural decisions; Tasks show interface details",
+  "sections": [
+    {
+      "id": "4.0",
+      "name": "Guiding Principles",
+      "headingLevel": 3,
+      "description": "A list of high-level architectural rules, patterns, or constraints that apply to the entire artefact (e.g., \"All UI components must be stateless,\" \"All services must be idempotent\"). These principles guide all subsequent design decisions.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: High-level architectural rules that govern this scope.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Stateless Services**: All backend services should be stateless to allow for horizontal scaling.",
+                "**Event-Driven**: Communication between major components should be asynchronous and event-driven where possible."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.1",
+      "name": "Current Architecture",
+      "headingLevel": 3,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Existing system analysis for planning. Task: Not applicable (inherits context from Plan)."
+    },
+    {
+      "id": "4.1.1",
+      "name": "Data Models",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current entity relationships analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.2",
+      "name": "Components",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current component relationships analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.3",
+      "name": "Data Flow",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current data movement analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.4",
+      "name": "Control Flow",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current system interactions analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.5",
+      "name": "Integration Points",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current external system boundaries analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.5.1",
+      "name": "Upstream Integrations",
+      "headingLevel": 5,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current systems this scope consumes analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.1.5.2",
+      "name": "Downstream Integrations",
+      "headingLevel": 5,
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Current systems this scope serves analysis. Task: Not applicable."
+    },
+    {
+      "id": "4.2",
+      "name": "Target Architecture",
+      "headingLevel": 3,
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Proposed system design. Task: Implementation architecture requirements."
+    },
+    {
+      "id": "4.2.1",
+      "name": "Data Models",
+      "headingLevel": 4,
+      "description": "The structure of data at a high level, often represented as an Entity-Relationship Diagram. This section defines the core data entities and their relationships before detailing the components that manage them.",
+      "contentFormat": "Mermaid `erDiagram`.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target entity relationships. Task: Implementation data structures.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "mermaid",
+              "diagramType": "erDiagram",
+              "content": "LOG_LEVEL ||--o{ LOG_PAYLOAD : \"sets severity\"\nLOG_PAYLOAD {\n  string id PK\n  LogLevel level\n  string message\n  string timeISO8601\n  string stack\n  string componentStack\n  json context\n}\nLOGGER_CONFIG {\n  LogLevel minLevel\n}\nTRANSPORT_CONFIG {\n  string name\n  string endpoint\n}\nENV_VAR {\n  string NEXT_PUBLIC_LOG_LEVEL PK\n}\nENV_VAR ||--|| LOGGER_CONFIG : \"overrides\"",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.2",
+      "name": "Components",
+      "headingLevel": 4,
+      "description": "A diagram illustrating the main components and their relationships. The term \"component\" is used broadly and does not necessarily map to a class; it represents a logical block of functionality.",
+      "contentFormat": "Mermaid `classDiagram` diagram.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target component architecture. Task: Implementation component interfaces.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "mermaid",
+              "diagramType": "classDiagram",
+              "content": "direction LR\n\n    class LogPayload {\n        <<type>>\n        +LogLevel level\n        +string message\n        +string timeISO8601\n        +string stack\n        +string componentStack\n        +Record<string,any> context\n    }\n\n    class ClientLogger {\n        <<interface>>\n        +log(payload: LogPayload): Promise<void>\n    }\n\n    class ConsoleTransport {\n        +log(payload: LogPayload): Promise<void>\n    }\n\n    class HttpTransport {\n        +string endpoint\n        +log(payload: LogPayload): Promise<void>\n    }\n\n    class CompositeLogger {\n        +ClientLogger[] delegates\n        +log(payload: LogPayload): Promise<void>\n    }\n\n    class LoggerConfig {\n        +LogLevel minLevel\n        +TransportConfig[] transports\n    }\n\n    class TransportConfig {\n        +string name\n        +string endpoint\n    }\n\n    class LoggerFactory {\n        +create(config: LoggerConfig): ClientLogger\n    }\n\n    class BuildLogPayload {\n        <<function>>\n    }\n\n    class SingleCallGuard {\n        <<function>>\n    }\n\n    class AppErrorBoundary {\n        +ClientLogger logger\n        +componentDidCatch(error, info): void\n    }\n\n    %% Inheritance / Implementation\n    ClientLogger <|.. ConsoleTransport\n    ClientLogger <|.. HttpTransport\n    ClientLogger <|.. CompositeLogger\n\n    %% Associations / Composition\n    CompositeLogger o-- ClientLogger : delegates\n    LoggerFactory --> LoggerConfig\n    LoggerFactory --> ClientLogger : returns\n    LoggerFactory --> TransportConfig\n    AppErrorBoundary --> ClientLogger : uses\n    AppErrorBoundary --> SingleCallGuard : guards\n    BuildLogPayload --> LogPayload : returns\n    AppErrorBoundary ..> BuildLogPayload : builds",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.3",
+      "name": "Data Flow",
+      "headingLevel": 4,
+      "description": "A diagram showing how data moves between components, with numbered steps to indicate the sequence of actions.",
+      "contentFormat": "Mermaid `graph` diagram. The labels on the connectors should be numbered (e.g., `\"1 - Action\"`).",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target data movement patterns. Task: Implementation data transformations.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "mermaid",
+              "diagramType": "graph",
+              "content": "TD\n    subgraph \"Input\"\n        A[Component A]\n    end\n\n    subgraph \"System\"\n        B(Component B)\n        C(Component C)\n    end\n\n    subgraph \"External Resource\"\n        D[Database]\n    end\n\n    subgraph \"Output\"\n        E[Component D]\n    end\n\n    A -- \"1 - Invoke with\" --> B\n    B -- \"2 - Process\" --> C\n    C -- \"3 - Write to\" --> D\n    C -- \"4 - Return\" --> E",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.4",
+      "name": "Control Flow",
+      "headingLevel": 4,
+      "description": "A diagram showing the sequence of interactions between components.",
+      "contentFormat": "Mermaid `sequenceDiagram`.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target interaction patterns. Task: Implementation operation sequences.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "mermaid",
+              "diagramType": "sequenceDiagram",
+              "content": "participant User\n    participant API\n    participant AuthSvc\n    User->>API: POST /login\n    API->>AuthSvc: ValidateCredentials(user, pass)\n    AuthSvc-->>API: JWT\n    API-->>User: { token: \"...\" }",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.5",
+      "name": "Integration Points",
+      "headingLevel": 4,
+      "description": "A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target integration strategy. Task: Implementation integration contracts."
+    },
+    {
+      "id": "4.2.5.1",
+      "name": "Upstream Integrations",
+      "headingLevel": 5,
+      "description": "Defines how this artefact is triggered and what data it receives from other systems.",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target upstream systems. Task: Implementation upstream dependencies.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Trigger**: User action via UI button click.",
+                "**Input Data**: Receives `documentId` and `userId` from the client."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.5.2",
+      "name": "Downstream Integrations",
+      "headingLevel": 5,
+      "description": "Defines what happens when this artefact completes its work and what data it sends to other systems.",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Target downstream systems. Task: Implementation downstream contracts.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Completion Trigger**: Emits a `DOCUMENT_PROCESSED` event to the message queue.",
+                "**Output Data**: The event payload includes `documentId` and `status: 'COMPLETED'`."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.2.6",
+      "name": "Exposed API",
+      "headingLevel": 4,
+      "description": "The API surface this component exposes to consumers.",
+      "contentFormat": "OpenAPI/Swagger snippet, or a Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Public API strategy. Task: Specific API implementation specification.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "codeblock",
+              "language": "yaml",
+              "content": "paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID\n      parameters:\n        - name: userId\n          in: path\n          required: true\n          schema:\n            type: string",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.3",
+      "name": "Tech Stack & Deployment",
+      "headingLevel": 3,
+      "description": "A list of the primary technologies, frameworks, or libraries foundational to this artefact, along with the deployment strategy.",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "optional"
+      },
+      "notes": "Plan: Technology choices and deployment strategy. Task: Implementation-specific tech requirements (if relevant).",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": ["**Language**: TypeScript", "**Framework**: Next.js", "**Deployment**: Vercel"],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.4",
+      "name": "Non-Functional Requirements",
+      "headingLevel": 3,
+      "description": "A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Quality attributes strategy. Task: Implementation-specific NFR targets."
+    },
+    {
+      "id": "4.4.1",
+      "name": "Performance",
+      "headingLevel": 4,
+      "description": "Defines the performance-related NFRs, such as response times, throughput, and resource utilization, in a prioritized table.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Performance strategy. Task: Specific performance targets.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Requirement", "Priority"],
+              "rows": [
+                ["PERF-01", "API endpoints must respond in < 200ms (95th percentile).", "🟥 High"],
+                ["PERF-02", "The system must support 100 concurrent users without degradation.", "🟧 Medium"]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.4.2",
+      "name": "Security",
+      "headingLevel": 4,
+      "description": "Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards, in a prioritized table.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Security approach. Task: Implementation security requirements.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Requirement", "Priority"],
+              "rows": [
+                ["SEC-01", "All sensitive user data must be encrypted at rest using AES-256.", "🟥 High"],
+                ["SEC-02", "Access to admin endpoints must be restricted to users with 'Admin' role.", "🟥 High"]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.4.3",
+      "name": "Reliability",
+      "headingLevel": 4,
+      "description": "Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery, in a prioritized table.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Reliability strategy. Task: Implementation reliability targets.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Requirement", "Priority"],
+              "rows": [
+                ["REL-01", "The service must maintain 99.9% uptime, measured monthly.", "🟥 High"],
+                ["REL-02", "All database transactions must be atomic and durable.", "🟥 High"]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4.4.4",
+      "name": "Permission Model",
+      "headingLevel": 4,
+      "description": "Defines the access control rules, user roles, and permissions for the system. This section should clearly outline who can access what and perform which actions. The mechanism for assigning these roles in each environment should be detailed in the `7.2 Configuration` section.",
+      "contentFormat": "A Markdown table or bulleted list describing the roles and their associated permissions.",
+      "applicability": {
+        "plan": "required",
+        "task": "optional"
+      },
+      "notes": "Plan: Access control strategy. Task: Implementation-specific permissions (if relevant).",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["Role", "Permissions", "Notes"],
+              "rows": [
+                [
+                  "**Admin**",
+                  "- Full CRUD access to all documents<br>- Can assign roles",
+                  "For system administrators only."
+                ],
+                [
+                  "**Analyst**",
+                  "- Read/Write access to assigned documents<br>- Cannot delete",
+                  "The primary user role."
+                ],
+                ["**Viewer**", "- Read-only access to completed documents", "For stakeholders or external users."]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

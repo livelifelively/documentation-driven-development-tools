@@ -1,0 +1,424 @@
+{
+  "id": 2,
+  "name": "Business & Scope",
+  "anchor": "business--scope",
+  "primaryQuestion": "Why are we doing this?",
+  "rationale": "Explains why the document exists, who it serves, and what success looks like. As we move from Plans to Tasks, the narrative narrows from strategic business goals to specific implementation acceptance criteria.",
+  "applicability": {
+    "plan": "required",
+    "task": "required"
+  },
+  "notes": "Plans focus on strategic context; Tasks focus on acceptance criteria",
+  "sections": [
+    {
+      "id": "2.1",
+      "name": "Overview",
+      "headingLevel": 3,
+      "description": "Provide a concise, bulleted list outlining what this artefact delivers and why it matters.",
+      "contentFormat": "Markdown bulleted list.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Core Function**: Implements a robust, multi-level logging system for the document processing pipeline.",
+                "**Key Capability**: Ensures both operational errors and business events are captured, categorized, and routed to monitoring tools.",
+                "**Business Value**: Enables proactive issue resolution and performance analysis."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2",
+      "name": "Business Context",
+      "headingLevel": 3,
+      "description": "Provides the narrative and domain-specific details behind the work. If no additional context beyond the parent level is needed, this section can contain `None (inherits from parent)`.",
+      "contentFormat": "Markdown text, with optional `####` sub-headings for child sections (Key Workflows, etc.).",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Strategic context including User Journeys, User Personas, Core Business Rules.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "text",
+              "content": "Currently, pipeline failures are opaque, requiring developers to manually inspect logs, which slows down resolution time. This new logging system will provide structured, queryable data to our analytics dashboard, allowing support staff to diagnose issues without engineering intervention.",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2.1",
+      "name": "User Journeys",
+      "headingLevel": 4,
+      "description": "A container for one or more `Journey` sections. This section should provide a complete overview of all primary user paths and interactions related to the document.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Container for one or more User Journey definitions."
+    },
+    {
+      "id": "2.2.1.1",
+      "name": "Journey: [Name]",
+      "headingLevel": 5,
+      "description": "A self-contained description of a single, specific user journey. The `[Name]` in the heading should be replaced with a descriptive title for the journey (e.g., \"Analyst Processes a New Document\"). This section must include a brief narrative explaining the journey's context and a diagram to visualize the flow.",
+      "contentFormat": "A `#####` heading, a brief narrative description, and a Mermaid `graph` or `sequenceDiagram`. This section can be repeated as many times as necessary to document all relevant journeys.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "A repeatable section for a single, named user journey, including a description and diagram.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "text",
+              "content": "##### Journey: Analyst Processes a New Document\n\nThis journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              },
+              "children": [
+                {
+                  "type": "mermaid",
+                  "diagramType": "graph",
+                  "content": "A(\"Start\") --> B[\"Selects Document\"];\nB --> C(\"Completes Pipeline\");",
+                  "rendering": {
+                    "renderAsCodeBlockForHuman": false,
+                    "renderAsCodeBlockForMachine": true
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "content": "##### Journey: DevOps Engineer Monitors Pipeline Health\n\nThis journey describes how a DevOps engineer interacts with the system's outputs to monitor for errors and performance issues.",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              },
+              "children": [
+                {
+                  "type": "mermaid",
+                  "diagramType": "sequenceDiagram",
+                  "content": "participant Pipeline\nparticipant Logger\nparticipant DevOps\nPipeline-->>Logger: Log \"Processing Failed\" (ERROR)\nDevOps->>Logger: Views and analyzes error",
+                  "rendering": {
+                    "renderAsCodeBlockForHuman": false,
+                    "renderAsCodeBlockForMachine": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2.2",
+      "name": "User Personas",
+      "headingLevel": 4,
+      "description": "Table or list of personas involved.",
+      "contentFormat": "Markdown table or list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Table or list of personas involved.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["Persona", "Goal"],
+              "rows": [
+                ["**DevOps Engineer**", "Monitor system health and diagnose infrastructure issues."],
+                ["**Support Analyst**", "Triage user-reported errors and identify root cause."]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2.3",
+      "name": "Core Business Rules",
+      "headingLevel": 4,
+      "description": "Enumerate domain rules that apply to this artefact.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "optional"
+      },
+      "notes": "Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "All personally identifiable information (PII) must be logged at the `DEBUG` level or lower.",
+                "Any log with a `FATAL` level must trigger an immediate PagerDuty alert.",
+                "Log retention period is 90 days for `INFO` and 1 year for `ERROR` and above."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2.4",
+      "name": "User Stories",
+      "headingLevel": 4,
+      "description": "A list of user-centric stories that describe a piece of functionality from the end-user's perspective. This section is most critical for Plans but can be used at the Task level if it provides necessary context. The format \"As a [persona], I want [to perform an action], so that I can [achieve a goal]\" is recommended.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "User-centric goals and workflows relevant to this Plan scope.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "As a DevOps Engineer, I want to receive a real-time alert when a critical error occurs, so that I can immediately begin troubleshooting.",
+                "As a Support Analyst, I want to filter logs by user ID, so that I can quickly investigate user-reported issues."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "name": "Success Criteria",
+      "headingLevel": 3,
+      "description": "Measurable or binary statements that define when a Plan is considered complete for its current phase.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "How we know this Plan's strategic objectives are achieved.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "All pipeline stages emit structured logs for success, failure, and key business events.",
+                "The central dashboard can successfully ingest and display logs from all pipeline stages.",
+                "A comprehensive set of alerts for critical failures is configured and tested."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.4",
+      "name": "Acceptance Criteria",
+      "headingLevel": 3,
+      "description": "A verifiable, tabular list of conditions that a Task must satisfy to be considered complete.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "omitted",
+        "task": "required"
+      },
+      "notes": "Verifiable conditions that define when this Task is complete.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Criterion", "Test Reference"],
+              "rows": [
+                ["AC-1", "Logger correctly filters messages below `minLevel`.", "`logger.test.ts`"],
+                ["AC-2", "`FATAL` level logs trigger a PagerDuty alert.", "`alerting.int.test`"],
+                ["AC-3", "Log output is valid JSON.", "`formatter.test.ts`"]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.5",
+      "name": "Boundaries & Scope",
+      "headingLevel": 3,
+      "description": "A container heading for the explicit definition of the work's boundaries. Its content is in the child sections `2.5.1 In Scope` and `2.5.2 Out of Scope`.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Container heading for scope definitions."
+    },
+    {
+      "id": "2.5.1",
+      "name": "In Scope",
+      "headingLevel": 4,
+      "description": "A bulleted list of functionalities, features, or outcomes that are explicitly included in the scope of the artefact. This list serves as a clear commitment of what will be delivered.",
+      "contentFormat": "Markdown bulleted list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "A bulleted list of items that are explicitly included in this Plan scope.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Processing of Lok Sabha Q&A documents in PDF format.",
+                "Manual verification and correction workflows for all pipeline steps.",
+                "Generation of a document-level knowledge graph."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.5.2",
+      "name": "Out of Scope",
+      "headingLevel": 4,
+      "description": "A bulleted list of functionalities, features, or outcomes that are explicitly excluded from the scope of the artefact. This is critical for managing expectations and preventing future misunderstandings. It is often useful to list items that were considered but deliberately deferred.",
+      "contentFormat": "Markdown bulleted list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "A bulleted list of items that are explicitly excluded from this Plan scope.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Real-time document processing capabilities.",
+                "Processing documents in formats other than PDF.",
+                "Advanced user management and role-based access control."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.6",
+      "name": "Core Business Processes",
+      "headingLevel": 3,
+      "description": "A container for one or more `Process` sections. This section details the key, step-by-step business workflows that the Plan implements or affects.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Container for detailed business process descriptions."
+    },
+    {
+      "id": "2.6.1",
+      "name": "Process: [Name]",
+      "headingLevel": 4,
+      "description": "A self-contained description of a single business process. The `[Name]` should be a descriptive title (e.g., \"Document Ingestion and Triage\"). This section should detail the participants, goals, and steps of the process.",
+      "contentFormat": "A `####` heading, followed by narrative text, bullet points, or a Mermaid diagram to illustrate the process flow.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "A repeatable section for a single, named business process.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "text",
+              "content": "#### Process: Manual Review",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              },
+              "children": [
+                {
+                  "type": "list",
+                  "items": [
+                    "**Participants**: Data Scientist",
+                    "**Goal**: To validate the accuracy of automated text extraction from a source PDF.",
+                    "**Workflow**:",
+                    "1. Analyst selects a document in the \"Pending Review\" state.",
+                    "2. The UI displays the source PDF alongside the extracted text.",
+                    "3. Analyst compares the two and makes corrections to the text.",
+                    "4. Analyst approves the corrected text, advancing the document to the \"Chunking\" state."
+                  ],
+                  "rendering": {
+                    "renderAsCodeBlockForHuman": false,
+                    "renderAsCodeBlockForMachine": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

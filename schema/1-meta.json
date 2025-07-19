@@ -1,0 +1,148 @@
+{
+  "id": 1,
+  "name": "Meta & Governance",
+  "anchor": "meta--governance",
+  "primaryQuestion": "How critical is this work, what is its current status?",
+  "rationale": "Keeps humans and CI aware of health, urgency, and blockers at any zoom level without polluting design content. Static plan docs carry only a pointer; live status tables sit in dedicated *-status.md companions (and inside each Task doc).",
+  "applicability": {
+    "plan": "required",
+    "task": "required"
+  },
+  "notes": "Required at all levels; Task-level includes detailed progress tracking",
+  "sections": [
+    {
+      "id": "1.2",
+      "name": "Status",
+      "headingLevel": 3,
+      "description": "A section containing key status metrics for the document. The specific fields vary depending on whether it's a Plan or Task, with Tasks providing more detailed implementation tracking.",
+      "contentFormat": "Markdown `###` heading followed by a bulleted list.",
+      "reference": "See the corresponding template file (e.g., `docs/templates/task.template.md`).",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Document lifecycle + strategic phase. Task: Implementation tracking + execution metrics.",
+      "fields": [
+        {
+          "name": "Created",
+          "type": "timestamp",
+          "applicability": { "plan": "required", "task": "required" },
+          "description": "The timestamp when the document was created (e.g., `2023-10-27 14:30`)."
+        },
+        {
+          "name": "Last Updated",
+          "type": "timestamp",
+          "applicability": { "plan": "required", "task": "required" },
+          "description": "The timestamp when this status block was last modified (e.g., `2023-10-27 15:00`)."
+        },
+        {
+          "name": "Current State",
+          "type": "status_key",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The operational status of the task (e.g., `✅ Done`, `⏳ In Progress`). See the standard status keys."
+        },
+        {
+          "name": "Priority",
+          "type": "priority_level",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The task's priority level (e.g., `🟥 High`)."
+        },
+        {
+          "name": "Progress",
+          "type": "percentage",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "A percentage representing the completion of the task."
+        },
+        {
+          "name": "Planning Estimate",
+          "type": "number",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The initial story point estimate assigned during planning. This should not change after work begins."
+        },
+        {
+          "name": "Est. Variance (pts)",
+          "type": "number",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The difference between the final completed points and the `Planning Estimate`. A positive number indicates scope creep or underestimation; a negative number indicates overestimation."
+        },
+        {
+          "name": "Implementation Started",
+          "type": "timestamp",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The timestamp when a developer began working on the task."
+        },
+        {
+          "name": "Completed",
+          "type": "timestamp",
+          "applicability": { "plan": "omitted", "task": "required" },
+          "description": "The timestamp when the task was marked as `✅ Done`."
+        }
+      ],
+      "examples": [
+        {
+          "context": "Plan",
+          "content": [
+            {
+              "type": "list",
+              "items": ["**Created:** [YYYY-MM-DD HH:MM]", "**Last Updated:** [YYYY-MM-DD HH:MM]"],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        },
+        {
+          "context": "Task",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Current State:** 💡 Not Started",
+                "**Priority:** 🟨 Medium",
+                "**Progress:** 0%",
+                "**Planning Estimate:** 0",
+                "**Est. Variance (pts):** 0",
+                "**Created:** [YYYY-MM-DD HH:MM]",
+                "**Implementation Started:** [YYYY-MM-DD HH:MM]",
+                "**Completed:** [YYYY-MM-DD HH:MM]",
+                "**Last Updated:** [YYYY-MM-DD HH:MM]"
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "name": "Priority Drivers",
+      "headingLevel": 3,
+      "description": "A bulleted list of stable Driver IDs that justify the priority of the artefact.",
+      "contentFormat": "Markdown bulleted list.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Business/strategic drivers. Task: Inherited drivers + technical execution drivers.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": ["CBP-Break_Block_Revenue_Legal", "TEC-Prod_Stability_Blocker"],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

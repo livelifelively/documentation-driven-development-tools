@@ -1,0 +1,114 @@
+{
+  "id": 6,
+  "name": "Implementation Guidance",
+  "anchor": "implementation--guidance",
+  "primaryQuestion": "What are the practical steps?",
+  "rationale": "This family provides the practical, step-by-step instructions for building the component. It translates the \"what\" from the planning sections and the \"how\" from the architecture sections into a concrete \"to-do\" list. This is where design becomes action.",
+  "applicability": {
+    "plan": "optional",
+    "task": "required"
+  },
+  "notes": "Optional for Plans (phased approach); Required for Tasks (step-by-step)",
+  "sections": [
+    {
+      "id": "6.1",
+      "name": "Implementation Plan",
+      "headingLevel": 3,
+      "description": "A detailed, step-by-step log of the implementation process for a Task.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "optional"
+      },
+      "notes": "Plan: Phased rollout strategy for child Plans/Tasks. Task: Direct implementation approach (if complex)."
+    },
+    {
+      "id": "6.1",
+      "name": "Implementation Log / Steps",
+      "headingLevel": 3,
+      "description": "A detailed, step-by-step log of the implementation process for a Task. This is often updated as the task progresses.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "omitted",
+        "task": "required"
+      },
+      "notes": "Plan: Not applicable (Plans don't implement). Task: Detailed step-by-step execution log.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "[x] Create `logger/types.ts` with core interfaces.",
+                "[x] Implement `ConsoleTransport`.",
+                "[ ] Implement `HttpTransport`.",
+                "[ ] Write unit tests for transports."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6.1.1",
+      "name": "Initial Situation",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "omitted",
+        "task": "required"
+      },
+      "notes": "Plan: Not applicable. Task: Baseline state before implementation begins."
+    },
+    {
+      "id": "6.1.2",
+      "name": "Files Change Log",
+      "headingLevel": 4,
+      "applicability": {
+        "plan": "omitted",
+        "task": "required"
+      },
+      "notes": "Plan: Not applicable. Task: File modifications tracking during implementation."
+    },
+    {
+      "id": "6.2",
+      "name": "Prompts (LLM reuse)",
+      "headingLevel": 3,
+      "description": "A collection of prompts that can be used with an LLM to assist in the implementation.",
+      "contentFormat": "Markdown code blocks.",
+      "applicability": {
+        "plan": "optional",
+        "task": "optional"
+      },
+      "notes": "Plan: Strategic prompts for planning. Task: Implementation-specific prompts.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "text",
+              "content": "Generate a Jest test for this function:",
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": false
+              }
+            },
+            {
+              "type": "codeblock",
+              "language": "typescript",
+              "content": "export const add = (a: number, b: number): number => a + b;",
+              "rendering": {
+                "renderAsCodeBlockForHuman": true,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

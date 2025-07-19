@@ -1,0 +1,204 @@
+{
+  "id": 7,
+  "name": "Quality & Operations",
+  "anchor": "quality--operations",
+  "primaryQuestion": "How do we validate & run it?",
+  "rationale": "This family defines how we ensure the system is correct, reliable, and observable. It covers everything from testing strategies to monitoring in production.",
+  "applicability": {
+    "plan": "required",
+    "task": "required"
+  },
+  "notes": "Plans define strategy; Tasks define specific tests and deployment",
+  "sections": [
+    {
+      "id": "7.1",
+      "name": "Testing Strategy / Requirements",
+      "headingLevel": 3,
+      "description": "The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria.",
+      "contentFormat": "Markdown table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["AC", "Scenario", "Test Type", "Tools / Runner", "Notes"],
+              "rows": [
+                [
+                  "1",
+                  "Default dev logger = console only",
+                  "Unit",
+                  "Jest + RTL (spy on console)",
+                  "Set `process.env.NODE_ENV='development'`"
+                ],
+                [
+                  "2",
+                  "Prod logger fan-out to console + HTTP, minLevel respected",
+                  "Unit",
+                  "Jest + fetch-mock + console spy",
+                  "`NODE_ENV='production'`"
+                ],
+                [
+                  "7",
+                  "Successful POST to `/api/log/client`",
+                  "Integration",
+                  "Jest + MSW",
+                  "Assert JSON body and 2xx handling"
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.2",
+      "name": "Configuration",
+      "headingLevel": 3,
+      "description": "How the system is configured in different environments (e.g., production, development).",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Configuration strategy and approach. Task: Implementation-specific configuration requirements.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["Setting Name", "Plan Dependency", "Source", "Override Method", "Notes"],
+              "rows": [
+                [
+                  "`analyzerApiEndpoint`",
+                  "`p1-analyzer`",
+                  "`ddd.config.json`",
+                  "`DDD_ANALYZER_API_ENDPOINT` (Environment Var)",
+                  "(Required) The URL of the external service for status reporting."
+                ],
+                [
+                  "`logLevel`",
+                  "(All)",
+                  "`ddd.config.json`",
+                  "`DDD_LOG_LEVEL` (Environment Variable)",
+                  "`info` (default), `debug`, `warn`, `error`. Controls logging verbosity."
+                ],
+                [
+                  "`NODE_ENV`",
+                  "(All)",
+                  "Environment Variable",
+                  "Not overrideable",
+                  "`development` or `production`. Determines the operational mode."
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.3",
+      "name": "Alerting & Response",
+      "headingLevel": 3,
+      "description": "How to respond to alerts and operational logs, especially errors, and how they are integrated with alerting systems.",
+      "contentFormat": "Markdown list or table.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["Error Condition", "Relevant Plans", "Response Plan", "Status"],
+              "rows": [
+                [
+                  "**Internal Script Failure**",
+                  "All",
+                  "Abort the `git commit` with a non-zero exit code. Print the error stack trace directly to the console.",
+                  "💡 Not Started"
+                ],
+                [
+                  "**External API Non-2xx Response**",
+                  "`p1-analyzer`",
+                  "Abort the `git commit` with a non-zero exit code. Log the API's error response to the console.",
+                  "💡 Not Started"
+                ],
+                [
+                  "**CI/CD Pipeline Failure**",
+                  "All",
+                  "Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface.",
+                  "💡 Not Started"
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.4",
+      "name": "Deployment Steps",
+      "headingLevel": 3,
+      "description": "Any manual steps required to deploy the component.",
+      "contentFormat": "Markdown list.",
+      "applicability": {
+        "plan": "required",
+        "task": "omitted"
+      },
+      "notes": "Plan: Deployment strategy and approach. Task: Not applicable (Tasks don't handle deployment).",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "Run database migrations: `yarn db:migrate`",
+                "Update environment variables in Vercel dashboard.",
+                "Promote the build to production."
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.5",
+      "name": "Local Test Commands",
+      "headingLevel": 3,
+      "description": "CLI commands to run tests locally.",
+      "contentFormat": "Markdown code blocks.",
+      "applicability": {
+        "plan": "omitted",
+        "task": "required"
+      },
+      "notes": "Plan: Not applicable (Plans don't execute tests). Task: CLI commands to run tests locally."
+    }
+  ]
+}
