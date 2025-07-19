@@ -4,6 +4,9 @@ import {
   TableStructure,
   BlockquoteStructure,
   BulletListStructure,
+  MermaidDiagramStructure,
+  CodeBlockStructure,
+  HorizontalRuleStructure,
   Section,
   DocumentStructures,
 } from './types';
@@ -34,6 +37,12 @@ function convertContentItem(item: any): string {
       return convertBlockquote(item as BlockquoteStructure);
     case 'bulletlist':
       return convertBulletList(item as BulletListStructure);
+    case 'mermaid':
+      return convertMermaidDiagram(item as MermaidDiagramStructure);
+    case 'codeblock':
+      return convertCodeBlock(item as CodeBlockStructure);
+    case 'hr':
+      return convertHorizontalRule(item as HorizontalRuleStructure);
     default:
       // If it's a nested section
       if ('title' in item && 'content' in item) {
@@ -71,4 +80,17 @@ function convertBlockquote(blockquote: BlockquoteStructure): string {
 
 function convertBulletList(list: BulletListStructure): string {
   return list.items.map((item) => `- ${item}`).join('\n');
+}
+
+function convertMermaidDiagram(diagram: MermaidDiagramStructure): string {
+  return `\`\`\`mermaid\n${diagram.content}\n\`\`\``;
+}
+
+function convertCodeBlock(code: CodeBlockStructure): string {
+  const language = code.language || '';
+  return `\`\`\`${language}\n${code.content}\n\`\`\``;
+}
+
+function convertHorizontalRule(hr: HorizontalRuleStructure): string {
+  return '---';
 }

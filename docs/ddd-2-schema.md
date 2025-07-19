@@ -215,26 +215,28 @@ Explains **why** the document exists, who it serves, and what success looks like
 - **Content Format**: A `#####` heading, a brief narrative description, and a Mermaid `graph` or `sequenceDiagram`. This section can be repeated as many times as necessary to document all relevant journeys.
 - **Example**:
 
-  ```md
+  ````md
   ##### Journey: Analyst Processes a New Document
 
   This journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.
 
-  graph LR
+  ```graph LR
   A("Start") --> B["Selects Document"];
   B --> C("Completes Pipeline");
+  ```
 
   ##### Journey: DevOps Engineer Monitors Pipeline Health
 
   This journey describes how a DevOps engineer interacts with the system's outputs to monitor for errors and performance issues.
 
-  sequenceDiagram
+  ```sequenceDiagram
   participant Pipeline
   participant Logger
   participant DevOps
   Pipeline-->>Logger: Log "Processing Failed" (ERROR)
   DevOps->>Logger: Views and analyzes error
   ```
+  ````
 
 #### 2.2.2 User Personas
 

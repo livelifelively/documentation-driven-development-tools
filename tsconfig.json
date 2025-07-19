@@ -3,13 +3,14 @@
     "target": "es2016",
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": true
+    "declaration": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": ["src", "schema", "scripts"],
   "exclude": ["node_modules", "dist"]
 }
