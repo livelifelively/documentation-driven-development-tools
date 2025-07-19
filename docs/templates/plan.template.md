@@ -1,4 +1,4 @@
-# [Task Name]
+# [Plan Name]
 
 ## Meta & Governance
 
@@ -8,14 +8,7 @@
 
 <!--
 EXAMPLE:
-- **Current State:** 💡 Not Started
-- **Priority:** 🟨 Medium
-- **Progress:** 0%
-- **Planning Estimate:** 0
-- **Est. Variance (pts):** 0
 - **Created:** [YYYY-MM-DD HH:MM]
-- **Implementation Started:** [YYYY-MM-DD HH:MM]
-- **Completed:** [YYYY-MM-DD HH:MM]
 - **Last Updated:** [YYYY-MM-DD HH:MM]
 -->
 [TODO: Add content for this section]
@@ -50,6 +43,67 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
+### Business Context
+
+<!-- Provides the narrative and domain-specific details behind the work. If no additional context beyond the parent level is needed, this section can contain `None (inherits from parent)`. -->
+
+<!--
+EXAMPLE:
+Currently, pipeline failures are opaque, requiring developers to manually inspect logs, which slows down resolution time. This new logging system will provide structured, queryable data to our analytics dashboard, allowing support staff to diagnose issues without engineering intervention.
+-->
+[TODO: Add content for this section]
+
+
+#### User Journeys
+
+<!-- A container for one or more `Journey` sections. This section should provide a complete overview of all primary user paths and interactions related to the document. -->
+
+[TODO: Add content for this section]
+
+
+##### Journey: [Name]
+
+<!-- A self-contained description of a single, specific user journey. The `[Name]` in the heading should be replaced with a descriptive title for the journey (e.g., "Analyst Processes a New Document"). This section must include a brief narrative explaining the journey's context and a diagram to visualize the flow. -->
+
+<!--
+EXAMPLE:
+##### Journey: Analyst Processes a New Document
+
+This journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.
+```mermaid
+graph
+A("Start") --&gt; B["Selects Document"];
+B --&gt; C("Completes Pipeline");
+```
+##### Journey: DevOps Engineer Monitors Pipeline Health
+
+This journey describes how a DevOps engineer interacts with the system's outputs to monitor for errors and performance issues.
+```mermaid
+sequenceDiagram
+participant Pipeline
+participant Logger
+participant DevOps
+Pipeline--&gt;>Logger: Log "Processing Failed" (ERROR)
+DevOps->>Logger: Views and analyzes error
+```
+-->
+[TODO: Add content for this section]
+
+
+#### User Personas
+
+<!-- Table or list of personas involved. -->
+
+<!--
+EXAMPLE:
+| Persona | Goal |
+| :--- | :--- |
+| **DevOps Engineer** | Monitor system health and diagnose infrastructure issues. |
+| **Support Analyst** | Triage user-reported errors and identify root cause. |
+-->
+[TODO: Add content for this section]
+
+
 #### Core Business Rules
 
 <!-- Enumerate domain rules that apply to this artefact. -->
@@ -63,17 +117,85 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Acceptance Criteria
+#### User Stories
 
-<!-- A verifiable, tabular list of conditions that a Task must satisfy to be considered complete. -->
+<!-- A list of user-centric stories that describe a piece of functionality from the end-user's perspective. This section is most critical for Plans but can be used at the Task level if it provides necessary context. The format "As a [persona], I want [to perform an action], so that I can [achieve a goal]" is recommended. -->
 
 <!--
 EXAMPLE:
-| ID | Criterion | Test Reference |
-| :--- | :--- | :--- |
-| AC-1 | Logger correctly filters messages below `minLevel`. | `logger.test.ts` |
-| AC-2 | `FATAL` level logs trigger a PagerDuty alert. | `alerting.int.test` |
-| AC-3 | Log output is valid JSON. | `formatter.test.ts` |
+- As a DevOps Engineer, I want to receive a real-time alert when a critical error occurs, so that I can immediately begin troubleshooting.
+- As a Support Analyst, I want to filter logs by user ID, so that I can quickly investigate user-reported issues.
+-->
+[TODO: Add content for this section]
+
+
+### Success Criteria
+
+<!-- Measurable or binary statements that define when a Plan is considered complete for its current phase. -->
+
+<!--
+EXAMPLE:
+- All pipeline stages emit structured logs for success, failure, and key business events.
+- The central dashboard can successfully ingest and display logs from all pipeline stages.
+- A comprehensive set of alerts for critical failures is configured and tested.
+-->
+[TODO: Add content for this section]
+
+
+### Boundaries & Scope
+
+<!-- A container heading for the explicit definition of the work's boundaries. Its content is in the child sections `2.5.1 In Scope` and `2.5.2 Out of Scope`. -->
+
+[TODO: Add content for this section]
+
+
+#### In Scope
+
+<!-- A bulleted list of functionalities, features, or outcomes that are explicitly included in the scope of the artefact. This list serves as a clear commitment of what will be delivered. -->
+
+<!--
+EXAMPLE:
+- Processing of Lok Sabha Q&A documents in PDF format.
+- Manual verification and correction workflows for all pipeline steps.
+- Generation of a document-level knowledge graph.
+-->
+[TODO: Add content for this section]
+
+
+#### Out of Scope
+
+<!-- A bulleted list of functionalities, features, or outcomes that are explicitly excluded from the scope of the artefact. This is critical for managing expectations and preventing future misunderstandings. It is often useful to list items that were considered but deliberately deferred. -->
+
+<!--
+EXAMPLE:
+- Real-time document processing capabilities.
+- Processing documents in formats other than PDF.
+- Advanced user management and role-based access control.
+-->
+[TODO: Add content for this section]
+
+
+### Core Business Processes
+
+<!-- A container for one or more `Process` sections. This section details the key, step-by-step business workflows that the Plan implements or affects. -->
+
+[TODO: Add content for this section]
+
+
+#### Process: [Name]
+
+<!-- A self-contained description of a single business process. The `[Name]` should be a descriptive title (e.g., "Document Ingestion and Triage"). This section should detail the participants, goals, and steps of the process. -->
+
+<!--
+EXAMPLE:
+#### Process: Manual Review
+- **Participants**: Data Scientist
+- **Goal**: To validate the accuracy of automated text extraction from a source PDF.
+- **Workflow**:
+- 1. Analyst selects a document in the "Pending Review" state.
+- 2. The UI displays the source PDF alongside the extracted text.
+- 3. Analyst compares the two and makes corrections to the text.
+- 4. Analyst approves the corrected text, advancing the document to the "Chunking" state.
 -->
 [TODO: Add content for this section]
 
@@ -81,6 +203,32 @@ EXAMPLE:
 ---
 
 ## Planning & Decomposition
+
+### Roadmap (In-Focus Items)
+
+<!-- A table of direct child Plans/Tasks that are currently planned for implementation in the active cycle. -->
+
+<!--
+EXAMPLE:
+| ID | Child Plan/Task | Priority | Priority Drivers | Status | Depends On | Summary |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
+| T1 | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
+-->
+[TODO: Add content for this section]
+
+
+### Backlog / Icebox
+
+<!-- A list of direct child Plans/Tasks that have been considered but are not scheduled for the current implementation cycle. This is crucial for capturing scope decisions. -->
+
+<!--
+EXAMPLE:
+- **Reporting Plan**: Deferred to Q4 due to dependency on new analytics service.
+- **Real-time Collaboration Features**: Moved to Icebox as it is outside the scope of the current MVP.
+-->
+[TODO: Add content for this section]
+
 
 ### Dependencies
 
@@ -96,9 +244,85 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
+### Decomposition Graph
+
+<!-- A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation. -->
+
+<!--
+EXAMPLE:
+```mermaid
+graph
+subgraph Plan: User Authentication
+        P1["Plan: Backend Auth"]
+        T1["Task: Create UI form"]
+        T2["Task: Implement validation"]
+        T3["Task: Add API endpoint"]
+        T4["Task: Write integration tests"]
+    end
+    P1 --&gt; T1
+    T1 --&gt; T2
+    T2 --&gt; T3
+    T3 --&gt; T4
+```
+-->
+[TODO: Add content for this section]
+
+
 ---
 
 ## High-Level Design
+
+### Guiding Principles
+
+<!-- A list of high-level architectural rules, patterns, or constraints that apply to the entire artefact (e.g., "All UI components must be stateless," "All services must be idempotent"). These principles guide all subsequent design decisions. -->
+
+<!--
+EXAMPLE:
+- **Stateless Services**: All backend services should be stateless to allow for horizontal scaling.
+- **Event-Driven**: Communication between major components should be asynchronous and event-driven where possible.
+-->
+[TODO: Add content for this section]
+
+
+### Current Architecture
+
+[TODO: Add content for this section]
+
+
+#### Data Models
+
+[TODO: Add content for this section]
+
+
+#### Components
+
+[TODO: Add content for this section]
+
+
+#### Data Flow
+
+[TODO: Add content for this section]
+
+
+#### Control Flow
+
+[TODO: Add content for this section]
+
+
+#### Integration Points
+
+[TODO: Add content for this section]
+
+
+##### Upstream Integrations
+
+[TODO: Add content for this section]
+
+
+##### Downstream Integrations
+
+[TODO: Add content for this section]
+
 
 ### Target Architecture
 
@@ -413,6 +637,21 @@ EXAMPLE:
 
 ## Maintenance and Monitoring
 
+### Current Maintenance and Monitoring
+
+[TODO: Add content for this section]
+
+
+#### Error Handling
+
+[TODO: Add content for this section]
+
+
+#### Logging & Monitoring
+
+[TODO: Add content for this section]
+
+
 ### Target Maintenance and Monitoring
 
 [TODO: Add content for this section]
@@ -453,30 +692,6 @@ EXAMPLE:
 ### Implementation Plan
 
 <!-- A detailed, step-by-step log of the implementation process for a Task. -->
-
-[TODO: Add content for this section]
-
-
-### Implementation Log / Steps
-
-<!-- A detailed, step-by-step log of the implementation process for a Task. This is often updated as the task progresses. -->
-
-<!--
-EXAMPLE:
-- [x] Create `logger/types.ts` with core interfaces.
-- [x] Implement `ConsoleTransport`.
-- [ ] Implement `HttpTransport`.
-- [ ] Write unit tests for transports.
--->
-[TODO: Add content for this section]
-
-
-#### Initial Situation
-
-[TODO: Add content for this section]
-
-
-#### Files Change Log
 
 [TODO: Add content for this section]
 
@@ -544,10 +759,16 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Local Test Commands
+### Deployment Steps
 
-<!-- CLI commands to run tests locally. -->
+<!-- Any manual steps required to deploy the component. -->
 
+<!--
+EXAMPLE:
+- Run database migrations: `yarn db:migrate`
+- Update environment variables in Vercel dashboard.
+- Promote the build to production.
+-->
 [TODO: Add content for this section]
 
 
