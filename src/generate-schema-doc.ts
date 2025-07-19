@@ -1,4 +1,4 @@
-import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from './index';
+import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from '.';
 import * as fs from 'fs';
 import * as path from 'path';
 
