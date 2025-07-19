@@ -1,0 +1,634 @@
+# Plan: DDD CLI Tools & Basic Operations
+
+---
+
+## 1 Meta & Governance
+
+### 1.2 Status
+
+- **Created:** 2025-01-19 16:45
+- **Last Updated:** 2025-01-19 16:45
+
+### 1.3 Priority Drivers
+
+- [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement)
+- [TEC-Dev_Productivity_Blocker](/docs/ddd-2.md#tec-dev_productivity_blocker)
+- [UX-Noticeable_Friction](/docs/ddd-2.md#ux-noticeable_friction)
+
+---
+
+## 2 Business & Scope
+
+### 2.1 Overview
+
+- **Core Function**: Provides command-line interface tools that wrap and extend the existing schema system to enable efficient DDD project creation, validation, and maintenance.
+- **Key Capability**: Transforms the powerful but script-based schema system into accessible CLI commands that developers can use directly in their workflow for template generation, project initialization, and document validation.
+- **Business Value**: Eliminates friction in DDD adoption by providing intuitive command-line tools that make schema-compliant documentation creation as simple as running a command.
+
+### 2.2 Business Context
+
+The existing schema system (P1) provides powerful generation capabilities but requires developers to run npm scripts and manually organize files. This creates adoption friction and limits the system's usability for day-to-day development work.
+
+This plan establishes a CLI wrapper around the proven schema foundation, making DDD tools accessible through standard command-line patterns that integrate naturally with developer workflows. By building on P1's solid foundation rather than recreating functionality, we can deliver immediate value while setting up the architecture for advanced features.
+
+#### 2.2.1 User Journeys
+
+##### 2.2.1.1 Journey: Developer Starts New DDD Project
+
+A developer needs to create a new project or component using DDD methodology.
+
+```mermaid
+sequenceDiagram
+    participant Developer
+    participant CLI
+    participant P1Schema
+    participant FileSystem
+
+    Developer->>CLI: ddd-init project --name backend
+    CLI->>P1Schema: generatePlanTemplate()
+    P1Schema-->>CLI: template content
+    CLI->>FileSystem: create project.plan.md
+    CLI->>CLI: apply naming conventions
+    CLI-->>Developer: Project initialized with template
+    Note over Developer: Ready to fill in content
+```
+
+##### 2.2.1.2 Journey: Developer Creates Plan Component
+
+A developer working on an existing project needs to add a new plan or task.
+
+```mermaid
+sequenceDiagram
+    participant Developer
+    participant CLI
+    participant P1Schema
+    participant FileSystem
+
+    Developer->>CLI: ddd-template plan --parent p1 --id p2 --name api
+    CLI->>CLI: validate naming convention
+    CLI->>P1Schema: generatePlanTemplate()
+    P1Schema-->>CLI: template with examples
+    CLI->>FileSystem: create p1-p2-api.plan.md
+    CLI-->>Developer: Template ready for editing
+```
+
+##### 2.2.1.3 Journey: Developer Validates Documentation
+
+A developer wants to ensure their documentation follows DDD schema requirements.
+
+```mermaid
+sequenceDiagram
+    participant Developer
+    participant CLI
+    participant P1Schema
+    participant DocumentParser
+
+    Developer->>CLI: ddd-lint docs/**/*.md
+    CLI->>DocumentParser: parse markdown files
+    DocumentParser->>P1Schema: validate against schema
+    P1Schema-->>CLI: validation results
+    CLI-->>Developer: show compliance report
+    Note over Developer: Fix issues and re-validate
+```
+
+#### 2.2.2 User Personas
+
+| Persona               | Goal                                                                                           |
+| :-------------------- | :--------------------------------------------------------------------------------------------- |
+| **Project Developer** | Create and maintain DDD-compliant documentation efficiently using familiar command-line tools. |
+| **Team Lead**         | Ensure team documentation follows standards and can be validated automatically in CI/CD.       |
+| **Platform Engineer** | Provide teams with easy-to-use tools that encourage DDD adoption without learning overhead.    |
+
+#### 2.2.3 Core Business Rules
+
+- **CLI Commands Must Leverage P1**: All functionality must build on existing schema system capabilities rather than reimplementing logic.
+- **Naming Convention Enforcement**: CLI must enforce and assist with proper DDD-2 naming conventions for hierarchical documents.
+- **Schema Compliance**: All generated documents must validate against the canonical schema without manual adjustment.
+- **Developer Experience Priority**: Commands must follow familiar CLI patterns and provide clear, actionable feedback.
+
+#### 2.2.4 User Stories
+
+- As a **Project Developer**, I want to run `ddd-init project` so that I can start a new DDD project with proper template structure in seconds.
+- As a **Project Developer**, I want to run `ddd-template plan --parent p1 --id p2` so that I can create properly named plan documents with correct examples.
+- As a **Team Lead**, I want to run `ddd-lint` in CI/CD so that documentation compliance is enforced automatically.
+- As a **Platform Engineer**, I want CLI commands that wrap existing schema functions so that teams get powerful capabilities without complexity.
+
+### 2.3 Success Criteria
+
+- **Template Generation**: CLI can generate plan and task templates with proper naming conventions and schema compliance.
+- **Project Initialization**: CLI can scaffold new DDD projects with appropriate directory structure and initial documentation.
+- **Validation Integration**: CLI can validate existing documentation against schema and provide actionable feedback.
+- **Developer Adoption**: Commands follow standard CLI patterns and integrate smoothly with existing development workflows.
+
+### 2.5 Boundaries & Scope
+
+#### 2.5.1 In Scope
+
+- **CLI Command Interface**: User-friendly commands that wrap P1 schema system functionality
+- **Template Generation Commands**: Generate plan and task templates with intelligent naming and examples
+- **Project Initialization**: Basic project scaffolding with proper DDD structure
+- **Document Validation**: Schema compliance checking for existing documentation
+- **Documentation Generation**: CLI access to human and machine-readable schema documentation
+- **Basic Schema Synchronization**: Version checking and template updating capabilities
+
+#### 2.5.2 Out of Scope
+
+- **Integration with External Tools**: Jira, Slack, GitHub integrations (separate future initiative)
+- **Multi-Language Schema Support**: Support for languages other than TypeScript (not currently needed)
+- **Advanced IDE Integrations**: VSCode extensions or editor plugins (separate future initiative)
+- **Custom Schema Modifications**: User-defined schema extensions (outside current requirements)
+
+### 2.6 Core Business Processes
+
+#### 2.6.1 Process: CLI-Driven Document Creation
+
+- **Participants**: Developer, CLI Tools, Schema System
+- **Goal**: Create new DDD-compliant documentation efficiently through command-line interface
+- **Workflow**:
+  1. Developer identifies need for new plan or task documentation
+  2. Developer runs appropriate CLI command with naming parameters
+  3. CLI validates naming convention and hierarchy requirements
+  4. CLI generates template using P1 schema system
+  5. CLI writes properly named file with schema-compliant structure
+  6. Developer edits generated template with actual content
+
+#### 2.6.2 Process: Automated Documentation Validation
+
+- **Participants**: Developer, CLI Tools, CI/CD System
+- **Goal**: Ensure documentation compliance through automated validation
+- **Workflow**:
+  1. Developer commits documentation changes to version control
+  2. CI/CD system runs `ddd-lint` command on changed files
+  3. CLI parses documentation and validates against schema
+  4. CLI reports validation results with specific compliance issues
+  5. Build passes/fails based on validation results
+  6. Developer fixes issues if validation fails and re-commits
+
+---
+
+## 3 Planning & Decomposition
+
+### 3.1 Roadmap (In-Focus Items)
+
+| ID  | Child Plan/Task                                                       | Priority  | Priority Drivers                                                                    | Status         | Depends On | Summary                                          |
+| :-- | :-------------------------------------------------------------------- | :-------- | :---------------------------------------------------------------------------------- | :------------- | :--------- | :----------------------------------------------- |
+| T1  | [CLI Framework Setup](./p1-p2-t1-cli-framework.task.md)               | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | —          | Set up CLI framework and basic command structure |
+| T2  | [Template Generation Commands](./p1-p2-t2-template-commands.task.md)  | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-template plan/task commands        |
+| T3  | [Project Initialization Commands](./p1-p2-t3-init-commands.task.md)   | 🟥 High   | [UX-Noticeable_Friction](/docs/ddd-2.md#ux-noticeable_friction)                     | 💡 Not Started | T1, T2     | Implement ddd-init project scaffolding           |
+| T4  | [Documentation Generation Commands](./p1-p2-t4-docs-commands.task.md) | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-docs generate commands             |
+| T5  | [Basic Validation Commands](./p1-p2-t5-validation-commands.task.md)   | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-lint basic structure validation    |
+
+### 3.2 Backlog / Icebox
+
+- **File Watching & Caching System**: Real-time document monitoring with structured cache for performance optimization
+- **Advanced Analytics & Progress Tracking**: Velocity metrics, project health dashboards, and progress visualization tools
+- **Real-time Validation**: Continuous linting with immediate feedback during document editing sessions
+- **Rich Operations & Queries**: Complex document relationship analysis, dependency tracking, and blocker detection
+- **External Integrations**: Webhooks, API endpoints, and integrations with project management tools
+- **Advanced Init Templates**: Smart project templates with auto-detection of patterns and developer preferences
+- **Schema Evolution Tools**: Migration utilities for updating documentation when schema versions change
+
+### 3.3 Dependencies
+
+| ID  | Dependency On                            | Type     | Status         | Affected Plans/Tasks | Notes                                                        |
+| :-- | :--------------------------------------- | :------- | :------------- | :------------------- | :----------------------------------------------------------- |
+| D-1 | [p1-schema-system.plan.md](./p1.plan.md) | Internal | ✅ Complete    | All tasks            | Foundation schema system with proven generation capabilities |
+| D-2 | CLI Framework (yargs/commander)          | External | 💡 Not Started | T1, All CLI tasks    | Need to select and integrate CLI argument parsing framework  |
+| D-3 | Markdown Parser Library                  | External | 💡 Not Started | T5                   | Required for document validation functionality               |
+| D-4 | File System Operations                   | External | ✅ Complete    | All tasks            | Node.js fs module capabilities (already used in P1)          |
+
+### 3.4 Decomposition Graph
+
+```mermaid
+graph TD
+    subgraph "Plan: CLI Tools"
+        T1["T1: CLI Framework Setup"]
+        T2["T2: Template Commands"]
+        T3["T3: Init Commands"]
+        T4["T4: Docs Commands"]
+        T5["T5: Validation Commands"]
+    end
+
+    subgraph "External Dependencies"
+        P1["P1: Schema System ✅"]
+        CLI_LIB["CLI Framework"]
+        MD_PARSER["Markdown Parser"]
+    end
+
+    P1 --> T2
+    P1 --> T3
+    P1 --> T4
+    P1 --> T5
+
+    T1 --> T2
+    T1 --> T3
+    T1 --> T4
+    T1 --> T5
+
+    CLI_LIB --> T1
+    MD_PARSER --> T5
+
+    T2 --> T3
+```
+
+---
+
+## 4 High-Level Design
+
+### 4.0 Guiding Principles
+
+- **Build on P1 Foundation**: Leverage existing schema system capabilities rather than reimplementing functionality
+- **CLI-First Design**: Commands should follow standard CLI patterns and conventions for intuitive developer experience
+- **Schema Compliance**: All generated content must validate against established schema without manual adjustment
+- **Incremental Architecture**: Design CLI layer to support future advanced features without major refactoring
+- **Developer Experience**: Prioritize clear feedback, helpful error messages, and efficient workflows
+
+### 4.1 Current Architecture
+
+#### 4.1.1 Data Models
+
+**CLI Command Structure:**
+
+```typescript
+interface CLICommand {
+  name: string;
+  description: string;
+  options: CLIOption[];
+  handler: (args: any) => Promise<void>;
+}
+
+interface CLIOption {
+  name: string;
+  alias?: string;
+  type: 'string' | 'boolean' | 'number';
+  required?: boolean;
+  description: string;
+}
+
+interface TemplateOptions {
+  parent?: string;
+  id: string;
+  name: string;
+  type: 'plan' | 'task';
+}
+
+interface InitOptions {
+  name: string;
+  path?: string;
+  type: 'project' | 'plan' | 'task';
+}
+```
+
+**Integration with P1 Schema:**
+
+```mermaid
+erDiagram
+    CLI_COMMAND {
+        string name PK
+        string description
+        CLIOption[] options
+        function handler
+    }
+
+    P1_SCHEMA_SYSTEM {
+        SchemaFamily[] fullSchema
+        function generatePlanTemplate
+        function generateTaskTemplate
+        function generateHumanSchemaDocumentation
+        function generateMachineSchemaDocumentation
+    }
+
+    GENERATED_DOCUMENT {
+        string path
+        string content
+        string type
+        SchemaFamily[] appliedSchema
+    }
+
+    CLI_COMMAND ||--o{ P1_SCHEMA_SYSTEM : "uses"
+    P1_SCHEMA_SYSTEM ||--|{ GENERATED_DOCUMENT : "creates"
+```
+
+#### 4.1.2 Components
+
+```mermaid
+classDiagram
+    direction TB
+
+    class CLIApplication {
+        +Map<string, CLICommand> commands
+        +register(command): void
+        +execute(argv): Promise<void>
+    }
+
+    class TemplateCommand {
+        +name: "template"
+        +execute(options): Promise<void>
+        +validateNaming(options): boolean
+    }
+
+    class InitCommand {
+        +name: "init"
+        +execute(options): Promise<void>
+        +createProjectStructure(options): void
+    }
+
+    class DocsCommand {
+        +name: "docs"
+        +execute(options): Promise<void>
+        +generateDocumentation(mode): string
+    }
+
+    class ValidationCommand {
+        +name: "lint"
+        +execute(options): Promise<void>
+        +parseDocument(path): Document
+        +validateSchema(doc): ValidationResult
+    }
+
+    class P1SchemaIntegration {
+        +generatePlanTemplate(): string
+        +generateTaskTemplate(): string
+        +getFullSchema(): SchemaFamily[]
+        +validateAgainstSchema(doc): boolean
+    }
+
+    CLIApplication --> TemplateCommand : registers
+    CLIApplication --> InitCommand : registers
+    CLIApplication --> DocsCommand : registers
+    CLIApplication --> ValidationCommand : registers
+
+    TemplateCommand --> P1SchemaIntegration : uses
+    InitCommand --> P1SchemaIntegration : uses
+    DocsCommand --> P1SchemaIntegration : uses
+    ValidationCommand --> P1SchemaIntegration : uses
+```
+
+#### 4.1.3 Data Flow
+
+```mermaid
+graph TD
+    subgraph "User Interface"
+        A[Developer Command Line]
+    end
+
+    subgraph "CLI Layer (New)"
+        B[CLI Application]
+        C[Command Router]
+        D[Option Parser]
+    end
+
+    subgraph "P1 Schema System (Existing)"
+        E[Schema Loader]
+        F[Template Generator]
+        G[Documentation Generator]
+    end
+
+    subgraph "File System"
+        H[Generated Documents]
+        I[Project Structure]
+    end
+
+    A -->|"1: Command input"| B
+    B -->|"2: Route command"| C
+    C -->|"3: Parse & validate args"| D
+    D -->|"4a: Template options"| F
+    D -->|"4b: Docs options"| G
+    F -->|"5a: Load schema"| E
+    G -->|"5b: Load schema"| E
+    E -->|"6a: Schema data"| F
+    E -->|"6b: Schema data"| G
+    F -->|"7a: Generated templates"| H
+    G -->|"7b: Generated docs"| H
+    F -->|"8a: Project files"| I
+```
+
+#### 4.1.4 Control Flow
+
+```mermaid
+sequenceDiagram
+    participant User as Developer
+    participant CLI as CLI Application
+    participant Router as Command Router
+    participant P1 as P1 Schema System
+    participant FS as File System
+
+    User->>CLI: ddd-template plan --parent p1 --id p2 --name api
+    CLI->>Router: parse command and options
+    Router->>Router: validate naming convention
+    Router->>P1: generatePlanTemplate()
+    P1-->>Router: template content with examples
+    Router->>Router: apply naming (p1-p2-api.plan.md)
+    Router->>FS: write file with generated content
+    FS-->>CLI: file created successfully
+    CLI-->>User: ✅ Created p1-p2-api.plan.md
+```
+
+#### 4.1.5 Integration Points
+
+##### 4.1.5.1 Upstream Integrations
+
+- **P1 Schema System**: Direct function calls to existing template and documentation generators
+- **Node.js File System**: Standard fs operations for reading/writing files and directories
+- **Command Line Arguments**: Standard argv parsing for user input and options
+
+##### 4.1.5.1 Downstream Integrations
+
+- **Generated Documentation Files**: Creates schema-compliant markdown files in project directory structure
+- **Development Workflow**: Integrates with git, CI/CD, and standard development tools
+- **Validation Feedback**: Provides structured output suitable for CI/CD integration and developer feedback
+
+### 4.2 Target Architecture
+
+**Current architecture design represents the target architecture.** The CLI layer provides a clean interface to P1's proven capabilities while establishing patterns for future advanced features.
+
+### 4.3 Tech Stack & Deployment
+
+- **Language**: TypeScript (consistent with P1 foundation)
+- **Runtime**: Node.js ≥ 18 (same as P1 requirements)
+- **CLI Framework**: yargs or commander (to be selected in T1)
+- **Markdown Parser**: remark or marked (for validation functionality)
+- **Package Distribution**: npm package with CLI binaries
+- **Installation**: Global npm install for CLI access
+
+### 4.4 Non-Functional Requirements
+
+#### 4.4.1 Performance
+
+| ID      | Requirement                                                | Priority  |
+| :------ | :--------------------------------------------------------- | :-------- |
+| PERF-01 | Template generation commands must complete in < 2 seconds  | 🟥 High   |
+| PERF-02 | Project initialization must complete in < 5 seconds        | 🟧 Medium |
+| PERF-03 | Document validation must process 50+ files in < 10 seconds | 🟨 Low    |
+
+#### 4.4.2 Security
+
+| ID     | Requirement                                                 | Priority |
+| :----- | :---------------------------------------------------------- | :------- |
+| SEC-01 | CLI must validate file paths to prevent directory traversal | 🟥 High  |
+| SEC-02 | Commands must not execute arbitrary user input              | 🟥 High  |
+
+#### 4.4.3 Reliability
+
+| ID     | Requirement                                                          | Priority  |
+| :----- | :------------------------------------------------------------------- | :-------- |
+| REL-01 | CLI commands must provide clear error messages for all failure modes | 🟥 High   |
+| REL-02 | Generated files must always validate against schema                  | 🟥 High   |
+| REL-03 | Commands must be idempotent where possible                           | 🟧 Medium |
+
+---
+
+## 5 Maintenance and Monitoring
+
+### 5.1 Current Maintenance and Monitoring
+
+Since this plan is for new functionality, current monitoring refers to the intended monitoring approach.
+
+#### ✅ Error Handling
+
+| Error Type                      | Trigger                                                        | Action                                 | User Feedback                                                               |
+| :------------------------------ | :------------------------------------------------------------- | :------------------------------------- | :-------------------------------------------------------------------------- |
+| **Invalid Command Arguments**   | User provides incorrect options or missing required parameters | Display usage help and specific error  | `ERROR: Missing required option --id. See 'ddd-template --help' for usage.` |
+| **File System Permissions**     | Cannot write to target directory                               | Exit with code 1 and clear message     | `ERROR: Cannot write to ./docs/. Please check directory permissions.`       |
+| **Naming Convention Violation** | User provides invalid naming pattern                           | Reject with explanation and suggestion | `ERROR: Invalid naming pattern. Use format: p1-p2-name (parent-id-name)`    |
+| **Schema Generation Failure**   | P1 system functions fail                                       | Propagate P1 error with context        | `ERROR: Template generation failed: [P1 error details]`                     |
+
+#### ✅ Logging & Monitoring
+
+- **Command Usage Logging**: Track which commands are used most frequently for UX optimization
+- **Error Rate Monitoring**: Monitor command failure rates to identify common issues
+- **Performance Tracking**: Log command execution times to ensure performance requirements are met
+- **Success Confirmation**: Clear success messages with specific actions taken
+
+### 5.2 Target Maintenance and Monitoring
+
+**Current approach is the target approach.** CLI tools require straightforward error handling and user feedback rather than complex monitoring infrastructure.
+
+---
+
+## 6 Implementation Guidance
+
+### 6.1 Implementation Plan
+
+| Phase                               | Scope / Deliverables                             | Key Artifacts                                 | Exit Criteria                            |
+| :---------------------------------- | :----------------------------------------------- | :-------------------------------------------- | :--------------------------------------- |
+| **Phase 1: CLI Foundation**         | Set up CLI framework and basic command structure | CLI application shell, command registration   | Commands parse correctly and show help   |
+| **Phase 2: Template Commands**      | Implement template generation commands           | `ddd-template` command with plan/task options | Can generate properly named templates    |
+| **Phase 3: Project Init**           | Implement project initialization                 | `ddd-init` command with project scaffolding   | Can create complete project structure    |
+| **Phase 4: Documentation Commands** | Implement docs generation commands               | `ddd-docs` command with mode options          | Can generate human/machine documentation |
+| **Phase 5: Basic Validation**       | Implement structure validation                   | `ddd-lint` command with basic checking        | Can validate documents against schema    |
+
+### 6.2 Prompts (LLM reuse)
+
+**For implementing CLI commands:**
+
+```markdown
+Create a CLI command that wraps the existing P1 function [FUNCTION_NAME] with the following options:
+
+- Required: [LIST_REQUIRED_OPTIONS]
+- Optional: [LIST_OPTIONAL_OPTIONS]
+- Validation: [VALIDATION_RULES]
+- Error handling: [ERROR_SCENARIOS]
+
+Follow the established CLI pattern and provide clear user feedback.
+```
+
+**For testing CLI functionality:**
+
+```markdown
+Write tests for the CLI command [COMMAND_NAME] that verify:
+
+- Argument parsing works correctly
+- P1 integration functions as expected
+- File output is generated properly
+- Error cases are handled appropriately
+
+Use Jest and mock P1 functions to isolate CLI logic.
+```
+
+---
+
+## 7 Quality & Operations
+
+### 7.1 Testing Strategy / Requirements
+
+| Scenario                                             | Test Type   | Tools / Runner                | Notes                                       |
+| :--------------------------------------------------- | :---------- | :---------------------------- | :------------------------------------------ |
+| **CLI argument parsing works correctly**             | Unit        | Jest + CLI testing utilities  | Mock P1 functions to isolate CLI logic      |
+| **Template commands generate proper files**          | Integration | Jest + temp directories       | Verify P1 integration and file output       |
+| **Project initialization creates correct structure** | Integration | Jest + filesystem mocking     | Test complete project scaffolding           |
+| **Validation commands detect schema violations**     | Unit        | Jest + sample documents       | Test validation logic with known violations |
+| **Error handling provides clear messages**           | Unit        | Jest + error scenario testing | Verify user-friendly error messages         |
+| **CLI help and usage information**                   | Integration | Jest + CLI output testing     | Ensure help text is accurate and useful     |
+
+### 7.2 Configuration
+
+| Setting Name            | Source       | Override Method           | Notes                                      |
+| :---------------------- | :----------- | :------------------------ | :----------------------------------------- |
+| `default-output-path`   | CLI defaults | `--path` option           | Default directory for generated files      |
+| `schema-version`        | P1 system    | `--schema-version` option | Which schema version to use for generation |
+| `template-mode`         | CLI defaults | `--mode` option           | Human vs machine readable templates        |
+| `validation-strictness` | CLI defaults | `--strict` flag           | How strict validation should be            |
+
+### 7.3 Alerting & Response
+
+| Error Condition                   | Response Plan                                                               | Status         |
+| :-------------------------------- | :-------------------------------------------------------------------------- | :------------- |
+| **CLI Command Failure**           | Exit with non-zero code and clear error message showing exactly what failed | 💡 Not Started |
+| **P1 Integration Failure**        | Wrap P1 errors with CLI context and suggest troubleshooting steps           | 💡 Not Started |
+| **File System Operation Failure** | Provide specific error with path and permission requirements                | 💡 Not Started |
+
+### 7.4 Deployment Steps
+
+**For development:**
+
+1. Run `npm run build` to compile TypeScript CLI code
+2. Run `npm link` to create global CLI commands for testing
+3. Test CLI commands against sample projects
+4. Run test suite: `npm test`
+
+**For release:**
+
+1. Compile and package CLI with P1 dependencies
+2. Test installation and CLI functionality on clean environment
+3. Publish to npm registry with appropriate version
+4. Update documentation with CLI usage examples
+
+---
+
+## 8 Reference
+
+### 8.1 Appendices/Glossary
+
+**Glossary:**
+
+- **CLI**: Command Line Interface - the primary way developers interact with DDD tools
+- **P1 Integration**: Using functions and capabilities from the existing schema system
+- **Template Generation**: Creating new documentation files with proper structure and examples
+- **Schema Compliance**: Documentation that follows the established DDD schema requirements
+- **Naming Convention**: The hierarchical naming pattern for DDD documents (p1-p2-name format)
+
+**Command Reference:**
+
+```bash
+# Template generation
+ddd-template plan --parent p1 --id p2 --name api
+ddd-template task --parent p1-p2 --id t1 --name endpoints
+
+# Project initialization
+ddd-init project --name backend --path ./docs
+
+# Documentation generation
+ddd-docs generate --mode human --output ./generated-docs
+
+# Basic validation
+ddd-lint docs/**/*.md --strict
+```
+
+**Key Dependencies:**
+
+- [P1 Schema System](./p1.plan.md) - Foundation for all CLI functionality
+- [DDD-2 Methodology](/docs/ddd-2.md) - Naming conventions and document structure
+- [Plan Template Structure](/docs/templates/plan.template.md) - Reference for generated templates
+
+---
