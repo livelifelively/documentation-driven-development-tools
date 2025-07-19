@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "analyze": "echo \"Error: no test specified\" && exit 1",
-    "generate-schema-doc": "tsx scripts/generate-schema-doc.ts"
+    "generate-schema-doc": "tsx src/modules/ddd-spec/generate-schema-doc.ts"
   },
   "files": [
     "dist"

@@ -1,12 +1,12 @@
-import family1 from './1-meta.json';
-import family2 from './2-business-scope.json';
-import family3 from './3-planning-decomposition.json';
-import family4 from './4-high-level-design.json';
-import family5 from './5-maintenance-monitoring.json';
-import family6 from './6-implementation-guidance.json';
-import family7 from './7-quality-operations.json';
-import family8 from './8-reference.json';
-import contextExamples from './context-examples.json';
+import family1 from './ddd-schema-json/1-meta.json';
+import family2 from './ddd-schema-json/2-business-scope.json';
+import family3 from './ddd-schema-json/3-planning-decomposition.json';
+import family4 from './ddd-schema-json/4-high-level-design.json';
+import family5 from './ddd-schema-json/5-maintenance-monitoring.json';
+import family6 from './ddd-schema-json/6-implementation-guidance.json';
+import family7 from './ddd-schema-json/7-quality-operations.json';
+import family8 from './ddd-schema-json/8-reference.json';
+import contextExamples from './ddd-schema-json/context-examples.json';
 import {
   DocumentStructures,
   Section,
@@ -602,12 +602,114 @@ function renderDocumentToMarkdown(document: DocumentStructures): string {
 
 export function generatePlanTemplate(): string {
   console.log('Generating Plan template...');
-  return '# Plan Template\n\n';
+
+  const sections: string[] = [];
+
+  // Document title placeholder
+  sections.push('# [Plan Name]\n');
+
+  // Generate sections based on schema families
+  fullSchema.forEach((family) => {
+    // Only include families that are required or optional for plans
+    if (family.applicability.plan === 'omitted') return;
+
+    // Add family heading
+    sections.push(`## ${family.name}\n`);
+
+    // Add sections that apply to plans
+    family.sections.forEach((section) => {
+      if (section.applicability.plan === 'omitted') return;
+
+      const heading = '#'.repeat(section.headingLevel);
+      sections.push(`${heading} ${section.name}\n`);
+
+      // Add description as comment if available
+      if (section.description) {
+        sections.push(`<!-- ${section.description} -->\n`);
+      }
+
+      // Add examples as HTML comments
+      if (section.examples && section.examples.length > 0) {
+        // Find plan-specific example or use default
+        const planExample = section.examples.find((ex) => ex.context === 'Plan') || section.examples[0];
+        if (planExample) {
+          sections.push('<!--');
+          sections.push('EXAMPLE:');
+          const renderedContent = convertFamilyExample(planExample.content as ContentElement[], 'human');
+          renderedContent.forEach((element) => {
+            const exampleText = renderContent(element);
+            // Escape any --> sequences in the example to avoid breaking the comment
+            const escapedText = exampleText.replace(/-->/g, '--&gt;');
+            sections.push(escapedText);
+          });
+          sections.push('-->');
+        }
+      }
+
+      sections.push('[TODO: Add content for this section]\n');
+      sections.push('');
+    });
+
+    sections.push('---\n');
+  });
+
+  return sections.join('\n');
 }
 
 export function generateTaskTemplate(): string {
   console.log('Generating Task template...');
-  return '# Task Template\n\n';
+
+  const sections: string[] = [];
+
+  // Document title placeholder
+  sections.push('# [Task Name]\n');
+
+  // Generate sections based on schema families
+  fullSchema.forEach((family) => {
+    // Only include families that are required or optional for tasks
+    if (family.applicability.task === 'omitted') return;
+
+    // Add family heading
+    sections.push(`## ${family.name}\n`);
+
+    // Add sections that apply to tasks
+    family.sections.forEach((section) => {
+      if (section.applicability.task === 'omitted') return;
+
+      const heading = '#'.repeat(section.headingLevel);
+      sections.push(`${heading} ${section.name}\n`);
+
+      // Add description as comment if available
+      if (section.description) {
+        sections.push(`<!-- ${section.description} -->\n`);
+      }
+
+      // Add examples as HTML comments
+      if (section.examples && section.examples.length > 0) {
+        // Find task-specific example or use default
+        const taskExample = section.examples.find((ex) => ex.context === 'Task') || section.examples[0];
+        if (taskExample) {
+          sections.push('<!--');
+          sections.push('EXAMPLE:');
+          const renderedContent = convertFamilyExample(taskExample.content as ContentElement[], 'human');
+          renderedContent.forEach((element) => {
+            const exampleText = renderContent(element);
+            // Escape any --> sequences in the example to avoid breaking the comment
+            const escapedText = exampleText.replace(/-->/g, '--&gt;');
+            sections.push(escapedText);
+          });
+          sections.push('-->');
+        }
+      }
+
+      sections.push('[TODO: Add content for this section]\n');
+      sections.push('');
+    });
+
+    sections.push('---\n');
+  });
+
+  return sections.join('\n');
 }
 
 // --- Public API Functions ---
