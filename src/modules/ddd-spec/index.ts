@@ -613,15 +613,15 @@ export function generatePlanTemplate(): string {
     // Only include families that are required or optional for plans
     if (family.applicability.plan === 'omitted') return;
 
-    // Add family heading
-    sections.push(`## ${family.name}\n`);
+    // Add family heading with ID
+    sections.push(`## ${family.id} ${family.name}\n`);
 
     // Add sections that apply to plans
     family.sections.forEach((section) => {
       if (section.applicability.plan === 'omitted') return;
 
       const heading = '#'.repeat(section.headingLevel);
-      sections.push(`${heading} ${section.name}\n`);
+      sections.push(`${heading} ${section.id} ${section.name}\n`);
 
       // Add description as comment if available
       if (section.description) {
@@ -669,15 +669,15 @@ export function generateTaskTemplate(): string {
     // Only include families that are required or optional for tasks
     if (family.applicability.task === 'omitted') return;
 
-    // Add family heading
-    sections.push(`## ${family.name}\n`);
+    // Add family heading with ID
+    sections.push(`## ${family.id} ${family.name}\n`);
 
     // Add sections that apply to tasks
     family.sections.forEach((section) => {
       if (section.applicability.task === 'omitted') return;
 
       const heading = '#'.repeat(section.headingLevel);
-      sections.push(`${heading} ${section.name}\n`);
+      sections.push(`${heading} ${section.id} ${section.name}\n`);
 
       // Add description as comment if available
       if (section.description) {

@@ -1,8 +1,8 @@
 # [Task Name]
 
-## Meta & Governance
+## 1 Meta & Governance
 
-### Status
+### 1.2 Status
 
 <!-- A section containing key status metrics for the document. The specific fields vary depending on whether it's a Plan or Task, with Tasks providing more detailed implementation tracking. -->
 
@@ -21,7 +21,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Priority Drivers
+### 1.3 Priority Drivers
 
 <!-- A bulleted list of stable Driver IDs that justify the priority of the artefact. -->
 
@@ -35,9 +35,9 @@ EXAMPLE:
 
 ---
 
-## Business & Scope
+## 2 Business & Scope
 
-### Overview
+### 2.1 Overview
 
 <!-- Provide a concise, bulleted list outlining what this artefact delivers and why it matters. -->
 
@@ -50,7 +50,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Core Business Rules
+#### 2.2.3 Core Business Rules
 
 <!-- Enumerate domain rules that apply to this artefact. -->
 
@@ -63,7 +63,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Acceptance Criteria
+### 2.4 Acceptance Criteria
 
 <!-- A verifiable, tabular list of conditions that a Task must satisfy to be considered complete. -->
 
@@ -80,9 +80,9 @@ EXAMPLE:
 
 ---
 
-## Planning & Decomposition
+## 3 Planning & Decomposition
 
-### Dependencies
+### 3.3 Dependencies
 
 <!-- An explicit list of internal or external dependencies that must be resolved before this Plan/Task can be completed. -->
 
@@ -98,14 +98,14 @@ EXAMPLE:
 
 ---
 
-## High-Level Design
+## 4 High-Level Design
 
-### Target Architecture
+### 4.2 Target Architecture
 
 [TODO: Add content for this section]
 
 
-#### Data Models
+#### 4.2.1 Data Models
 
 <!-- The structure of data at a high level, often represented as an Entity-Relationship Diagram. This section defines the core data entities and their relationships before detailing the components that manage them. -->
 
@@ -139,7 +139,7 @@ ENV_VAR ||--|| LOGGER_CONFIG : "overrides"
 [TODO: Add content for this section]
 
 
-#### Components
+#### 4.2.2 Components
 
 <!-- A diagram illustrating the main components and their relationships. The term "component" is used broadly and does not necessarily map to a class; it represents a logical block of functionality. -->
 
@@ -224,7 +224,7 @@ direction LR
 [TODO: Add content for this section]
 
 
-#### Data Flow
+#### 4.2.3 Data Flow
 
 <!-- A diagram showing how data moves between components, with numbered steps to indicate the sequence of actions. -->
 
@@ -259,7 +259,7 @@ TD
 [TODO: Add content for this section]
 
 
-#### Control Flow
+#### 4.2.4 Control Flow
 
 <!-- A diagram showing the sequence of interactions between components. -->
 
@@ -279,14 +279,14 @@ participant User
 [TODO: Add content for this section]
 
 
-#### Integration Points
+#### 4.2.5 Integration Points
 
 <!-- A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections. -->
 
 [TODO: Add content for this section]
 
 
-##### Upstream Integrations
+##### 4.2.5.1 Upstream Integrations
 
 <!-- Defines how this artefact is triggered and what data it receives from other systems. -->
 
@@ -298,7 +298,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-##### Downstream Integrations
+##### 4.2.5.2 Downstream Integrations
 
 <!-- Defines what happens when this artefact completes its work and what data it sends to other systems. -->
 
@@ -310,7 +310,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Exposed API
+#### 4.2.6 Exposed API
 
 <!-- The API surface this component exposes to consumers. -->
 
@@ -332,7 +332,7 @@ paths:
 [TODO: Add content for this section]
 
 
-### Tech Stack & Deployment
+### 4.3 Tech Stack & Deployment
 
 <!-- A list of the primary technologies, frameworks, or libraries foundational to this artefact, along with the deployment strategy. -->
 
@@ -345,14 +345,14 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Non-Functional Requirements
+### 4.4 Non-Functional Requirements
 
 <!-- A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored. -->
 
 [TODO: Add content for this section]
 
 
-#### Performance
+#### 4.4.1 Performance
 
 <!-- Defines the performance-related NFRs, such as response times, throughput, and resource utilization, in a prioritized table. -->
 
@@ -366,7 +366,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Security
+#### 4.4.2 Security
 
 <!-- Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards, in a prioritized table. -->
 
@@ -380,7 +380,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Reliability
+#### 4.4.3 Reliability
 
 <!-- Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery, in a prioritized table. -->
 
@@ -394,7 +394,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Permission Model
+#### 4.4.4 Permission Model
 
 <!-- Defines the access control rules, user roles, and permissions for the system. This section should clearly outline who can access what and perform which actions. The mechanism for assigning these roles in each environment should be detailed in the `7.2 Configuration` section. -->
 
@@ -411,14 +411,14 @@ EXAMPLE:
 
 ---
 
-## Maintenance and Monitoring
+## 5 Maintenance and Monitoring
 
-### Target Maintenance and Monitoring
+### 5.2 Target Maintenance and Monitoring
 
 [TODO: Add content for this section]
 
 
-#### Error Handling
+#### 5.2.1 Error Handling
 
 <!-- The strategy for managing and communicating errors, often best represented as a table detailing the condition, trigger, action, and feedback. -->
 
@@ -433,7 +433,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Logging & Monitoring
+#### 5.2.2 Logging & Monitoring
 
 <!-- The strategy for system observability. -->
 
@@ -448,16 +448,16 @@ EXAMPLE:
 
 ---
 
-## Implementation Guidance
+## 6 Implementation Guidance
 
-### Implementation Plan
+### 6.1 Implementation Plan
 
 <!-- A detailed, step-by-step log of the implementation process for a Task. -->
 
 [TODO: Add content for this section]
 
 
-### Implementation Log / Steps
+### 6.1 Implementation Log / Steps
 
 <!-- A detailed, step-by-step log of the implementation process for a Task. This is often updated as the task progresses. -->
 
@@ -471,17 +471,17 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-#### Initial Situation
+#### 6.1.1 Initial Situation
 
 [TODO: Add content for this section]
 
 
-#### Files Change Log
+#### 6.1.2 Files Change Log
 
 [TODO: Add content for this section]
 
 
-### Prompts (LLM reuse)
+### 6.2 Prompts (LLM reuse)
 
 <!-- A collection of prompts that can be used with an LLM to assist in the implementation. -->
 
@@ -497,9 +497,9 @@ export const add = (a: number, b: number): number => a + b;
 
 ---
 
-## Quality & Operations
+## 7 Quality & Operations
 
-### Testing Strategy / Requirements
+### 7.1 Testing Strategy / Requirements
 
 <!-- The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria. -->
 
@@ -514,7 +514,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Configuration
+### 7.2 Configuration
 
 <!-- How the system is configured in different environments (e.g., production, development). -->
 
@@ -529,7 +529,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Alerting & Response
+### 7.3 Alerting & Response
 
 <!-- How to respond to alerts and operational logs, especially errors, and how they are integrated with alerting systems. -->
 
@@ -544,7 +544,7 @@ EXAMPLE:
 [TODO: Add content for this section]
 
 
-### Local Test Commands
+### 7.5 Local Test Commands
 
 <!-- CLI commands to run tests locally. -->
 
@@ -553,9 +553,9 @@ EXAMPLE:
 
 ---
 
-## Reference
+## 8 Reference
 
-### Appendices/Glossary
+### 8.1 Appendices/Glossary
 
 <!-- A place for glossaries, appendices, or links to external resources. -->
 
