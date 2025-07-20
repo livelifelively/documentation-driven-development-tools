@@ -4,6 +4,9 @@
   "description": "A collection of useful tools for my projects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "ddd": "dist/src/cli/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
@@ -19,10 +22,12 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.14",
+    "@types/yargs": "^17.0.33",
     "jest": "^30.0.4",
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "yargs": "^17.7.2"
   },
   "dependencies": {
     "glob": "^11.0.3",
