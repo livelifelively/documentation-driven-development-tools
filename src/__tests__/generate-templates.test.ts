@@ -50,6 +50,6 @@ describe('generate-templates script', () => {
     (generatePlanTemplate as jest.Mock).mockReturnValue('plan-template');
     (generateTaskTemplate as jest.Mock).mockReturnValue('task-template');
     run();
-    expect(fs.mkdirSync).toHaveBeenCalledTimes(2);
+    expect(fs.mkdirSync).toHaveBeenCalledTimes(4);
   });
 });

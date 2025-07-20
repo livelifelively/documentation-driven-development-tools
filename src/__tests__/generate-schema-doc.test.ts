@@ -50,6 +50,6 @@ describe('generate-schema-doc script', () => {
     (generateHumanSchemaDocumentation as jest.Mock).mockReturnValue('human-doc');
     (generateMachineSchemaDocumentation as jest.Mock).mockReturnValue('machine-doc');
     run();
-    expect(fs.mkdirSync).toHaveBeenCalledTimes(2);
+    expect(fs.mkdirSync).toHaveBeenCalledTimes(4);
   });
 });
