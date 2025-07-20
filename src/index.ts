@@ -7,6 +7,7 @@ import family6 from './ddd-schema-json/6-implementation-guidance.json';
 import family7 from './ddd-schema-json/7-quality-operations.json';
 import family8 from './ddd-schema-json/8-reference.json';
 import contextExamples from './ddd-schema-json/context-examples.json';
+import { TODO_PLACEHOLDER_TEXT } from './config';
 import {
   DocumentStructures,
   Section,
@@ -638,15 +639,16 @@ export function generatePlanTemplate(): string {
           const renderedContent = convertFamilyExample(planExample.content as ContentElement[], 'human');
           renderedContent.forEach((element) => {
             const exampleText = renderContent(element);
-            // Escape any --> sequences in the example to avoid breaking the comment
-            const escapedText = exampleText.replace(/-->/g, '--&gt;');
+            // Only escape --> sequences in non-code content to avoid breaking HTML comments
+            // Preserve Mermaid diagram syntax and other code block content
+            const escapedText = element.type === 'codeblock' ? exampleText : exampleText.replace(/-->/g, '--&gt;');
             sections.push(escapedText);
           });
           sections.push('-->');
         }
       }
 
-      sections.push('[TODO: Add content for this section]\n');
+      sections.push(`${TODO_PLACEHOLDER_TEXT}\n`);
       sections.push('');
     });
 
@@ -694,15 +696,16 @@ export function generateTaskTemplate(): string {
           const renderedContent = convertFamilyExample(taskExample.content as ContentElement[], 'human');
           renderedContent.forEach((element) => {
             const exampleText = renderContent(element);
-            // Escape any --> sequences in the example to avoid breaking the comment
-            const escapedText = exampleText.replace(/-->/g, '--&gt;');
+            // Only escape --> sequences in non-code content to avoid breaking HTML comments
+            // Preserve Mermaid diagram syntax and other code block content
+            const escapedText = element.type === 'codeblock' ? exampleText : exampleText.replace(/-->/g, '--&gt;');
             sections.push(escapedText);
           });
           sections.push('-->');
         }
       }
 
-      sections.push('[TODO: Add content for this section]\n');
+      sections.push(`${TODO_PLACEHOLDER_TEXT}\n`);
       sections.push('');
     });
 

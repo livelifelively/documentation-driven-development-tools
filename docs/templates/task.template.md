@@ -18,7 +18,7 @@ EXAMPLE:
 - **Completed:** [YYYY-MM-DD HH:MM]
 - **Last Updated:** [YYYY-MM-DD HH:MM]
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 1.3 Priority Drivers
@@ -30,7 +30,7 @@ EXAMPLE:
 - CBP-Break_Block_Revenue_Legal
 - TEC-Prod_Stability_Blocker
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -47,7 +47,7 @@ EXAMPLE:
 - **Key Capability**: Ensures both operational errors and business events are captured, categorized, and routed to monitoring tools.
 - **Business Value**: Enables proactive issue resolution and performance analysis.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.2.3 Core Business Rules
@@ -60,7 +60,7 @@ EXAMPLE:
 - Any log with a `FATAL` level must trigger an immediate PagerDuty alert.
 - Log retention period is 90 days for `INFO` and 1 year for `ERROR` and above.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 2.4 Acceptance Criteria
@@ -75,7 +75,7 @@ EXAMPLE:
 | AC-2 | `FATAL` level logs trigger a PagerDuty alert. | `alerting.int.test` |
 | AC-3 | Log output is valid JSON. | `formatter.test.ts` |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -93,7 +93,7 @@ EXAMPLE:
 | D-1 | `shared-ui-library` v2.1+ | External | ❌ Blocked | `p1-frontend` | Awaiting release from Platform team. |
 | D-2 | Plan `p2-user-profiles` | Internal | ✅ Complete | `p3-reporting` | User schema is now finalized. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -102,7 +102,7 @@ EXAMPLE:
 
 ### 4.2 Target Architecture
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.1 Data Models
@@ -136,7 +136,7 @@ ENV_VAR {
 ENV_VAR ||--|| LOGGER_CONFIG : "overrides"
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.2 Components
@@ -212,16 +212,16 @@ direction LR
 
     %% Associations / Composition
     CompositeLogger o-- ClientLogger : delegates
-    LoggerFactory --&gt; LoggerConfig
-    LoggerFactory --&gt; ClientLogger : returns
-    LoggerFactory --&gt; TransportConfig
-    AppErrorBoundary --&gt; ClientLogger : uses
-    AppErrorBoundary --&gt; SingleCallGuard : guards
-    BuildLogPayload --&gt; LogPayload : returns
+    LoggerFactory --> LoggerConfig
+    LoggerFactory --> ClientLogger : returns
+    LoggerFactory --> TransportConfig
+    AppErrorBoundary --> ClientLogger : uses
+    AppErrorBoundary --> SingleCallGuard : guards
+    BuildLogPayload --> LogPayload : returns
     AppErrorBoundary ..> BuildLogPayload : builds
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.3 Data Flow
@@ -250,13 +250,13 @@ TD
         E[Component D]
     end
 
-    A -- "1 - Invoke with" --&gt; B
-    B -- "2 - Process" --&gt; C
-    C -- "3 - Write to" --&gt; D
-    C -- "4 - Return" --&gt; E
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.4 Control Flow
@@ -272,18 +272,18 @@ participant User
     participant AuthSvc
     User->>API: POST /login
     API->>AuthSvc: ValidateCredentials(user, pass)
-    AuthSvc--&gt;>API: JWT
-    API--&gt;>User: { token: "..." }
+    AuthSvc-->>API: JWT
+    API-->>User: { token: "..." }
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.5 Integration Points
 
 <!-- A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.2.5.1 Upstream Integrations
@@ -295,7 +295,7 @@ EXAMPLE:
 - **Trigger**: User action via UI button click.
 - **Input Data**: Receives `documentId` and `userId` from the client.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.2.5.2 Downstream Integrations
@@ -307,7 +307,7 @@ EXAMPLE:
 - **Completion Trigger**: Emits a `DOCUMENT_PROCESSED` event to the message queue.
 - **Output Data**: The event payload includes `documentId` and `status: 'COMPLETED'`.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.6 Exposed API
@@ -329,7 +329,7 @@ paths:
             type: string
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.3 Tech Stack & Deployment
@@ -342,14 +342,14 @@ EXAMPLE:
 - **Framework**: Next.js
 - **Deployment**: Vercel
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.4 Non-Functional Requirements
 
 <!-- A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.1 Performance
@@ -363,7 +363,7 @@ EXAMPLE:
 | PERF-01 | API endpoints must respond in < 200ms (95th percentile). | 🟥 High |
 | PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.2 Security
@@ -377,7 +377,7 @@ EXAMPLE:
 | SEC-01 | All sensitive user data must be encrypted at rest using AES-256. | 🟥 High |
 | SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.3 Reliability
@@ -391,7 +391,7 @@ EXAMPLE:
 | REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High |
 | REL-02 | All database transactions must be atomic and durable. | 🟥 High |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.4 Permission Model
@@ -406,7 +406,7 @@ EXAMPLE:
 | **Analyst** | - Read/Write access to assigned documents<br>- Cannot delete | The primary user role. |
 | **Viewer** | - Read-only access to completed documents | For stakeholders or external users. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -415,7 +415,7 @@ EXAMPLE:
 
 ### 5.2 Target Maintenance and Monitoring
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.2.1 Error Handling
@@ -430,7 +430,7 @@ EXAMPLE:
 | **Schema Validation Error** | A document violates the canonical schema. | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].` |
 | **API/Network Error** | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.2.2 Logging & Monitoring
@@ -443,7 +443,7 @@ EXAMPLE:
 - **Logs**: Structured JSON logs sent to stdout for collection by Fluentd.
 - **Tracing**: OpenTelemetry SDK will be used for distributed tracing.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -454,7 +454,7 @@ EXAMPLE:
 
 <!-- A detailed, step-by-step log of the implementation process for a Task. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 6.1 Implementation Log / Steps
@@ -468,17 +468,17 @@ EXAMPLE:
 - [ ] Implement `HttpTransport`.
 - [ ] Write unit tests for transports.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 6.1.1 Initial Situation
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 6.1.2 Files Change Log
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 6.2 Prompts (LLM reuse)
@@ -492,7 +492,7 @@ Generate a Jest test for this function:
 export const add = (a: number, b: number): number => a + b;
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -511,7 +511,7 @@ EXAMPLE:
 | 2 | Prod logger fan-out to console + HTTP, minLevel respected | Unit | Jest + fetch-mock + console spy | `NODE_ENV='production'` |
 | 7 | Successful POST to `/api/log/client` | Integration | Jest + MSW | Assert JSON body and 2xx handling |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.2 Configuration
@@ -526,7 +526,7 @@ EXAMPLE:
 | `logLevel` | (All) | `ddd.config.json` | `DDD_LOG_LEVEL` (Environment Variable) | `info` (default), `debug`, `warn`, `error`. Controls logging verbosity. |
 | `NODE_ENV` | (All) | Environment Variable | Not overrideable | `development` or `production`. Determines the operational mode. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.3 Alerting & Response
@@ -541,14 +541,14 @@ EXAMPLE:
 | **External API Non-2xx Response** | `p1-analyzer` | Abort the `git commit` with a non-zero exit code. Log the API's error response to the console. | 💡 Not Started |
 | **CI/CD Pipeline Failure** | All | Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface. | 💡 Not Started |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.5 Local Test Commands
 
 <!-- CLI commands to run tests locally. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -565,7 +565,7 @@ EXAMPLE:
 - **PII**: Personally Identifiable Information.
 - **SSO**: Single Sign-On.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---

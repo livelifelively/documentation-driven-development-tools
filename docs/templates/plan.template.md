@@ -11,7 +11,7 @@ EXAMPLE:
 - **Created:** [YYYY-MM-DD HH:MM]
 - **Last Updated:** [YYYY-MM-DD HH:MM]
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 1.3 Priority Drivers
@@ -23,7 +23,7 @@ EXAMPLE:
 - CBP-Break_Block_Revenue_Legal
 - TEC-Prod_Stability_Blocker
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -40,7 +40,7 @@ EXAMPLE:
 - **Key Capability**: Ensures both operational errors and business events are captured, categorized, and routed to monitoring tools.
 - **Business Value**: Enables proactive issue resolution and performance analysis.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 2.2 Business Context
@@ -51,14 +51,14 @@ EXAMPLE:
 EXAMPLE:
 Currently, pipeline failures are opaque, requiring developers to manually inspect logs, which slows down resolution time. This new logging system will provide structured, queryable data to our analytics dashboard, allowing support staff to diagnose issues without engineering intervention.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.2.1 User Journeys
 
 <!-- A container for one or more `Journey` sections. This section should provide a complete overview of all primary user paths and interactions related to the document. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 2.2.1.1 Journey: [Name]
@@ -72,8 +72,8 @@ EXAMPLE:
 This journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.
 ```mermaid
 graph
-A("Start") --&gt; B["Selects Document"];
-B --&gt; C("Completes Pipeline");
+A("Start") --> B["Selects Document"];
+B --> C("Completes Pipeline");
 ```
 ##### Journey: DevOps Engineer Monitors Pipeline Health
 
@@ -83,11 +83,11 @@ sequenceDiagram
 participant Pipeline
 participant Logger
 participant DevOps
-Pipeline--&gt;>Logger: Log "Processing Failed" (ERROR)
+Pipeline-->>Logger: Log "Processing Failed" (ERROR)
 DevOps->>Logger: Views and analyzes error
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.2.2 User Personas
@@ -101,7 +101,7 @@ EXAMPLE:
 | **DevOps Engineer** | Monitor system health and diagnose infrastructure issues. |
 | **Support Analyst** | Triage user-reported errors and identify root cause. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.2.3 Core Business Rules
@@ -114,7 +114,7 @@ EXAMPLE:
 - Any log with a `FATAL` level must trigger an immediate PagerDuty alert.
 - Log retention period is 90 days for `INFO` and 1 year for `ERROR` and above.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.2.4 User Stories
@@ -126,7 +126,7 @@ EXAMPLE:
 - As a DevOps Engineer, I want to receive a real-time alert when a critical error occurs, so that I can immediately begin troubleshooting.
 - As a Support Analyst, I want to filter logs by user ID, so that I can quickly investigate user-reported issues.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 2.3 Success Criteria
@@ -139,14 +139,14 @@ EXAMPLE:
 - The central dashboard can successfully ingest and display logs from all pipeline stages.
 - A comprehensive set of alerts for critical failures is configured and tested.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 2.5 Boundaries & Scope
 
 <!-- A container heading for the explicit definition of the work's boundaries. Its content is in the child sections `2.5.1 In Scope` and `2.5.2 Out of Scope`. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.5.1 In Scope
@@ -159,7 +159,7 @@ EXAMPLE:
 - Manual verification and correction workflows for all pipeline steps.
 - Generation of a document-level knowledge graph.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.5.2 Out of Scope
@@ -172,14 +172,14 @@ EXAMPLE:
 - Processing documents in formats other than PDF.
 - Advanced user management and role-based access control.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 2.6 Core Business Processes
 
 <!-- A container for one or more `Process` sections. This section details the key, step-by-step business workflows that the Plan implements or affects. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 2.6.1 Process: [Name]
@@ -197,7 +197,7 @@ EXAMPLE:
 - 3. Analyst compares the two and makes corrections to the text.
 - 4. Analyst approves the corrected text, advancing the document to the "Chunking" state.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -215,7 +215,7 @@ EXAMPLE:
 | P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
 | T1 | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 3.2 Backlog / Icebox
@@ -227,7 +227,7 @@ EXAMPLE:
 - **Reporting Plan**: Deferred to Q4 due to dependency on new analytics service.
 - **Real-time Collaboration Features**: Moved to Icebox as it is outside the scope of the current MVP.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 3.3 Dependencies
@@ -241,7 +241,7 @@ EXAMPLE:
 | D-1 | `shared-ui-library` v2.1+ | External | ❌ Blocked | `p1-frontend` | Awaiting release from Platform team. |
 | D-2 | Plan `p2-user-profiles` | Internal | ✅ Complete | `p3-reporting` | User schema is now finalized. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 3.4 Decomposition Graph
@@ -259,13 +259,13 @@ subgraph Plan: User Authentication
         T3["Task: Add API endpoint"]
         T4["Task: Write integration tests"]
     end
-    P1 --&gt; T1
-    T1 --&gt; T2
-    T2 --&gt; T3
-    T3 --&gt; T4
+    P1 --> T1
+    T1 --> T2
+    T2 --> T3
+    T3 --> T4
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -281,52 +281,52 @@ EXAMPLE:
 - **Stateless Services**: All backend services should be stateless to allow for horizontal scaling.
 - **Event-Driven**: Communication between major components should be asynchronous and event-driven where possible.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.1 Current Architecture
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.1.1 Data Models
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.1.2 Components
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.1.3 Data Flow
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.1.4 Control Flow
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.1.5 Integration Points
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.1.5.1 Upstream Integrations
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.1.5.2 Downstream Integrations
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.2 Target Architecture
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.1 Data Models
@@ -360,7 +360,7 @@ ENV_VAR {
 ENV_VAR ||--|| LOGGER_CONFIG : "overrides"
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.2 Components
@@ -436,16 +436,16 @@ direction LR
 
     %% Associations / Composition
     CompositeLogger o-- ClientLogger : delegates
-    LoggerFactory --&gt; LoggerConfig
-    LoggerFactory --&gt; ClientLogger : returns
-    LoggerFactory --&gt; TransportConfig
-    AppErrorBoundary --&gt; ClientLogger : uses
-    AppErrorBoundary --&gt; SingleCallGuard : guards
-    BuildLogPayload --&gt; LogPayload : returns
+    LoggerFactory --> LoggerConfig
+    LoggerFactory --> ClientLogger : returns
+    LoggerFactory --> TransportConfig
+    AppErrorBoundary --> ClientLogger : uses
+    AppErrorBoundary --> SingleCallGuard : guards
+    BuildLogPayload --> LogPayload : returns
     AppErrorBoundary ..> BuildLogPayload : builds
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.3 Data Flow
@@ -474,13 +474,13 @@ TD
         E[Component D]
     end
 
-    A -- "1 - Invoke with" --&gt; B
-    B -- "2 - Process" --&gt; C
-    C -- "3 - Write to" --&gt; D
-    C -- "4 - Return" --&gt; E
+    A -- "1 - Invoke with" --> B
+    B -- "2 - Process" --> C
+    C -- "3 - Write to" --> D
+    C -- "4 - Return" --> E
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.4 Control Flow
@@ -496,18 +496,18 @@ participant User
     participant AuthSvc
     User->>API: POST /login
     API->>AuthSvc: ValidateCredentials(user, pass)
-    AuthSvc--&gt;>API: JWT
-    API--&gt;>User: { token: "..." }
+    AuthSvc-->>API: JWT
+    API-->>User: { token: "..." }
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.5 Integration Points
 
 <!-- A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.2.5.1 Upstream Integrations
@@ -519,7 +519,7 @@ EXAMPLE:
 - **Trigger**: User action via UI button click.
 - **Input Data**: Receives `documentId` and `userId` from the client.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ##### 4.2.5.2 Downstream Integrations
@@ -531,7 +531,7 @@ EXAMPLE:
 - **Completion Trigger**: Emits a `DOCUMENT_PROCESSED` event to the message queue.
 - **Output Data**: The event payload includes `documentId` and `status: 'COMPLETED'`.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.2.6 Exposed API
@@ -553,7 +553,7 @@ paths:
             type: string
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.3 Tech Stack & Deployment
@@ -566,14 +566,14 @@ EXAMPLE:
 - **Framework**: Next.js
 - **Deployment**: Vercel
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 4.4 Non-Functional Requirements
 
 <!-- A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.1 Performance
@@ -587,7 +587,7 @@ EXAMPLE:
 | PERF-01 | API endpoints must respond in < 200ms (95th percentile). | 🟥 High |
 | PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.2 Security
@@ -601,7 +601,7 @@ EXAMPLE:
 | SEC-01 | All sensitive user data must be encrypted at rest using AES-256. | 🟥 High |
 | SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.3 Reliability
@@ -615,7 +615,7 @@ EXAMPLE:
 | REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High |
 | REL-02 | All database transactions must be atomic and durable. | 🟥 High |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 4.4.4 Permission Model
@@ -630,7 +630,7 @@ EXAMPLE:
 | **Analyst** | - Read/Write access to assigned documents<br>- Cannot delete | The primary user role. |
 | **Viewer** | - Read-only access to completed documents | For stakeholders or external users. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -639,22 +639,22 @@ EXAMPLE:
 
 ### 5.1 Current Maintenance and Monitoring
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.1.1 Error Handling
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.1.2 Logging & Monitoring
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 5.2 Target Maintenance and Monitoring
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.2.1 Error Handling
@@ -669,7 +669,7 @@ EXAMPLE:
 | **Schema Validation Error** | A document violates the canonical schema. | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].` |
 | **API/Network Error** | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 #### 5.2.2 Logging & Monitoring
@@ -682,7 +682,7 @@ EXAMPLE:
 - **Logs**: Structured JSON logs sent to stdout for collection by Fluentd.
 - **Tracing**: OpenTelemetry SDK will be used for distributed tracing.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -693,7 +693,7 @@ EXAMPLE:
 
 <!-- A detailed, step-by-step log of the implementation process for a Task. -->
 
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 6.2 Prompts (LLM reuse)
@@ -707,7 +707,7 @@ Generate a Jest test for this function:
 export const add = (a: number, b: number): number => a + b;
 ```
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -726,7 +726,7 @@ EXAMPLE:
 | 2 | Prod logger fan-out to console + HTTP, minLevel respected | Unit | Jest + fetch-mock + console spy | `NODE_ENV='production'` |
 | 7 | Successful POST to `/api/log/client` | Integration | Jest + MSW | Assert JSON body and 2xx handling |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.2 Configuration
@@ -741,7 +741,7 @@ EXAMPLE:
 | `logLevel` | (All) | `ddd.config.json` | `DDD_LOG_LEVEL` (Environment Variable) | `info` (default), `debug`, `warn`, `error`. Controls logging verbosity. |
 | `NODE_ENV` | (All) | Environment Variable | Not overrideable | `development` or `production`. Determines the operational mode. |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.3 Alerting & Response
@@ -756,7 +756,7 @@ EXAMPLE:
 | **External API Non-2xx Response** | `p1-analyzer` | Abort the `git commit` with a non-zero exit code. Log the API's error response to the console. | 💡 Not Started |
 | **CI/CD Pipeline Failure** | All | Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface. | 💡 Not Started |
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ### 7.4 Deployment Steps
@@ -769,7 +769,7 @@ EXAMPLE:
 - Update environment variables in Vercel dashboard.
 - Promote the build to production.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
@@ -786,7 +786,7 @@ EXAMPLE:
 - **PII**: Personally Identifiable Information.
 - **SSO**: Single Sign-On.
 -->
-[TODO: Add content for this section]
+TODO__ADD_CONTENT_HERE
 
 
 ---
