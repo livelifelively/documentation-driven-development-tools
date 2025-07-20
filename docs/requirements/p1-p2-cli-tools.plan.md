@@ -173,10 +173,10 @@ sequenceDiagram
 | ID  | Child Plan/Task                                                       | Priority  | Priority Drivers                                                                    | Status         | Depends On | Summary                                          |
 | :-- | :-------------------------------------------------------------------- | :-------- | :---------------------------------------------------------------------------------- | :------------- | :--------- | :----------------------------------------------- |
 | T1  | [CLI Framework Setup](./p1-p2-t1-cli-framework.task.md)               | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | —          | Set up CLI framework and basic command structure |
-| T2  | [Template Generation Commands](./p1-p2-t2-template-commands.task.md)  | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-template plan/task commands        |
-| T3  | [Project Initialization Commands](./p1-p2-t3-init-commands.task.md)   | 🟥 High   | [UX-Noticeable_Friction](/docs/ddd-2.md#ux-noticeable_friction)                     | 💡 Not Started | T1, T2     | Implement ddd-init project scaffolding           |
-| T4  | [Documentation Generation Commands](./p1-p2-t4-docs-commands.task.md) | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-docs generate commands             |
-| T5  | [Basic Validation Commands](./p1-p2-t5-validation-commands.task.md)   | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-lint basic structure validation    |
+| T2  | [Template Generation Commands](./p1-p2-t3-template-commands.task.md)  | 🟥 High   | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-template plan/task commands        |
+| T3  | [Project Initialization Commands](./p1-p2-t4-init-commands.task.md)   | 🟥 High   | [UX-Noticeable_Friction](/docs/ddd-2.md#ux-noticeable_friction)                     | 💡 Not Started | T1, T2     | Implement ddd-init project scaffolding           |
+| T4  | [Documentation Generation Commands](./p1-p2-t5-docs-commands.task.md) | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-docs generate commands             |
+| T5  | [Basic Validation Commands](./p1-p2-t6-validation-commands.task.md)   | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](/docs/ddd-2.md#tec-dev_productivity_enhancement) | 💡 Not Started | T1         | Implement ddd-lint basic structure validation    |
 
 ### 3.2 Backlog / Icebox
 
