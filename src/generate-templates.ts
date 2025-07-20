@@ -1,40 +1,31 @@
 import { generatePlanTemplate, generateTaskTemplate } from './index';
-import * as fs from 'fs';
+import { getConfig } from './config';
+import { writeToMultipleLocations } from './path-utils';
 import * as path from 'path';
 
 export function run() {
   console.log('Generating plan and task templates from JSON source...');
 
   try {
-    // Ensure the output directories exist
-    const srcDir = path.join(__dirname, 'templates');
-    const docsDir = path.join(__dirname, '..', 'docs', 'templates');
-    if (!fs.existsSync(srcDir)) {
-      fs.mkdirSync(srcDir, { recursive: true });
-      console.log(`📁 Created output directory: ${srcDir}`);
-    }
-    if (!fs.existsSync(docsDir)) {
-      fs.mkdirSync(docsDir, { recursive: true });
-      console.log(`📁 Created output directory: ${docsDir}`);
-    }
+    const config = getConfig();
 
     // Generate plan template
     console.log('📋 Generating plan template...');
     const planTemplate = generatePlanTemplate();
-    const planSrcPath = path.join(srcDir, 'plan.template.md');
-    const planDocsPath = path.join(docsDir, 'plan.template.md');
-    fs.writeFileSync(planSrcPath, planTemplate, 'utf8');
-    fs.writeFileSync(planDocsPath, planTemplate, 'utf8');
-    console.log(`✅ Plan template generated at: ${planSrcPath} and ${planDocsPath}`);
+    const planPaths = [
+      path.join(config.templates.outputDirs.src, 'plan.template.md'),
+      path.join(config.templates.outputDirs.docs, 'plan.template.md'),
+    ];
+    writeToMultipleLocations(planTemplate, planPaths, 'Plan template');
 
     // Generate task template
     console.log('📝 Generating task template...');
     const taskTemplate = generateTaskTemplate();
-    const taskSrcPath = path.join(srcDir, 'task.template.md');
-    const taskDocsPath = path.join(docsDir, 'task.template.md');
-    fs.writeFileSync(taskSrcPath, taskTemplate, 'utf8');
-    fs.writeFileSync(taskDocsPath, taskTemplate, 'utf8');
-    console.log(`✅ Task template generated at: ${taskSrcPath} and ${taskDocsPath}`);
+    const taskPaths = [
+      path.join(config.templates.outputDirs.src, 'task.template.md'),
+      path.join(config.templates.outputDirs.docs, 'task.template.md'),
+    ];
+    writeToMultipleLocations(taskTemplate, taskPaths, 'Task template');
 
     console.log('\n🎉 Both templates generated successfully!');
     console.log('📋 Plan template: For creating new plan documents');
