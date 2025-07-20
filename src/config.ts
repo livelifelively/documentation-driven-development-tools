@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-export const TODO_PLACEHOLDER_TEXT = 'TODO__ADD_CONTENT_HERE';
+export const TODO_PLACEHOLDER_TEXT = '_ADD_CONTENT_HERE_';
 
 export interface GenerationConfig {
   schema: {

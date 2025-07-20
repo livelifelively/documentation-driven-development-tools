@@ -4,26 +4,24 @@
 
 ### 1.2 Status
 
-<!-- A section containing key status metrics for the document. The specific fields vary depending on whether it's a Plan or Task, with Tasks providing more detailed implementation tracking. -->
-
 <!--
-EXAMPLE:
-- **Created:** [YYYY-MM-DD HH:MM]
-- **Last Updated:** [YYYY-MM-DD HH:MM]
+Required: Yes
+Description: A section containing key status metrics for the document. The specific fields vary depending on whether it's a Plan or Task, with Tasks providing more detailed implementation tracking.
+Content Format: Markdown `###` heading followed by a bulleted list.
+Notes: Plan: Document lifecycle + strategic phase. Task: Implementation tracking + execution metrics.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 1.3 Priority Drivers
 
-<!-- A bulleted list of stable Driver IDs that justify the priority of the artefact. -->
-
 <!--
-EXAMPLE:
-- CBP-Break_Block_Revenue_Legal
-- TEC-Prod_Stability_Blocker
+Required: Yes
+Description: A bulleted list of stable Driver IDs that justify the priority of the artefact.
+Content Format: Markdown bulleted list.
+Notes: Plan: Business/strategic drivers. Task: Inherited drivers + technical execution drivers.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -32,172 +30,142 @@ TODO__ADD_CONTENT_HERE
 
 ### 2.1 Overview
 
-<!-- Provide a concise, bulleted list outlining what this artefact delivers and why it matters. -->
-
 <!--
-EXAMPLE:
-- **Core Function**: Implements a robust, multi-level logging system for the document processing pipeline.
-- **Key Capability**: Ensures both operational errors and business events are captured, categorized, and routed to monitoring tools.
-- **Business Value**: Enables proactive issue resolution and performance analysis.
+Required: Yes
+Description: Provide a concise, bulleted list outlining what this artefact delivers and why it matters.
+Content Format: Markdown bulleted list.
+Notes: Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 2.2 Business Context
 
-<!-- Provides the narrative and domain-specific details behind the work. If no additional context beyond the parent level is needed, this section can contain `None (inherits from parent)`. -->
-
 <!--
-EXAMPLE:
-Currently, pipeline failures are opaque, requiring developers to manually inspect logs, which slows down resolution time. This new logging system will provide structured, queryable data to our analytics dashboard, allowing support staff to diagnose issues without engineering intervention.
+Required: Yes
+Description: Provides the narrative and domain-specific details behind the work. If no additional context beyond the parent level is needed, this section can contain `None (inherits from parent)`.
+Content Format: Markdown text, with optional `####` sub-headings for child sections (Key Workflows, etc.).
+Notes: Strategic context including User Journeys, User Personas, Core Business Rules.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 2.2.1 User Journeys
 
-<!-- A container for one or more `Journey` sections. This section should provide a complete overview of all primary user paths and interactions related to the document. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A container for one or more `Journey` sections. This section should provide a complete overview of all primary user paths and interactions related to the document.
+Notes: Container for one or more User Journey definitions.
+-->
+_ADD_CONTENT_HERE_
 
 
 ##### 2.2.1.1 Journey: [Name]
 
-<!-- A self-contained description of a single, specific user journey. The `[Name]` in the heading should be replaced with a descriptive title for the journey (e.g., "Analyst Processes a New Document"). This section must include a brief narrative explaining the journey's context and a diagram to visualize the flow. -->
-
 <!--
-EXAMPLE:
-##### Journey: Analyst Processes a New Document
-
-This journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.
-```mermaid
-graph
-A("Start") --> B["Selects Document"];
-B --> C("Completes Pipeline");
-```
-##### Journey: DevOps Engineer Monitors Pipeline Health
-
-This journey describes how a DevOps engineer interacts with the system's outputs to monitor for errors and performance issues.
-```mermaid
-sequenceDiagram
-participant Pipeline
-participant Logger
-participant DevOps
-Pipeline-->>Logger: Log "Processing Failed" (ERROR)
-DevOps->>Logger: Views and analyzes error
-```
+Required: Yes
+Description: A self-contained description of a single, specific user journey. The `[Name]` in the heading should be replaced with a descriptive title for the journey (e.g., "Analyst Processes a New Document"). This section must include a brief narrative explaining the journey's context and a diagram to visualize the flow.
+Content Format: A `#####` heading, a brief narrative description, and a Mermaid `graph` or `sequenceDiagram`. This section can be repeated as many times as necessary to document all relevant journeys.
+Notes: A repeatable section for a single, named user journey, including a description and diagram.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 2.2.2 User Personas
 
-<!-- Table or list of personas involved. -->
-
 <!--
-EXAMPLE:
-| Persona | Goal |
-| :--- | :--- |
-| **DevOps Engineer** | Monitor system health and diagnose infrastructure issues. |
-| **Support Analyst** | Triage user-reported errors and identify root cause. |
+Required: Yes
+Description: Table or list of personas involved.
+Content Format: Markdown table or list.
+Notes: Table or list of personas involved.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 2.2.3 Core Business Rules
 
-<!-- Enumerate domain rules that apply to this artefact. -->
-
 <!--
-EXAMPLE:
-- All personally identifiable information (PII) must be logged at the `DEBUG` level or lower.
-- Any log with a `FATAL` level must trigger an immediate PagerDuty alert.
-- Log retention period is 90 days for `INFO` and 1 year for `ERROR` and above.
+Required: Yes
+Description: Enumerate domain rules that apply to this artefact.
+Content Format: Markdown list.
+Notes: Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 2.2.4 User Stories
 
-<!-- A list of user-centric stories that describe a piece of functionality from the end-user's perspective. This section is most critical for Plans but can be used at the Task level if it provides necessary context. The format "As a [persona], I want [to perform an action], so that I can [achieve a goal]" is recommended. -->
-
 <!--
-EXAMPLE:
-- As a DevOps Engineer, I want to receive a real-time alert when a critical error occurs, so that I can immediately begin troubleshooting.
-- As a Support Analyst, I want to filter logs by user ID, so that I can quickly investigate user-reported issues.
+Required: Yes
+Description: A list of user-centric stories that describe a piece of functionality from the end-user's perspective. This section is most critical for Plans but can be used at the Task level if it provides necessary context. The format "As a [persona], I want [to perform an action], so that I can [achieve a goal]" is recommended.
+Content Format: Markdown list.
+Notes: User-centric goals and workflows relevant to this Plan scope.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 2.3 Success Criteria
 
-<!-- Measurable or binary statements that define when a Plan is considered complete for its current phase. -->
-
 <!--
-EXAMPLE:
-- All pipeline stages emit structured logs for success, failure, and key business events.
-- The central dashboard can successfully ingest and display logs from all pipeline stages.
-- A comprehensive set of alerts for critical failures is configured and tested.
+Required: Yes
+Description: Measurable or binary statements that define when a Plan is considered complete for its current phase.
+Content Format: Markdown list.
+Notes: How we know this Plan's strategic objectives are achieved.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 2.5 Boundaries & Scope
 
-<!-- A container heading for the explicit definition of the work's boundaries. Its content is in the child sections `2.5.1 In Scope` and `2.5.2 Out of Scope`. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A container heading for the explicit definition of the work's boundaries. Its content is in the child sections `2.5.1 In Scope` and `2.5.2 Out of Scope`.
+Notes: Container heading for scope definitions.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 2.5.1 In Scope
 
-<!-- A bulleted list of functionalities, features, or outcomes that are explicitly included in the scope of the artefact. This list serves as a clear commitment of what will be delivered. -->
-
 <!--
-EXAMPLE:
-- Processing of Lok Sabha Q&A documents in PDF format.
-- Manual verification and correction workflows for all pipeline steps.
-- Generation of a document-level knowledge graph.
+Required: Yes
+Description: A bulleted list of functionalities, features, or outcomes that are explicitly included in the scope of the artefact. This list serves as a clear commitment of what will be delivered.
+Content Format: Markdown bulleted list.
+Notes: A bulleted list of items that are explicitly included in this Plan scope.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 2.5.2 Out of Scope
 
-<!-- A bulleted list of functionalities, features, or outcomes that are explicitly excluded from the scope of the artefact. This is critical for managing expectations and preventing future misunderstandings. It is often useful to list items that were considered but deliberately deferred. -->
-
 <!--
-EXAMPLE:
-- Real-time document processing capabilities.
-- Processing documents in formats other than PDF.
-- Advanced user management and role-based access control.
+Required: Yes
+Description: A bulleted list of functionalities, features, or outcomes that are explicitly excluded from the scope of the artefact. This is critical for managing expectations and preventing future misunderstandings. It is often useful to list items that were considered but deliberately deferred.
+Content Format: Markdown bulleted list.
+Notes: A bulleted list of items that are explicitly excluded from this Plan scope.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 2.6 Core Business Processes
 
-<!-- A container for one or more `Process` sections. This section details the key, step-by-step business workflows that the Plan implements or affects. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A container for one or more `Process` sections. This section details the key, step-by-step business workflows that the Plan implements or affects.
+Notes: Container for detailed business process descriptions.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 2.6.1 Process: [Name]
 
-<!-- A self-contained description of a single business process. The `[Name]` should be a descriptive title (e.g., "Document Ingestion and Triage"). This section should detail the participants, goals, and steps of the process. -->
-
 <!--
-EXAMPLE:
-#### Process: Manual Review
-- **Participants**: Data Scientist
-- **Goal**: To validate the accuracy of automated text extraction from a source PDF.
-- **Workflow**:
-- 1. Analyst selects a document in the "Pending Review" state.
-- 2. The UI displays the source PDF alongside the extracted text.
-- 3. Analyst compares the two and makes corrections to the text.
-- 4. Analyst approves the corrected text, advancing the document to the "Chunking" state.
+Required: Yes
+Description: A self-contained description of a single business process. The `[Name]` should be a descriptive title (e.g., "Document Ingestion and Triage"). This section should detail the participants, goals, and steps of the process.
+Content Format: A `####` heading, followed by narrative text, bullet points, or a Mermaid diagram to illustrate the process flow.
+Notes: A repeatable section for a single, named business process.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -206,66 +174,45 @@ TODO__ADD_CONTENT_HERE
 
 ### 3.1 Roadmap (In-Focus Items)
 
-<!-- A table of direct child Plans/Tasks that are currently planned for implementation in the active cycle. -->
-
 <!--
-EXAMPLE:
-| ID | Child Plan/Task | Priority | Priority Drivers | Status | Depends On | Summary |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
-| T1 | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
+Required: Yes
+Description: A table of direct child Plans/Tasks that are currently planned for implementation in the active cycle.
+Content Format: Markdown table.
+Notes: Plan: Lists the immediate child Plans/Tasks being actively worked on.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 3.2 Backlog / Icebox
 
-<!-- A list of direct child Plans/Tasks that have been considered but are not scheduled for the current implementation cycle. This is crucial for capturing scope decisions. -->
-
 <!--
-EXAMPLE:
-- **Reporting Plan**: Deferred to Q4 due to dependency on new analytics service.
-- **Real-time Collaboration Features**: Moved to Icebox as it is outside the scope of the current MVP.
+Required: Yes
+Description: A list of direct child Plans/Tasks that have been considered but are not scheduled for the current implementation cycle. This is crucial for capturing scope decisions.
+Content Format: Markdown list.
+Notes: Plan: Lists considered but de-scoped or deferred child Plans/Tasks.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 3.3 Dependencies
 
-<!-- An explicit list of internal or external dependencies that must be resolved before this Plan/Task can be completed. -->
-
 <!--
-EXAMPLE:
-| ID | Dependency On | Type | Status | Affected Plans/Tasks | Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| D-1 | `shared-ui-library` v2.1+ | External | ❌ Blocked | `p1-frontend` | Awaiting release from Platform team. |
-| D-2 | Plan `p2-user-profiles` | Internal | ✅ Complete | `p3-reporting` | User schema is now finalized. |
+Required: Yes
+Description: An explicit list of internal or external dependencies that must be resolved before this Plan/Task can be completed.
+Content Format: Markdown table or list.
+Notes: Plan: External dependencies affecting this scope. Task: Other Tasks/Plans this implementation depends on.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 3.4 Decomposition Graph
 
-<!-- A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation. -->
-
 <!--
-EXAMPLE:
-```mermaid
-graph
-subgraph Plan: User Authentication
-        P1["Plan: Backend Auth"]
-        T1["Task: Create UI form"]
-        T2["Task: Implement validation"]
-        T3["Task: Add API endpoint"]
-        T4["Task: Write integration tests"]
-    end
-    P1 --> T1
-    T1 --> T2
-    T2 --> T3
-    T3 --> T4
-```
+Required: Yes
+Description: A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation.
+Content Format: Mermaid `graph` diagram.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -274,363 +221,246 @@ TODO__ADD_CONTENT_HERE
 
 ### 4.0 Guiding Principles
 
-<!-- A list of high-level architectural rules, patterns, or constraints that apply to the entire artefact (e.g., "All UI components must be stateless," "All services must be idempotent"). These principles guide all subsequent design decisions. -->
-
 <!--
-EXAMPLE:
-- **Stateless Services**: All backend services should be stateless to allow for horizontal scaling.
-- **Event-Driven**: Communication between major components should be asynchronous and event-driven where possible.
+Required: Yes
+Description: A list of high-level architectural rules, patterns, or constraints that apply to the entire artefact (e.g., "All UI components must be stateless," "All services must be idempotent"). These principles guide all subsequent design decisions.
+Content Format: Markdown list.
+Notes: Plan: High-level architectural rules that govern this scope.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 4.1 Current Architecture
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Existing system analysis for planning. Task: Not applicable (inherits context from Plan).
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.1.1 Data Models
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current entity relationships analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.1.2 Components
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current component relationships analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.1.3 Data Flow
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current data movement analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.1.4 Control Flow
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current system interactions analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.1.5 Integration Points
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current external system boundaries analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 ##### 4.1.5.1 Upstream Integrations
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current systems this scope consumes analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 ##### 4.1.5.2 Downstream Integrations
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current systems this scope serves analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 ### 4.2 Target Architecture
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Proposed system design. Task: Implementation architecture requirements.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.1 Data Models
 
-<!-- The structure of data at a high level, often represented as an Entity-Relationship Diagram. This section defines the core data entities and their relationships before detailing the components that manage them. -->
-
 <!--
-EXAMPLE:
-```mermaid
-erDiagram
-LOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"
-LOG_PAYLOAD {
-  string id PK
-  LogLevel level
-  string message
-  string timeISO8601
-  string stack
-  string componentStack
-  json context
-}
-LOGGER_CONFIG {
-  LogLevel minLevel
-}
-TRANSPORT_CONFIG {
-  string name
-  string endpoint
-}
-ENV_VAR {
-  string NEXT_PUBLIC_LOG_LEVEL PK
-}
-ENV_VAR ||--|| LOGGER_CONFIG : "overrides"
-```
+Required: Yes
+Description: The structure of data at a high level, often represented as an Entity-Relationship Diagram. This section defines the core data entities and their relationships before detailing the components that manage them.
+Content Format: Mermaid `erDiagram`.
+Notes: Plan: Target entity relationships. Task: Implementation data structures.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.2 Components
 
-<!-- A diagram illustrating the main components and their relationships. The term "component" is used broadly and does not necessarily map to a class; it represents a logical block of functionality. -->
-
 <!--
-EXAMPLE:
-```mermaid
-classDiagram
-direction LR
-
-    class LogPayload {
-        <<type>>
-        +LogLevel level
-        +string message
-        +string timeISO8601
-        +string stack
-        +string componentStack
-        +Record<string,any> context
-    }
-
-    class ClientLogger {
-        <<interface>>
-        +log(payload: LogPayload): Promise<void>
-    }
-
-    class ConsoleTransport {
-        +log(payload: LogPayload): Promise<void>
-    }
-
-    class HttpTransport {
-        +string endpoint
-        +log(payload: LogPayload): Promise<void>
-    }
-
-    class CompositeLogger {
-        +ClientLogger[] delegates
-        +log(payload: LogPayload): Promise<void>
-    }
-
-    class LoggerConfig {
-        +LogLevel minLevel
-        +TransportConfig[] transports
-    }
-
-    class TransportConfig {
-        +string name
-        +string endpoint
-    }
-
-    class LoggerFactory {
-        +create(config: LoggerConfig): ClientLogger
-    }
-
-    class BuildLogPayload {
-        <<function>>
-    }
-
-    class SingleCallGuard {
-        <<function>>
-    }
-
-    class AppErrorBoundary {
-        +ClientLogger logger
-        +componentDidCatch(error, info): void
-    }
-
-    %% Inheritance / Implementation
-    ClientLogger <|.. ConsoleTransport
-    ClientLogger <|.. HttpTransport
-    ClientLogger <|.. CompositeLogger
-
-    %% Associations / Composition
-    CompositeLogger o-- ClientLogger : delegates
-    LoggerFactory --> LoggerConfig
-    LoggerFactory --> ClientLogger : returns
-    LoggerFactory --> TransportConfig
-    AppErrorBoundary --> ClientLogger : uses
-    AppErrorBoundary --> SingleCallGuard : guards
-    BuildLogPayload --> LogPayload : returns
-    AppErrorBoundary ..> BuildLogPayload : builds
-```
+Required: Yes
+Description: A diagram illustrating the main components and their relationships. The term "component" is used broadly and does not necessarily map to a class; it represents a logical block of functionality.
+Content Format: Mermaid `classDiagram` diagram.
+Notes: Plan: Target component architecture. Task: Implementation component interfaces.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.3 Data Flow
 
-<!-- A diagram showing how data moves between components, with numbered steps to indicate the sequence of actions. -->
-
 <!--
-EXAMPLE:
-```mermaid
-graph
-TD
-    subgraph "Input"
-        A[Component A]
-    end
-
-    subgraph "System"
-        B(Component B)
-        C(Component C)
-    end
-
-    subgraph "External Resource"
-        D[Database]
-    end
-
-    subgraph "Output"
-        E[Component D]
-    end
-
-    A -- "1 - Invoke with" --> B
-    B -- "2 - Process" --> C
-    C -- "3 - Write to" --> D
-    C -- "4 - Return" --> E
-```
+Required: Yes
+Description: A diagram showing how data moves between components, with numbered steps to indicate the sequence of actions.
+Content Format: Mermaid `graph` diagram. The labels on the connectors should be numbered (e.g., `"1 - Action"`).
+Notes: Plan: Target data movement patterns. Task: Implementation data transformations.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.4 Control Flow
 
-<!-- A diagram showing the sequence of interactions between components. -->
-
 <!--
-EXAMPLE:
-```mermaid
-sequenceDiagram
-participant User
-    participant API
-    participant AuthSvc
-    User->>API: POST /login
-    API->>AuthSvc: ValidateCredentials(user, pass)
-    AuthSvc-->>API: JWT
-    API-->>User: { token: "..." }
-```
+Required: Yes
+Description: A diagram showing the sequence of interactions between components.
+Content Format: Mermaid `sequenceDiagram`.
+Notes: Plan: Target interaction patterns. Task: Implementation operation sequences.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.5 Integration Points
 
-<!-- A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A container for defining all systems, services, or APIs that this component interacts with, broken down into `Upstream` and `Downstream` sections.
+Notes: Plan: Target integration strategy. Task: Implementation integration contracts.
+-->
+_ADD_CONTENT_HERE_
 
 
 ##### 4.2.5.1 Upstream Integrations
 
-<!-- Defines how this artefact is triggered and what data it receives from other systems. -->
-
 <!--
-EXAMPLE:
-- **Trigger**: User action via UI button click.
-- **Input Data**: Receives `documentId` and `userId` from the client.
+Required: Yes
+Description: Defines how this artefact is triggered and what data it receives from other systems.
+Content Format: Markdown list or table.
+Notes: Plan: Target upstream systems. Task: Implementation upstream dependencies.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ##### 4.2.5.2 Downstream Integrations
 
-<!-- Defines what happens when this artefact completes its work and what data it sends to other systems. -->
-
 <!--
-EXAMPLE:
-- **Completion Trigger**: Emits a `DOCUMENT_PROCESSED` event to the message queue.
-- **Output Data**: The event payload includes `documentId` and `status: 'COMPLETED'`.
+Required: Yes
+Description: Defines what happens when this artefact completes its work and what data it sends to other systems.
+Content Format: Markdown list or table.
+Notes: Plan: Target downstream systems. Task: Implementation downstream contracts.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.2.6 Exposed API
 
-<!-- The API surface this component exposes to consumers. -->
-
 <!--
-EXAMPLE:
-```yaml
-paths:
-  /users/{userId}:
-    get:
-      summary: Get user by ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-```
+Required: Yes
+Description: The API surface this component exposes to consumers.
+Content Format: OpenAPI/Swagger snippet, or a Markdown table.
+Notes: Plan: Public API strategy. Task: Specific API implementation specification.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 4.3 Tech Stack & Deployment
 
-<!-- A list of the primary technologies, frameworks, or libraries foundational to this artefact, along with the deployment strategy. -->
-
 <!--
-EXAMPLE:
-- **Language**: TypeScript
-- **Framework**: Next.js
-- **Deployment**: Vercel
+Required: Yes
+Description: A list of the primary technologies, frameworks, or libraries foundational to this artefact, along with the deployment strategy.
+Content Format: Markdown list or table.
+Notes: Plan: Technology choices and deployment strategy. Task: Implementation-specific tech requirements (if relevant).
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 4.4 Non-Functional Requirements
 
-<!-- A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A container for the high-level, non-functional requirements (NFRs) or quality attributes that the system must meet. This section defines what the requirements are, while the `7. Quality & Operations` family describes how they will be tested and monitored.
+Notes: Plan: Quality attributes strategy. Task: Implementation-specific NFR targets.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 4.4.1 Performance
 
-<!-- Defines the performance-related NFRs, such as response times, throughput, and resource utilization, in a prioritized table. -->
-
 <!--
-EXAMPLE:
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| PERF-01 | API endpoints must respond in < 200ms (95th percentile). | 🟥 High |
-| PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
+Required: Yes
+Description: Defines the performance-related NFRs, such as response times, throughput, and resource utilization, in a prioritized table.
+Content Format: Markdown table.
+Notes: Plan: Performance strategy. Task: Specific performance targets.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.4.2 Security
 
-<!-- Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards, in a prioritized table. -->
-
 <!--
-EXAMPLE:
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| SEC-01 | All sensitive user data must be encrypted at rest using AES-256. | 🟥 High |
-| SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High |
+Required: Yes
+Description: Defines the security-related NFRs, such as data encryption, access control, and vulnerability standards, in a prioritized table.
+Content Format: Markdown table.
+Notes: Plan: Security approach. Task: Implementation security requirements.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.4.3 Reliability
 
-<!-- Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery, in a prioritized table. -->
-
 <!--
-EXAMPLE:
-| ID | Requirement | Priority |
-| :--- | :--- | :--- |
-| REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High |
-| REL-02 | All database transactions must be atomic and durable. | 🟥 High |
+Required: Yes
+Description: Defines the reliability-related NFRs, such as uptime, data integrity, and disaster recovery, in a prioritized table.
+Content Format: Markdown table.
+Notes: Plan: Reliability strategy. Task: Implementation reliability targets.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 4.4.4 Permission Model
 
-<!-- Defines the access control rules, user roles, and permissions for the system. This section should clearly outline who can access what and perform which actions. The mechanism for assigning these roles in each environment should be detailed in the `7.2 Configuration` section. -->
-
 <!--
-EXAMPLE:
-| Role | Permissions | Notes |
-| :--- | :--- | :--- |
-| **Admin** | - Full CRUD access to all documents<br>- Can assign roles | For system administrators only. |
-| **Analyst** | - Read/Write access to assigned documents<br>- Cannot delete | The primary user role. |
-| **Viewer** | - Read-only access to completed documents | For stakeholders or external users. |
+Required: Yes
+Description: Defines the access control rules, user roles, and permissions for the system. This section should clearly outline who can access what and perform which actions. The mechanism for assigning these roles in each environment should be detailed in the `7.2 Configuration` section.
+Content Format: A Markdown table or bulleted list describing the roles and their associated permissions.
+Notes: Plan: Access control strategy. Task: Implementation-specific permissions (if relevant).
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -639,50 +469,60 @@ TODO__ADD_CONTENT_HERE
 
 ### 5.1 Current Maintenance and Monitoring
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Existing observability analysis for planning. Task: Not applicable (inherits context from Plan).
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 5.1.1 Error Handling
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current error handling analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 5.1.2 Logging & Monitoring
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Current observability analysis. Task: Not applicable.
+-->
+_ADD_CONTENT_HERE_
 
 
 ### 5.2 Target Maintenance and Monitoring
 
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Notes: Plan: Target observability strategy. Task: Implementation requirements.
+-->
+_ADD_CONTENT_HERE_
 
 
 #### 5.2.1 Error Handling
 
-<!-- The strategy for managing and communicating errors, often best represented as a table detailing the condition, trigger, action, and feedback. -->
-
 <!--
-EXAMPLE:
-| Error Type | Trigger | Action | User Feedback |
-| :--- | :--- | :--- | :--- |
-| **File System Error** | Cannot read a required file or directory. | Abort with exit code 1. | `ERROR: Cannot access [path]. Please check permissions.` |
-| **Schema Validation Error** | A document violates the canonical schema. | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].` |
-| **API/Network Error** | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
+Required: Yes
+Description: The strategy for managing and communicating errors, often best represented as a table detailing the condition, trigger, action, and feedback.
+Content Format: Markdown table.
+Notes: Plan: Target error handling strategy. Task: Specific error scenarios and implementation requirements.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 #### 5.2.2 Logging & Monitoring
 
-<!-- The strategy for system observability. -->
-
 <!--
-EXAMPLE:
-- **Metrics**: Prometheus endpoint `/metrics` will be exposed.
-- **Logs**: Structured JSON logs sent to stdout for collection by Fluentd.
-- **Tracing**: OpenTelemetry SDK will be used for distributed tracing.
+Required: Yes
+Description: The strategy for system observability.
+Content Format: Markdown list or table.
+Notes: Plan: Target observability strategy. Task: Specific logging/monitoring implementation requirements.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -691,23 +531,24 @@ TODO__ADD_CONTENT_HERE
 
 ### 6.1 Implementation Plan
 
-<!-- A detailed, step-by-step log of the implementation process for a Task. -->
-
-TODO__ADD_CONTENT_HERE
+<!--
+Required: Yes
+Description: A detailed, step-by-step log of the implementation process for a Task.
+Content Format: Markdown list.
+Notes: Plan: Phased rollout strategy for child Plans/Tasks. Task: Direct implementation approach (if complex).
+-->
+_ADD_CONTENT_HERE_
 
 
 ### 6.2 Prompts (LLM reuse)
 
-<!-- A collection of prompts that can be used with an LLM to assist in the implementation. -->
-
 <!--
-EXAMPLE:
-Generate a Jest test for this function:
-```md
-export const add = (a: number, b: number): number => a + b;
-```
+Required: No
+Description: A collection of prompts that can be used with an LLM to assist in the implementation.
+Content Format: Markdown code blocks.
+Notes: Plan: Strategic prompts for planning. Task: Implementation-specific prompts.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -716,60 +557,46 @@ TODO__ADD_CONTENT_HERE
 
 ### 7.1 Testing Strategy / Requirements
 
-<!-- The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria. -->
-
 <!--
-EXAMPLE:
-| AC | Scenario | Test Type | Tools / Runner | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| 1 | Default dev logger = console only | Unit | Jest + RTL (spy on console) | Set `process.env.NODE_ENV='development'` |
-| 2 | Prod logger fan-out to console + HTTP, minLevel respected | Unit | Jest + fetch-mock + console spy | `NODE_ENV='production'` |
-| 7 | Successful POST to `/api/log/client` | Integration | Jest + MSW | Assert JSON body and 2xx handling |
+Required: Yes
+Description: The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria.
+Content Format: Markdown table.
+Notes: Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 7.2 Configuration
 
-<!-- How the system is configured in different environments (e.g., production, development). -->
-
 <!--
-EXAMPLE:
-| Setting Name | Plan Dependency | Source | Override Method | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| `analyzerApiEndpoint` | `p1-analyzer` | `ddd.config.json` | `DDD_ANALYZER_API_ENDPOINT` (Environment Var) | (Required) The URL of the external service for status reporting. |
-| `logLevel` | (All) | `ddd.config.json` | `DDD_LOG_LEVEL` (Environment Variable) | `info` (default), `debug`, `warn`, `error`. Controls logging verbosity. |
-| `NODE_ENV` | (All) | Environment Variable | Not overrideable | `development` or `production`. Determines the operational mode. |
+Required: Yes
+Description: How the system is configured in different environments (e.g., production, development).
+Content Format: Markdown list or table.
+Notes: Plan: Configuration strategy and approach. Task: Implementation-specific configuration requirements.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 7.3 Alerting & Response
 
-<!-- How to respond to alerts and operational logs, especially errors, and how they are integrated with alerting systems. -->
-
 <!--
-EXAMPLE:
-| Error Condition | Relevant Plans | Response Plan | Status |
-| :--- | :--- | :--- | :--- |
-| **Internal Script Failure** | All | Abort the `git commit` with a non-zero exit code. Print the error stack trace directly to the console. | 💡 Not Started |
-| **External API Non-2xx Response** | `p1-analyzer` | Abort the `git commit` with a non-zero exit code. Log the API's error response to the console. | 💡 Not Started |
-| **CI/CD Pipeline Failure** | All | Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface. | 💡 Not Started |
+Required: Yes
+Description: How to respond to alerts and operational logs, especially errors, and how they are integrated with alerting systems.
+Content Format: Markdown list or table.
+Notes: Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ### 7.4 Deployment Steps
 
-<!-- Any manual steps required to deploy the component. -->
-
 <!--
-EXAMPLE:
-- Run database migrations: `yarn db:migrate`
-- Update environment variables in Vercel dashboard.
-- Promote the build to production.
+Required: Yes
+Description: Any manual steps required to deploy the component.
+Content Format: Markdown list.
+Notes: Plan: Deployment strategy and approach. Task: Not applicable (Tasks don't handle deployment).
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---
@@ -778,15 +605,13 @@ TODO__ADD_CONTENT_HERE
 
 ### 8.1 Appendices/Glossary
 
-<!-- A place for glossaries, appendices, or links to external resources. -->
-
 <!--
-EXAMPLE:
-**Glossary:**
-- **PII**: Personally Identifiable Information.
-- **SSO**: Single Sign-On.
+Required: No
+Description: A place for glossaries, appendices, or links to external resources.
+Content Format: Markdown list or text.
+Notes: Additional information or definitions.
 -->
-TODO__ADD_CONTENT_HERE
+_ADD_CONTENT_HERE_
 
 
 ---

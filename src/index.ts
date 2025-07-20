@@ -624,29 +624,19 @@ export function generatePlanTemplate(): string {
       const heading = '#'.repeat(section.headingLevel);
       sections.push(`${heading} ${section.id} ${section.name}\n`);
 
-      // Add description as comment if available
+      // Add machine-readable instruction comment
+      sections.push(`<!--`);
+      sections.push(`Required: ${section.applicability.plan === 'required' ? 'Yes' : 'No'}`);
       if (section.description) {
-        sections.push(`<!-- ${section.description} -->\n`);
+        sections.push(`Description: ${section.description}`);
       }
-
-      // Add examples as HTML comments
-      if (section.examples && section.examples.length > 0) {
-        // Find plan-specific example or use default
-        const planExample = section.examples.find((ex) => ex.context === 'Plan') || section.examples[0];
-        if (planExample) {
-          sections.push('<!--');
-          sections.push('EXAMPLE:');
-          const renderedContent = convertFamilyExample(planExample.content as ContentElement[], 'human');
-          renderedContent.forEach((element) => {
-            const exampleText = renderContent(element);
-            // Only escape --> sequences in non-code content to avoid breaking HTML comments
-            // Preserve Mermaid diagram syntax and other code block content
-            const escapedText = element.type === 'codeblock' ? exampleText : exampleText.replace(/-->/g, '--&gt;');
-            sections.push(escapedText);
-          });
-          sections.push('-->');
-        }
+      if (section.contentFormat) {
+        sections.push(`Content Format: ${section.contentFormat}`);
       }
+      if (section.notes) {
+        sections.push(`Notes: ${section.notes}`);
+      }
+      sections.push(`-->`);
 
       sections.push(`${TODO_PLACEHOLDER_TEXT}\n`);
       sections.push('');
@@ -681,29 +671,19 @@ export function generateTaskTemplate(): string {
       const heading = '#'.repeat(section.headingLevel);
       sections.push(`${heading} ${section.id} ${section.name}\n`);
 
-      // Add description as comment if available
+      // Add machine-readable instruction comment
+      sections.push(`<!--`);
+      sections.push(`Required: ${section.applicability.task === 'required' ? 'Yes' : 'No'}`);
       if (section.description) {
-        sections.push(`<!-- ${section.description} -->\n`);
+        sections.push(`Description: ${section.description}`);
       }
-
-      // Add examples as HTML comments
-      if (section.examples && section.examples.length > 0) {
-        // Find task-specific example or use default
-        const taskExample = section.examples.find((ex) => ex.context === 'Task') || section.examples[0];
-        if (taskExample) {
-          sections.push('<!--');
-          sections.push('EXAMPLE:');
-          const renderedContent = convertFamilyExample(taskExample.content as ContentElement[], 'human');
-          renderedContent.forEach((element) => {
-            const exampleText = renderContent(element);
-            // Only escape --> sequences in non-code content to avoid breaking HTML comments
-            // Preserve Mermaid diagram syntax and other code block content
-            const escapedText = element.type === 'codeblock' ? exampleText : exampleText.replace(/-->/g, '--&gt;');
-            sections.push(escapedText);
-          });
-          sections.push('-->');
-        }
+      if (section.contentFormat) {
+        sections.push(`Content Format: ${section.contentFormat}`);
       }
+      if (section.notes) {
+        sections.push(`Notes: ${section.notes}`);
+      }
+      sections.push(`-->`);
 
       sections.push(`${TODO_PLACEHOLDER_TEXT}\n`);
       sections.push('');
