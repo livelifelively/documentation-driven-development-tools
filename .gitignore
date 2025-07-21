@@ -137,3 +137,9 @@ dist
 
 # Optional: If you install browsers locally within the project (uncommon)
 # /playwright-browsers/
+
+# Generated schema docs
+/docs/templates/
+/docs/ddd-2.md
+/docs/ddd-2-schema.human.md
+/docs/ddd-2-schema.machine.md
