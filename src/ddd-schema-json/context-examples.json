@@ -19,15 +19,15 @@
     },
     "examples": [
       {
-        "title": "For `p1-p2-t1-user-endpoints.task.md`:",
+        "title": "For `p1-p2.t1-user-endpoints.task.md`:",
         "content": [
           {
             "type": "list",
             "items": [
               "Read `project.plan.md` (broadest strategic context)",
               "Read `p1-backend.plan.md` (backend-specific context)",
-              "Read `p1-p2-api.plan.md` (API-specific context)",
-              "Read `p1-p2-t1-user-endpoints.task.md` (implementation details)"
+              "Read `p1.p2-api.plan.md` (API-specific context)",
+              "Read `p1-p2.t1-user-endpoints.task.md` (implementation details)"
             ],
             "rendering": {
               "renderAsCodeBlockForHuman": false,
@@ -37,14 +37,14 @@
         ]
       },
       {
-        "title": "For `p1-t1-database-setup.task.md`:",
+        "title": "For `p1.t1-database-setup.task.md`:",
         "content": [
           {
             "type": "list",
             "items": [
               "Read `project.plan.md` (strategic context)",
               "Read `p1-backend.plan.md` (backend context)",
-              "Read `p1-t1-database-setup.task.md` (implementation details)"
+              "Read `p1.t1-database-setup.task.md` (implementation details)"
             ],
             "rendering": {
               "renderAsCodeBlockForHuman": false,

@@ -40,7 +40,7 @@
                 ],
                 [
                   "T1",
-                  "[Database Setup](p1-t1-database.task.md)",
+                  "[Database Setup](p1.t1-database-setup.task.md)",
                   "🟧 Medium",
                   "[TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker)",
                   "💡 Not Started",

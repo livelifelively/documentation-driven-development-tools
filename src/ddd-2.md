@@ -347,22 +347,22 @@ This approach ensures that context is inherited and built upon, not repeated. It
 
 To ensure consistency and predictability, all documentation-related files and directories **MUST** follow a standardized naming convention that reflects the Plan/Task hierarchy.
 
-**Pattern for Plans:** `[parent-prefix-]p[id]-[name]`
-**Pattern for Tasks:** `[parent-prefix-]t[id]-[name]`
+**Pattern for Plans:** `[parent-chain].[p{id}-{name}].plan.md`
+**Pattern for Tasks:** `[parent-chain].[t{id}-{name}].task.md`
 
-- **`parent-prefix`**: The full ID of the parent Plan (omitted for top-level Plans)
-- **`p[id]`**: Plan identifier (e.g., `p1`, `p2`)
-- **`t[id]`**: Task identifier (e.g., `t1`, `t2`)
-- **`name`**: A short, descriptive, kebab-case name
+- **`parent-chain`**: Dash-joined list of plan IDs for all ancestors (e.g., `p1-p2`). Omitted for top-level Plans/Tasks.
+- The dot (`.`) separates the parent chain from the current plan/task.
+- The first dash in the right part separates the ID from the name.
+- The extension (`plan.md` or `task.md`) indicates the type.
 
 #### Examples
 
-| Type      | Example                   | File Name                         |
-| :-------- | :------------------------ | :-------------------------------- |
-| Top Plan  | `p1-backend`              | `p1-backend.plan.md`              |
-| Sub Plan  | `p1-p2-api`               | `p1-p2-api.plan.md`               |
-| Plan Task | `p1-t1-database-setup`    | `p1-t1-database-setup.task.md`    |
-| Sub Task  | `p1-p2-t1-user-endpoints` | `p1-p2-t1-user-endpoints.task.md` |
+| Type     | Example Parent Chain | Example Name | File Name                    |
+| -------- | -------------------- | ------------ | ---------------------------- |
+| Top Plan | (none)               | backend      | `p1-backend.plan.md`         |
+| Sub Plan | p1                   | api          | `p1.p2-api.plan.md`          |
+| Sub Plan | p1-p2                | endpoints    | `p1-p2.p3-endpoints.plan.md` |
+| Task     | p1-p2                | endpoints    | `p1-p2.t1-endpoints.task.md` |
 
 This structure ensures that every file is self-describing and its location in the project hierarchy can be determined from its name alone.
 
