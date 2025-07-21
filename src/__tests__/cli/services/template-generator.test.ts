@@ -1,7 +1,7 @@
 import { TemplateGenerator, TemplateRequest } from '../../../cli/services/template-generator';
 import { FileManager } from '../../../cli/services/file-manager';
 import { NamingValidator } from '../../../cli/services/naming-validator';
-import * as templateGenerators from '../../../generate-templates';
+import * as templateGenerators from '../../../';
 
 jest.mock('../../../cli/services/file-manager');
 jest.mock('../../../cli/services/naming-validator');

@@ -1,7 +1,7 @@
 import path from 'path';
 import { FileManager } from './file-manager';
 import { NamingValidator, ValidationResult } from './naming-validator';
-import { generatePlanTemplate, generateTaskTemplate } from '../../generate-templates';
+import { generatePlanTemplate, generateTaskTemplate } from '../../';
 
 export interface TemplateRequest {
   documentType: 'plan' | 'task';

@@ -1,6 +1,5 @@
 import { generatePlanTemplate, generateTaskTemplate } from './index';
 
-export { generatePlanTemplate, generateTaskTemplate };
 import { getConfig } from './config';
 import { writeToMultipleLocations } from './path-utils';
 import * as path from 'path';
