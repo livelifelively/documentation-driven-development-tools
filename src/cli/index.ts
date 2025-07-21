@@ -2,6 +2,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { templateCommand } from './commands/template.js';
 import { helloCommand } from './commands/hello.js';
 
 /**
@@ -23,6 +24,7 @@ async function main() {
     .showHelpOnFail(false, 'Specify --help for available options');
 
   // Register commands
+  cli.command(templateCommand);
   cli.command(helloCommand);
 
   // Parse and execute
