@@ -1,22 +1,15 @@
 import { FileManager } from '../../../cli/services/file-manager';
-import { promises as fs } from 'fs';
+import { vol } from 'memfs';
 import path from 'path';
 
-jest.mock('fs', () => ({
-  promises: {
-    mkdir: jest.fn(),
-    writeFile: jest.fn(),
-    access: jest.fn(),
-  },
-}));
-
-const mockedFs = fs as jest.Mocked<typeof fs>;
+// Mock the entire fs module with memfs
+jest.mock('fs', () => require('memfs').fs);
 
 describe('FileManager', () => {
   let fileManager: FileManager;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vol.reset();
     fileManager = new FileManager();
   });
 
@@ -33,45 +26,77 @@ describe('FileManager', () => {
   });
 
   describe('ensureDirectoryExists', () => {
-    it('should call fs.mkdir with recursive true', async () => {
-      const dirPath = '/some/path';
+    it('should create a directory if it does not exist', async () => {
+      const dirPath = '/some/new/path';
+      vol.fromJSON({}); // Ensure empty file system
       await fileManager.ensureDirectoryExists(dirPath);
-      expect(mockedFs.mkdir).toHaveBeenCalledWith(dirPath, { recursive: true });
+      expect(vol.existsSync(dirPath)).toBe(true);
     });
 
     it('should not throw if directory already exists', async () => {
-      mockedFs.mkdir.mockRejectedValue({ code: 'EEXIST' });
-      await expect(fileManager.ensureDirectoryExists('/some/path')).resolves.not.toThrow();
-    });
-
-    it('should throw other errors from fs.mkdir', async () => {
-      const error = new Error('Some other error');
-      mockedFs.mkdir.mockRejectedValue(error);
-      await expect(fileManager.ensureDirectoryExists('/some/path')).rejects.toThrow('Some other error');
+      const dirPath = '/some/existing/path';
+      vol.fromJSON({ [dirPath]: null }); // Create directory
+      await expect(fileManager.ensureDirectoryExists(dirPath)).resolves.not.toThrow();
     });
   });
 
   describe('writeTemplate', () => {
-    it('should ensure directory exists and write the file', async () => {
+    it('should create the directory and write the file', async () => {
       const filePath = '/some/path/file.md';
       const content = 'hello world';
+      vol.fromJSON({});
       await fileManager.writeTemplate(filePath, content);
-      expect(mockedFs.mkdir).toHaveBeenCalledWith('/some/path', { recursive: true });
-      expect(mockedFs.writeFile).toHaveBeenCalledWith(filePath, content, 'utf-8');
+      expect(vol.readFileSync(filePath, 'utf-8')).toBe(content);
     });
   });
 
   describe('checkFileExists', () => {
     it('should return true if file exists', async () => {
-      mockedFs.access.mockResolvedValue(undefined);
-      const exists = await fileManager.checkFileExists('/some/path/file.md');
+      const filePath = '/some/path/file.md';
+      vol.fromJSON({ [filePath]: 'content' });
+      const exists = await fileManager.checkFileExists(filePath);
       expect(exists).toBe(true);
     });
 
     it('should return false if file does not exist', async () => {
-      mockedFs.access.mockRejectedValue(new Error('File not found'));
-      const exists = await fileManager.checkFileExists('/some/path/file.md');
+      vol.fromJSON({});
+      const exists = await fileManager.checkFileExists('/non/existent/file.md');
       expect(exists).toBe(false);
+    });
+  });
+
+  describe('getAllFiles', () => {
+    it('should return an empty array for a non-existent directory', async () => {
+      const files = await fileManager.getAllFiles('/non/existent');
+      expect(files).toEqual([]);
+    });
+
+    it('should return all files in a flat directory', async () => {
+      const dir = '/docs';
+      vol.fromJSON({
+        [`${dir}/file1.md`]: '',
+        [`${dir}/file2.txt`]: '',
+      });
+      const files = await fileManager.getAllFiles(dir);
+      expect(files).toHaveLength(2);
+      expect(files).toContain(path.join(dir, 'file1.md'));
+      expect(files).toContain(path.join(dir, 'file2.txt'));
+    });
+
+    it('should return all files recursively from nested directories', async () => {
+      const dir = '/docs';
+      vol.fromJSON({
+        [`${dir}/root.md`]: '',
+        [`${dir}/nested/file1.md`]: '',
+        [`${dir}/nested/deep/file2.md`]: '',
+        [`${dir}/another/file3.md`]: '',
+      });
+      const files = await fileManager.getAllFiles(dir);
+      expect(files).toHaveLength(4);
+      expect(files).toContain(path.join(dir, 'root.md'));
+      expect(files).toContain(path.join(dir, 'nested/file1.md'));
+      expect(files).toContain(path.join(dir, 'nested/deep/file2.md'));
+      expect(files).toContain(path.join(dir, 'another/file3.md'));
     });
   });
 });

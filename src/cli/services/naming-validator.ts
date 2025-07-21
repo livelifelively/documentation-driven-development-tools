@@ -1,6 +1,6 @@
 import path from 'path';
-import { promises as fs } from 'fs';
 import { FileManager } from './file-manager';
+import { ConfigManager } from './config-manager';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -9,11 +9,13 @@ export interface ValidationResult {
 
 export class NamingValidator {
   private fileManager: FileManager;
+  private configManager: ConfigManager;
   private static readonly NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
-  private static readonly DDD_FILE_PATTERN = /^(.*)([pt])(\d+)-([^.]+)\.(plan|task)\.md$/;
+  private static readonly DDD_FILE_PATTERN = /^(?:([a-z0-9-]+)-)?([pt])(\d+)-.*/;
 
   constructor() {
     this.fileManager = new FileManager();
+    this.configManager = new ConfigManager();
   }
 
   public validateName(name: string): ValidationResult {
@@ -27,6 +29,7 @@ export class NamingValidator {
   }
 
   public async generateFileName(type: 'plan' | 'task', name: string, parent?: string): Promise<string> {
+    await this.configManager.loadConfig();
     const nextId = await this.getNextAvailableId(type, parent);
     const prefix = parent ? `${parent}-` : '';
     const typePrefix = type === 'plan' ? 'p' : 't';
@@ -36,38 +39,44 @@ export class NamingValidator {
   }
 
   private async getNextAvailableId(type: 'plan' | 'task', parent?: string): Promise<number> {
-    const directory = process.cwd(); // Default to current directory for now
+    const searchDirectory = this.configManager.getRequirementsPath();
     const typePrefix = type === 'plan' ? 'p' : 't';
-    const expectedPrefix = parent ? `${parent}-${typePrefix}` : typePrefix;
 
     try {
-      const files = await fs.readdir(directory);
-      const matchingFiles = files
-        .filter((file) => file.includes(expectedPrefix) && file.endsWith(`.${type}.md`))
+      const files = await this.fileManager.getAllFiles(searchDirectory);
+      const ids = files
         .map((file) => {
-          const match = file.match(NamingValidator.DDD_FILE_PATTERN);
+          const fileName = path.basename(file);
+          const match = fileName.match(NamingValidator.DDD_FILE_PATTERN);
+
           if (!match) return null;
 
-          const [, filePrefix, fileType, fileId] = match;
-          const fullPrefix = filePrefix + fileType;
+          const [, parentName, fileType, fileIdStr] = match;
+          const fileId = parseInt(fileIdStr, 10);
 
-          // Check if this file matches our expected prefix pattern
-          if (fullPrefix === expectedPrefix) {
-            return parseInt(fileId, 10);
+          // If a parent is specified, we only match direct children
+          if (parent) {
+            if (parentName === parent && fileType === typePrefix) {
+              return fileId;
+            }
+          } else {
+            // If no parent, match only top-level files (where parentName is undefined)
+            if (!parentName && fileType === typePrefix) {
+              return fileId;
+            }
           }
           return null;
         })
         .filter((id): id is number => id !== null);
 
-      if (matchingFiles.length === 0) {
-        return 1; // First file of this type/parent combination
+      if (ids.length === 0) {
+        return 1;
       }
 
-      // Return the next available ID
-      return Math.max(...matchingFiles) + 1;
-    } catch (error) {
-      // If directory reading fails, default to 1
-      console.warn(`Warning: Could not read directory ${directory}, defaulting to ID 1`);
+      return Math.max(...ids) + 1;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An unknown error occurred';
+      console.warn(`Warning: Could not process directory ${searchDirectory}, defaulting to ID 1. Error: ${message}`);
       return 1;
     }
   }

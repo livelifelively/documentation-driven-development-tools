@@ -31,4 +31,25 @@ export class FileManager {
       return false;
     }
   }
+
+  public async getAllFiles(dirPath: string): Promise<string[]> {
+    const allFiles: string[] = [];
+    try {
+      const entries = await fs.readdir(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          allFiles.push(...(await this.getAllFiles(fullPath)));
+        } else {
+          allFiles.push(fullPath);
+        }
+      }
+    } catch (error: unknown) {
+      // If the directory doesn't exist, return an empty array.
+      if (error instanceof Error && 'code' in error && error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
+    return allFiles;
+  }
 }

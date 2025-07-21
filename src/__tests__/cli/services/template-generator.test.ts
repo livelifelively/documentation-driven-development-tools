@@ -5,7 +5,7 @@ import * as templateGenerators from '../../../';
 
 jest.mock('../../../cli/services/file-manager');
 jest.mock('../../../cli/services/naming-validator');
-jest.mock('../../../generate-templates');
+jest.mock('../../../');
 
 const mockedTemplateGenerators = templateGenerators as jest.Mocked<typeof templateGenerators>;
 
