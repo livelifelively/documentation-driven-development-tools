@@ -138,9 +138,7 @@ classDiagram
 
     class TemplateGenerator {
         <<service>>
-        +generatePlan(request: TemplateRequest): TemplateResult
-        +generateTask(request: TemplateRequest): TemplateResult
-        -validateRequest(request: TemplateRequest): ValidationResult
+        +generate(request: TemplateRequest): TemplateResult
     }
 
     class NamingValidator {
