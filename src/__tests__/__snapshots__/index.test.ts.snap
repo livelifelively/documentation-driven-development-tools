@@ -57,18 +57,18 @@ The Plan/Task Composable Hierarchy uses a strict protocol for context inheritanc
 
 ### Examples:
 
-For \`p1-p2-t1-user-endpoints.task.md\`:
+For \`p1-p2.t1-user-endpoints.task.md\`:
 
 - Read \`project.plan.md\` (broadest strategic context)
 - Read \`p1-backend.plan.md\` (backend-specific context)
-- Read \`p1-p2-api.plan.md\` (API-specific context)
-- Read \`p1-p2-t1-user-endpoints.task.md\` (implementation details)
+- Read \`p1.p2-api.plan.md\` (API-specific context)
+- Read \`p1-p2.t1-user-endpoints.task.md\` (implementation details)
 
-For \`p1-t1-database-setup.task.md\`:
+For \`p1.t1-database-setup.task.md\`:
 
 - Read \`project.plan.md\` (strategic context)
 - Read \`p1-backend.plan.md\` (backend context)
-- Read \`p1-t1-database-setup.task.md\` (implementation details)
+- Read \`p1.t1-database-setup.task.md\` (implementation details)
 
 This top-down traversal ensures each document receives progressively narrowed, inherited context. Information is never repeated - it flows downward through the hierarchy. Automated tools and LLMs **MUST** enforce this reading order.
 
@@ -372,7 +372,7 @@ This family answers what we are building and in what order. It provides a clear 
 > | ID | Child Plan/Task | Priority | Priority Drivers | Status | Depends On | Summary |
 > | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 > | P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
-> | T1 | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
+> | T1 | [Database Setup](p1.t1-database-setup.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
 
 #### 3.2 Backlog / Icebox
 
@@ -1094,21 +1094,21 @@ The Plan/Task Composable Hierarchy uses a strict protocol for context inheritanc
 
 ### Examples:
 
-For \`p1-p2-t1-user-endpoints.task.md\`:
+For \`p1-p2.t1-user-endpoints.task.md\`:
 
 \`\`\`md
 - Read \`project.plan.md\` (broadest strategic context)
 - Read \`p1-backend.plan.md\` (backend-specific context)
-- Read \`p1-p2-api.plan.md\` (API-specific context)
-- Read \`p1-p2-t1-user-endpoints.task.md\` (implementation details)
+- Read \`p1.p2-api.plan.md\` (API-specific context)
+- Read \`p1-p2.t1-user-endpoints.task.md\` (implementation details)
 \`\`\`
 
-For \`p1-t1-database-setup.task.md\`:
+For \`p1.t1-database-setup.task.md\`:
 
 \`\`\`md
 - Read \`project.plan.md\` (strategic context)
 - Read \`p1-backend.plan.md\` (backend context)
-- Read \`p1-t1-database-setup.task.md\` (implementation details)
+- Read \`p1.t1-database-setup.task.md\` (implementation details)
 \`\`\`
 
 This top-down traversal ensures each document receives progressively narrowed, inherited context. Information is never repeated - it flows downward through the hierarchy. Automated tools and LLMs **MUST** enforce this reading order.
@@ -1444,7 +1444,7 @@ This family answers what we are building and in what order. It provides a clear 
 | ID | Child Plan/Task | Priority | Priority Drivers | Status | Depends On | Summary |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
-| T1 | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
+| T1 | [Database Setup](p1.t1-database-setup.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
 \`\`\`
 
 #### 3.2 Backlog / Icebox

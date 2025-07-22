@@ -39,21 +39,29 @@ const builder: CommandBuilder<{}, Options> = (yargs) =>
       alias: 'd',
       type: 'boolean',
       description: 'Show what would be generated without creating files',
+    })
+    .fail((msg, err) => {
+      // err is the thrown error from the handler
+      if (err) throw err;
+      // msg is the validation error from yargs
+      console.error(msg);
+      process.exit(1);
     });
 
-const handler = async (argv: Arguments<Options>): Promise<void> => {
+export const handler = async (argv: Arguments<Options>, generator?: TemplateGenerator): Promise<void> => {
+  console.log('[DEBUG] process.argv:', process.argv);
   const { type, name, parent, 'output-dir': outputDir, 'dry-run': dryRun } = argv;
 
   const request: TemplateRequest = {
     documentType: type,
     documentName: name,
-    parentPlan: parent,
+    parentPlan: parent === '' ? undefined : parent, // Explicitly set to undefined if parent is an empty string
     outputDirectory: outputDir,
     isDryRun: dryRun,
   };
 
-  const generator = new TemplateGenerator();
-  const result = await generator.generate(request);
+  const templateGenerator = generator || new TemplateGenerator();
+  const result = await templateGenerator.generate(request);
 
   if (result.success) {
     console.log(`✅ Successfully generated ${result.filePath}`);
@@ -66,9 +74,11 @@ const handler = async (argv: Arguments<Options>): Promise<void> => {
       console.log('--- End File Content ---\n');
     }
   } else {
+    const errorMessages = result.errors?.join('\n') || 'Unknown error';
     console.error('❌ Error generating template:');
     result.errors?.forEach((error) => console.error(`- ${error}`));
-    process.exit(1);
+    // Throw an error to ensure the process exits with a failure code for testing
+    throw new Error(errorMessages);
   }
 };
 

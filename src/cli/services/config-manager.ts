@@ -14,28 +14,27 @@ export class ConfigManager {
     },
   };
 
-  private config: DddConfig | null = null;
+  private config: DddConfig = ConfigManager.DEFAULT_CONFIG;
 
-  public async loadConfig(): Promise<void> {
-    const configPath = path.join(process.cwd(), 'ddd.config.json');
+  public async loadConfig(rootDir: string = process.cwd()): Promise<void> {
+    const configPath = path.join(rootDir, 'ddd.config.json');
     try {
       const fileContent = await fs.readFile(configPath, 'utf-8');
       this.config = JSON.parse(fileContent);
     } catch (error: unknown) {
       const isError = error instanceof Error;
       if (isError && 'code' in error && error.code === 'ENOENT') {
-        console.warn('Warning: ddd.config.json not found. Using default settings.');
+        // This is an expected case (no config file), so we just use defaults.
+        this.config = ConfigManager.DEFAULT_CONFIG;
       } else {
         const message = isError ? error.message : 'An unknown error occurred';
         console.warn(`Warning: Could not parse ddd.config.json. Using default settings. Error: ${message}`);
+        this.config = ConfigManager.DEFAULT_CONFIG;
       }
-      this.config = null;
     }
   }
 
   public getRequirementsPath(): string {
-    const path =
-      this.config?.documentation?.requirementsPath ?? ConfigManager.DEFAULT_CONFIG.documentation.requirementsPath;
-    return path;
+    return this.config.documentation.requirementsPath;
   }
 }

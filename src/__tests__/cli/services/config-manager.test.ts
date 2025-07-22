@@ -1,57 +1,81 @@
-import { ConfigManager } from '../../../cli/services/config-manager';
 import { vol } from 'memfs';
-import { promises as fs } from 'fs';
+import { ConfigManager } from '../../../cli/services/config-manager';
 
-// Mock the file system
 jest.mock('fs', () => require('memfs').fs);
+jest.mock('fs/promises', () => require('memfs').fs.promises);
+
+const TEST_DIR = '/test-dir';
 
 describe('ConfigManager', () => {
   beforeEach(() => {
     vol.reset();
+    vol.fromJSON(
+      {
+        'some-other-file.txt': 'hello',
+      },
+      TEST_DIR
+    );
   });
 
-  it('should load the default config if ddd.config.json does not exist', async () => {
+  it('should return the default requirements path if no config file is found', async () => {
     const configManager = new ConfigManager();
-    await configManager.loadConfig();
+    await configManager.loadConfig(TEST_DIR);
     expect(configManager.getRequirementsPath()).toBe('docs/requirements');
   });
 
-  it('should load the path from ddd.config.json if it exists', async () => {
-    const config = {
+  it('should load the requirements path from ddd.config.json if it exists', async () => {
+    const customConfig = {
       documentation: {
-        requirementsPath: 'my-custom-docs',
+        requirementsPath: 'my/custom/docs',
       },
     };
-    // Use a specific path for the test and ensure the CWD is mocked to match
-    const MOCK_CWD = '/app';
-    const CONFIG_PATH = `${MOCK_CWD}/ddd.config.json`;
-    vol.fromJSON({
-      [CONFIG_PATH]: JSON.stringify(config),
-    });
-    jest.spyOn(process, 'cwd').mockReturnValue(MOCK_CWD);
+    vol.fromJSON(
+      {
+        'ddd.config.json': JSON.stringify(customConfig),
+      },
+      TEST_DIR
+    );
 
     const configManager = new ConfigManager();
-    await configManager.loadConfig();
-    expect(configManager.getRequirementsPath()).toBe('my-custom-docs');
+    await configManager.loadConfig(TEST_DIR);
+    expect(configManager.getRequirementsPath()).toBe('my/custom/docs');
   });
 
-  it('should return the default path if ddd.config.json is malformed', async () => {
-    vol.fromJSON({
-      '/ddd.config.json': 'this is not json',
-    });
+  it('should return the default requirements path if the config file is malformed', async () => {
+    vol.fromJSON(
+      {
+        'ddd.config.json': 'this is not json',
+      },
+      TEST_DIR
+    );
+
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     const configManager = new ConfigManager();
-    await configManager.loadConfig();
+    await configManager.loadConfig(TEST_DIR);
+
     expect(configManager.getRequirementsPath()).toBe('docs/requirements');
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Warning: Could not parse ddd.config.json.'));
+
+    consoleWarnSpy.mockRestore();
   });
 
-  it('should handle an empty ddd.config.json file', async () => {
-    vol.fromJSON({
-      '/ddd.config.json': '{}',
-    });
+  it('should use process.cwd() by default if no directory is provided', async () => {
+    const customConfig = {
+      documentation: {
+        requirementsPath: 'cwd/docs',
+      },
+    };
+    // Set up the file in the mocked process.cwd()
+    vol.fromJSON(
+      {
+        'ddd.config.json': JSON.stringify(customConfig),
+      },
+      process.cwd()
+    );
 
     const configManager = new ConfigManager();
-    await configManager.loadConfig();
-    expect(configManager.getRequirementsPath()).toBe('docs/requirements');
+    await configManager.loadConfig(); // No argument
+    expect(configManager.getRequirementsPath()).toBe('cwd/docs');
   });
 });

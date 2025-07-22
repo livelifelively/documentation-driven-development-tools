@@ -1,6 +1,8 @@
 import path from 'path';
 import { FileManager } from './file-manager';
-import { NamingValidator, ValidationResult } from './naming-validator';
+import { NamingValidator } from './naming-validator';
+import { ConfigManager } from './config-manager';
+import { IdProvider } from './id-provider';
 import { generatePlanTemplate, generateTaskTemplate } from '../../';
 
 export interface TemplateRequest {
@@ -22,50 +24,79 @@ export interface TemplateResult {
 export class TemplateGenerator {
   private fileManager: FileManager;
   private namingValidator: NamingValidator;
+  private configManager: ConfigManager;
+  private idProvider: IdProvider;
 
   constructor() {
     this.fileManager = new FileManager();
     this.namingValidator = new NamingValidator();
+    this.configManager = new ConfigManager();
+    this.idProvider = new IdProvider(this.fileManager, this.namingValidator);
   }
 
   public async generate(request: TemplateRequest): Promise<TemplateResult> {
-    const nameValidation = this.namingValidator.validateName(request.documentName);
-    if (!nameValidation.isValid) {
-      return { success: false, errors: [nameValidation.message || 'Invalid name'] };
-    }
-
-    const fileName = await this.namingValidator.generateFileName(
-      request.documentType,
-      request.documentName,
-      request.parentPlan
-    );
-
-    const outputDir = this.fileManager.resolveOutputPath(request.outputDirectory);
-    const conflictValidation = await this.namingValidator.checkNameConflicts(fileName, outputDir);
-    if (!conflictValidation.isValid) {
-      return { success: false, errors: [conflictValidation.message || 'File conflict'] };
-    }
-
-    const content = request.documentType === 'plan' ? generatePlanTemplate() : generateTaskTemplate();
-    const filePath = path.join(outputDir, fileName);
-
-    if (request.isDryRun) {
-      return {
-        success: true,
-        filePath,
-        content,
-        warnings: ['Dry run mode: No files were written.'],
-      };
-    }
-
     try {
+      // 1. Validate the name format
+      const nameValidation = this.namingValidator.validateName(request.documentName);
+      if (!nameValidation.isValid) {
+        return { success: false, errors: [nameValidation.message || 'Invalid name'] };
+      }
+
+      // 2. Load configuration to determine the correct directory
+      await this.configManager.loadConfig(request.outputDirectory);
+      const requirementsDir = this.configManager.getRequirementsPath();
+      const outputDir = this.fileManager.resolveOutputPath(request.outputDirectory);
+      const finalDir = path.join(outputDir, requirementsDir);
+
+      // 3. Handle parent logic
+      let parentChain: string | undefined;
+      if (request.parentPlan) {
+        const parentPath = path.join(finalDir, request.parentPlan);
+        if (!(await this.fileManager.checkFileExists(parentPath))) {
+          throw new Error(`Parent file does not exist: '${request.parentPlan}'`);
+        }
+        parentChain = this.namingValidator.extractIdChainFromParent(request.parentPlan);
+      } else if (request.documentType === 'task') {
+        throw new Error('Tasks must have a parent plan.');
+      }
+
+      // 4. Determine the next available ID by scanning the final directory
+      const { nextPlanId, nextTaskId } = await this.idProvider.getNextAvailableIds(finalDir);
+      const nextId = request.documentType === 'plan' ? nextPlanId : nextTaskId;
+
+      // 5. Generate the pure file name
+      const fileName = this.namingValidator.generateFileName(
+        request.documentType,
+        request.documentName,
+        nextId,
+        parentChain
+      );
+
+      // 6. Check for file conflicts in the final directory
+      const filePath = path.join(finalDir, fileName);
+      if (await this.fileManager.checkFileExists(filePath)) {
+        return { success: false, errors: [`File '${fileName}' already exists in '${finalDir}'.`] };
+      }
+
+      // 7. Generate content and write file (or simulate for dry run)
+      const content = request.documentType === 'plan' ? generatePlanTemplate() : generateTaskTemplate();
+
+      if (request.isDryRun) {
+        return {
+          success: true,
+          filePath,
+          content,
+          warnings: ['Dry run mode: No files were written.'],
+        };
+      }
+
       await this.fileManager.writeTemplate(filePath, content);
       return { success: true, filePath };
     } catch (e) {
-      const error = e as any;
+      const error = e as Error;
       return {
         success: false,
-        errors: [`Failed to write file: ${error.message}`],
+        errors: [`Failed to generate template: ${error.message}`],
       };
     }
   }

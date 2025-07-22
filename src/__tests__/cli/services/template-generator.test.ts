@@ -1,90 +1,211 @@
 import { TemplateGenerator, TemplateRequest } from '../../../cli/services/template-generator';
 import { FileManager } from '../../../cli/services/file-manager';
 import { NamingValidator } from '../../../cli/services/naming-validator';
+import { ConfigManager } from '../../../cli/services/config-manager';
+import { IdProvider } from '../../../cli/services/id-provider';
 import * as templateGenerators from '../../../';
 
+// Mock all dependencies
 jest.mock('../../../cli/services/file-manager');
 jest.mock('../../../cli/services/naming-validator');
-jest.mock('../../../');
+jest.mock('../../../cli/services/config-manager');
+jest.mock('../../../cli/services/id-provider');
+jest.mock('../../../'); // Mocks generatePlanTemplate and generateTaskTemplate
 
-const mockedTemplateGenerators = templateGenerators as jest.Mocked<typeof templateGenerators>;
+const MockedFileManager = FileManager as jest.MockedClass<typeof FileManager>;
+const MockedNamingValidator = NamingValidator as jest.MockedClass<typeof NamingValidator>;
+const MockedConfigManager = ConfigManager as jest.MockedClass<typeof ConfigManager>;
+const MockedIdProvider = IdProvider as jest.MockedClass<typeof IdProvider>;
+const mockedTemplates = templateGenerators as jest.Mocked<typeof templateGenerators>;
 
 describe('TemplateGenerator', () => {
   let generator: TemplateGenerator;
   let fileManager: jest.Mocked<FileManager>;
   let namingValidator: jest.Mocked<NamingValidator>;
+  let configManager: jest.Mocked<ConfigManager>;
+  let idProvider: jest.Mocked<IdProvider>;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-    generator = new TemplateGenerator();
-    // We are manually setting the mocked services, so we can cast to any
-    fileManager = new (FileManager as any)() as jest.Mocked<FileManager>;
-    namingValidator = new (NamingValidator as any)() as jest.Mocked<NamingValidator>;
-    (generator as any).fileManager = fileManager;
-    (generator as any).namingValidator = namingValidator;
-  });
+    // Reset mocks before each test
+    MockedFileManager.mockClear();
+    MockedNamingValidator.mockClear();
+    MockedConfigManager.mockClear();
+    MockedIdProvider.mockClear();
+    mockedTemplates.generatePlanTemplate.mockClear();
+    mockedTemplates.generateTaskTemplate.mockClear();
 
-  const baseRequest: TemplateRequest = {
-    documentType: 'plan',
-    documentName: 'my-plan',
-  };
+    // Instantiate the generator, which will create mocked instances of its dependencies
+    generator = new TemplateGenerator();
+
+    // Get the mocked instances from the generator for individual test configuration
+    fileManager = (generator as any).fileManager;
+    namingValidator = (generator as any).namingValidator;
+    configManager = (generator as any).configManager;
+    idProvider = (generator as any).idProvider;
+
+    // Setup default mock behaviors
+    configManager.getRequirementsPath.mockReturnValue('requirements');
+    fileManager.resolveOutputPath.mockReturnValue('/tmp');
+    namingValidator.validateName.mockReturnValue({ isValid: true });
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 1, nextTaskId: 1 });
+    fileManager.checkFileExists.mockResolvedValue(false); // Default to no file conflicts
+  });
 
   it('should return an error if name validation fails', async () => {
     namingValidator.validateName.mockReturnValue({ isValid: false, message: 'Invalid name' });
-    const result = await generator.generate(baseRequest);
+    const request: TemplateRequest = { documentType: 'plan', documentName: 'Invalid-Name' };
+    const result = await generator.generate(request);
     expect(result.success).toBe(false);
     expect(result.errors).toContain('Invalid name');
   });
 
-  it('should return an error if a file conflict exists', async () => {
-    namingValidator.validateName.mockReturnValue({ isValid: true });
-    namingValidator.generateFileName.mockResolvedValue('p1-my-plan.plan.md');
-    fileManager.resolveOutputPath.mockReturnValue('/tmp');
-    namingValidator.checkNameConflicts.mockResolvedValue({ isValid: false, message: 'File exists' });
-
-    const result = await generator.generate(baseRequest);
+  it('should throw an error if a task is created without a parent', async () => {
+    const request: TemplateRequest = { documentType: 'task', documentName: 'a-task' };
+    const result = await generator.generate(request);
     expect(result.success).toBe(false);
-    expect(result.errors).toContain('File exists');
+    expect(result.errors).toContain('Failed to generate template: Tasks must have a parent plan.');
   });
 
-  it('should generate a plan template successfully', async () => {
-    namingValidator.validateName.mockReturnValue({ isValid: true });
-    namingValidator.generateFileName.mockResolvedValue('p1-my-plan.plan.md');
-    fileManager.resolveOutputPath.mockReturnValue('/tmp');
-    namingValidator.checkNameConflicts.mockResolvedValue({ isValid: true });
-    mockedTemplateGenerators.generatePlanTemplate.mockReturnValue('plan content');
+  it('should throw an error if the parent file does not exist', async () => {
+    fileManager.checkFileExists.mockResolvedValueOnce(false); // The parent file check
+    const request: TemplateRequest = {
+      documentType: 'plan',
+      documentName: 'a-plan',
+      parentPlan: 'non-existent.plan.md',
+    };
+    const result = await generator.generate(request);
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain("Failed to generate template: Parent file does not exist: 'non-existent.plan.md'");
+  });
 
-    const result = await generator.generate(baseRequest);
+  it('should generate a top-level plan successfully', async () => {
+    // Arrange
+    const request: TemplateRequest = { documentType: 'plan', documentName: 'my-plan' };
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 2, nextTaskId: 1 });
+    namingValidator.generateFileName.mockReturnValue('p2-my-plan.plan.md');
+    mockedTemplates.generatePlanTemplate.mockReturnValue('plan content');
+    fileManager.checkFileExists.mockResolvedValue(false); // No conflict
+
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe('/tmp/p1-my-plan.plan.md');
-    expect(fileManager.writeTemplate).toHaveBeenCalledWith('/tmp/p1-my-plan.plan.md', 'plan content');
+    expect(result.filePath).toBe('/tmp/requirements/p2-my-plan.plan.md');
+    expect(idProvider.getNextAvailableIds).toHaveBeenCalledWith('/tmp/requirements');
+    expect(namingValidator.generateFileName).toHaveBeenCalledWith('plan', 'my-plan', 2, undefined);
+    expect(fileManager.writeTemplate).toHaveBeenCalledWith('/tmp/requirements/p2-my-plan.plan.md', 'plan content');
+  });
+
+  it('should generate a sub-task successfully', async () => {
+    // Arrange
+    const request: TemplateRequest = { documentType: 'task', documentName: 'my-task', parentPlan: 'p1-parent.plan.md' };
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 2, nextTaskId: 3 });
+    fileManager.checkFileExists.mockResolvedValueOnce(true); // Parent exists
+    namingValidator.extractIdChainFromParent.mockReturnValue('p1');
+    namingValidator.generateFileName.mockReturnValue('p1.t3-my-task.task.md');
+    mockedTemplates.generateTaskTemplate.mockReturnValue('task content');
+
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(result.filePath).toBe('/tmp/requirements/p1.t3-my-task.task.md');
+    expect(namingValidator.extractIdChainFromParent).toHaveBeenCalledWith('p1-parent.plan.md');
+    expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'my-task', 3, 'p1');
+    expect(fileManager.writeTemplate).toHaveBeenCalledWith('/tmp/requirements/p1.t3-my-task.task.md', 'task content');
   });
 
   it('should perform a dry run correctly', async () => {
-    namingValidator.validateName.mockReturnValue({ isValid: true });
-    namingValidator.generateFileName.mockResolvedValue('p1-my-plan.plan.md');
-    fileManager.resolveOutputPath.mockReturnValue('/tmp');
-    namingValidator.checkNameConflicts.mockResolvedValue({ isValid: true });
-    mockedTemplateGenerators.generatePlanTemplate.mockReturnValue('plan content');
+    // Arrange
+    const request: TemplateRequest = { documentType: 'plan', documentName: 'my-plan', isDryRun: true };
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 1, nextTaskId: 1 });
+    namingValidator.generateFileName.mockReturnValue('p1-my-plan.plan.md');
+    mockedTemplates.generatePlanTemplate.mockReturnValue('plan content');
 
-    const result = await generator.generate({ ...baseRequest, isDryRun: true });
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe('/tmp/p1-my-plan.plan.md');
+    expect(result.filePath).toBe('/tmp/requirements/p1-my-plan.plan.md');
     expect(result.content).toBe('plan content');
     expect(result.warnings).toContain('Dry run mode: No files were written.');
     expect(fileManager.writeTemplate).not.toHaveBeenCalled();
   });
 
+  it('should return an error if the generated file already exists', async () => {
+    // Arrange
+    const request: TemplateRequest = { documentType: 'plan', documentName: 'my-plan' };
+    namingValidator.generateFileName.mockReturnValue('p1-my-plan.plan.md');
+    // This test case has no parent, so checkFileExists is only called once for the conflict check.
+    fileManager.checkFileExists.mockResolvedValue(true);
+
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain("File 'p1-my-plan.plan.md' already exists in '/tmp/requirements'.");
+  });
+
   it('should handle errors during file writing', async () => {
-    namingValidator.validateName.mockReturnValue({ isValid: true });
-    namingValidator.generateFileName.mockResolvedValue('p1-my-plan.plan.md');
-    fileManager.resolveOutputPath.mockReturnValue('/tmp');
-    namingValidator.checkNameConflicts.mockResolvedValue({ isValid: true });
-    mockedTemplateGenerators.generatePlanTemplate.mockReturnValue('plan content');
+    // Arrange
+    const request: TemplateRequest = { documentType: 'plan', documentName: 'my-plan' };
+    namingValidator.generateFileName.mockReturnValue('p1-my-plan.plan.md');
     fileManager.writeTemplate.mockRejectedValue(new Error('Disk full'));
 
-    const result = await generator.generate(baseRequest);
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
     expect(result.success).toBe(false);
-    expect(result.errors).toContain('Failed to write file: Disk full');
+    expect(result.errors).toContain('Failed to generate template: Disk full');
+  });
+
+  it('should generate a sub-task with a multi-level parent', async () => {
+    // Arrange
+    const request: TemplateRequest = {
+      documentType: 'task',
+      documentName: 'my-task',
+      parentPlan: 'p1-p2.p3-parent.plan.md',
+    };
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 4, nextTaskId: 5 });
+    fileManager.checkFileExists.mockResolvedValueOnce(true); // Parent exists
+    namingValidator.extractIdChainFromParent.mockReturnValue('p1-p2-p3');
+    namingValidator.generateFileName.mockReturnValue('p1-p2-p3.t5-my-task.task.md');
+    mockedTemplates.generateTaskTemplate.mockReturnValue('task content');
+
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(namingValidator.extractIdChainFromParent).toHaveBeenCalledWith('p1-p2.p3-parent.plan.md');
+    expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'my-task', 5, 'p1-p2-p3');
+    expect(result.filePath).toBe('/tmp/requirements/p1-p2-p3.t5-my-task.task.md');
+  });
+
+  it('should generate a task with dashes in its name', async () => {
+    // Arrange
+    const request: TemplateRequest = {
+      documentType: 'task',
+      documentName: 'a-task-with-dashes',
+      parentPlan: 'p1-parent.plan.md',
+    };
+    idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 2, nextTaskId: 2 });
+    fileManager.checkFileExists.mockResolvedValueOnce(true); // Parent exists
+    namingValidator.extractIdChainFromParent.mockReturnValue('p1');
+    namingValidator.generateFileName.mockReturnValue('p1.t2-a-task-with-dashes.task.md');
+    mockedTemplates.generateTaskTemplate.mockReturnValue('task content');
+
+    // Act
+    const result = await generator.generate(request);
+
+    // Assert
+    expect(result.success).toBe(true);
+    expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'a-task-with-dashes', 2, 'p1');
+    expect(result.filePath).toBe('/tmp/requirements/p1.t2-a-task-with-dashes.task.md');
   });
 });
