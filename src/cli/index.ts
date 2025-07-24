@@ -5,6 +5,8 @@ import { hideBin } from 'yargs/helpers';
 import { templateCommand } from './commands/template';
 import { helloCommand } from './commands/hello';
 
+import pkg from '../../package.json';
+
 /**
  * Main CLI Application Entry Point
  *
@@ -17,8 +19,7 @@ export async function main(args: string[]) {
     .usage('Usage: $0 <command> [options]')
     .help('h')
     .alias('h', 'help')
-    .version('1.0.0')
-    .demandCommand(1, 'You need at least one command before moving on')
+    .version(pkg.version)
     .strict()
     .recommendCommands()
     .showHelpOnFail(false, 'Specify --help for available options');
