@@ -49,7 +49,6 @@ const builder: CommandBuilder<{}, Options> = (yargs) =>
     });
 
 export const handler = async (argv: Arguments<Options>, generator?: TemplateGenerator): Promise<void> => {
-  console.log('[DEBUG] process.argv:', process.argv);
   const { type, name, parent, 'output-dir': outputDir, 'dry-run': dryRun } = argv;
 
   const request: TemplateRequest = {
