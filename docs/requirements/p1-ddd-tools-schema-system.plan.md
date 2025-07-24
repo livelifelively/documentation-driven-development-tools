@@ -9,8 +9,8 @@
 
 ### 1.3 Priority Drivers
 
-- TEC-Dev_Productivity_Enhancement
-- TEC-Dev_Productivity_Blocker
+- [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)
+- [TEC-Dev_Productivity_Blocker](../ddd-2.md#tec-dev_productivity_blocker)
 
 ---
 
@@ -153,19 +153,17 @@ sequenceDiagram
 
 ### 3.1 Roadmap (In-Focus Items)
 
-| ID  | Child Plan/Task              | Priority  | Priority Drivers                 | Status      | Depends On | Summary                                                       |
-| :-- | :--------------------------- | :-------- | :------------------------------- | :---------- | :--------- | :------------------------------------------------------------ |
-| T1  | Schema Type Definitions      | 🟥 High   | TEC-Dev_Productivity_Enhancement | ✅ Complete | —          | Core TypeScript interfaces for schema families                |
-| T2  | Content Element System       | 🟥 High   | TEC-Dev_Productivity_Enhancement | ✅ Complete | T1         | Structured content with rendering controls                    |
-| T3  | Dual-Mode Rendering          | 🟥 High   | TEC-Dev_Productivity_Enhancement | ✅ Complete | T1, T2     | Human and machine readable output generation                  |
-| T4  | Template Generation          | 🟧 Medium | TEC-Dev_Productivity_Enhancement | ✅ Complete | T1, T3     | Plan and Task template generation with examples               |
-| T5  | Documentation Scripts        | 🟧 Medium | TEC-Dev_Productivity_Enhancement | ✅ Complete | T3, T4     | Automation scripts for schema documentation                   |
-| T6  | Configuration System         | 🟧 Medium | TEC-Dev_Productivity_Enhancement | ✅ Complete | T4, T5     | Configurable paths with environment variable support          |
-| T7  | Current System Documentation | 🟥 High   | TEC-Dev_Productivity_Enhancement | ✅ Complete | T1-T6      | Complete documentation of existing capabilities as foundation |
+| ID  | Child Plan/Task                                                            | Priority  | Priority Drivers                                                                                                                                                                                                                                   | Status         | Depends On                      | Summary                                                                             |
+| :-- | :------------------------------------------------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- | :------------------------------ | :---------------------------------------------------------------------------------- |
+| P2  | [CLI Tools](./p1.p2-cli-tools.plan.md)                                     | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement), [TEC-Dev_Productivity_Blocker](../ddd-2.md#tec-dev_productivity_blocker)                                                                                         | ⏳ In Progress | P1 Schema System, CLI Framework | Provides command-line interface tools to wrap and extend the schema system.         |
+| P4  | [NPM Package Publication](./p1.p4-npm-publication.plan.md)                 | 🟥 High   | [MKT-Launch_Critical](../ddd-2.md#mkt-launch_critical), [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                           | 💡 Not Started | NPM Account, GitHub Secrets     | Defines the strategy for publishing and maintaining the `ddd-tools` package on NPM. |
+| P5  | [Documentation Parser & Linter](./p1.p5-doc-parser.plan.md)                | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement), [TEC-Prod_Stability_Blocker](../ddd-2.md#tec-prod_stability_blocker)                                                                                             | 💡 Not Started | remark, glob                    | A modular, schema-aware parser for extracting structured data from task files.      |
+| T2  | [Refactor Placeholder to Constant](./p1.t2-todo-placeholder-const.task.md) | 🟧 Medium | [TEC-Tech_Debt_Refactor](../ddd-2.md#tec-tech_debt_refactor), [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                     | ✅ Done        | `src/index.ts`                  | Replace the hardcoded placeholder text in template generators with a constant.      |
+| T8  | [File Naming Pattern Change](./p1.t8-file-naming-pattern-change.task.md)   | 🟥 High   | [TEC-Debt_Maintainability](../ddd-2.md#tec-debt_maintainability), [TEC-Testability](../ddd-2.md#tec-testability), [TEC-Dev_FutureProofing](../ddd-2.md#tec-dev_futureproofing), [TEC-Dev_ParsingSimplicity](../ddd-2.md#tec-dev_parsingsimplicity) | ✅ Done        | `ddd-2.md`, `ddd-schema-json`   | Implements a new, parsing-friendly file naming convention for all DDD artefacts.    |
+| T22 | [Schema Generation Scripts](./p1.t22-schema-generation-scripts.task.md)    | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                                                                                   | ✅ Done        | `src/ddd-schema-json/*`         | Documents the core scripts that generate templates and schema docs from JSON.       |
 
 ### 3.2 Backlog / Icebox
 
-- **CLI Tools**: Command-line interface for project initialization and schema validation
 - **Template Customization**: Support for project-specific template variations
 - **Schema Versioning**: Semantic versioning and migration tools for schema evolution
 - **IDE Integration**: VSCode extensions for real-time DDD compliance checking
@@ -181,31 +179,19 @@ sequenceDiagram
 
 ```mermaid
 graph TD
-    subgraph "DDD Schema System"
-        T1["T1: Schema Type Definitions"]
-        T2["T2: Content Element System"]
-        T3["T3: Dual-Mode Rendering"]
-        T4["T4: Template Generation"]
-        T5["T5: Documentation Scripts"]
-        T6["T6: Configuration System"]
-        T7["T7: Current System Documentation"]
+    subgraph "P1: DDD Schema System"
+        direction LR
+        T2["T2: Refactor Placeholder"]
+        T8["T8: File Naming Change"]
+        P5["P5: Doc Parser"]
+        P2["P2: CLI Tools"]
+        P4["P4: NPM Publication"]
     end
 
-    T1 -->|"provides types"| T2
-    T1 -->|"provides types"| T3
-    T2 -->|"enables structured content"| T3
-    T1 -->|"provides schema structure"| T4
-    T3 -->|"provides rendering capability"| T4
-    T3 -->|"provides rendering capability"| T5
-    T4 -->|"provides generation functions"| T5
-    T4 -->|"requires path configuration"| T6
-    T5 -->|"requires path configuration"| T6
-    T1 -->|"documents"| T7
-    T2 -->|"documents"| T7
-    T3 -->|"documents"| T7
-    T4 -->|"documents"| T7
-    T5 -->|"documents"| T7
-    T6 -->|"documents"| T7
+    T2 -- foundational refactor --> P2
+    T8 -- foundational refactor --> P2
+    P5 -- provides parsing API --> P2
+    P2 -- must be complete before --> P4
 ```
 
 ---
@@ -376,7 +362,7 @@ classDiagram
     SchemaDocumentationGenerator --> DualModeRenderer: "uses"
 ```
 
-**System Components:**
+#### 4.1.3 Data Flow
 
 ```mermaid
 graph TB
@@ -514,6 +500,8 @@ sequenceDiagram
 
 #### 4.1.6 Exposed API
 
+<!-- TODO: This section should be expanded to include detailed descriptions, parameters, and return types for each function, similar to a formal API reference. This will be addressed in a future task. -->
+
 **Public Functions (exported from index.ts):**
 
 ```typescript
@@ -531,7 +519,7 @@ export const fullSchema: SchemaFamily[];
 
 ### 4.2 Target Architecture
 
-**Current architecture is the target architecture.** The system is designed for its current scope and implements the intended schema-driven generation approach effectively.
+Not applicable. The system has been implemented, and this document describes the current, stable architecture. There are no planned changes that would require a separate "target" architecture definition.
 
 ### 4.3 Tech Stack & Deployment
 
@@ -612,22 +600,7 @@ export const fullSchema: SchemaFamily[];
 
 ### 6.1 Implementation Plan
 
-**The system was implemented using a phased approach:**
-
-| Phase                                 | Scope / Deliverables                    | Key Artifacts                | Exit Criteria                                   |
-| :------------------------------------ | :-------------------------------------- | :--------------------------- | :---------------------------------------------- |
-| **Phase 1: Core Schema**              | TypeScript types and schema structure   | `types.ts`, core interfaces  | All schema families defined with type safety    |
-| **Phase 2: Content System**           | Content elements and rendering controls | Content element interfaces   | Rich content structures with dual-mode support  |
-| **Phase 3: Rendering Engine**         | Human and machine output generation     | Rendering functions          | Both output modes generate correctly            |
-| **Phase 4: Template Generation**      | Plan and Task template creation         | Template generator functions | Templates include proper examples and structure |
-| **Phase 5: Documentation Automation** | Scripts and build integration           | Generation scripts           | Documentation builds automatically              |
-
-**Current system implementation details:**
-
-1. **Schema Definition**: JSON files created for each information family with complete section definitions
-2. **Type System**: TypeScript interfaces created to ensure compile-time validation
-3. **Rendering Engine**: Flexible rendering system built to support multiple output modes
-4. **Generation Scripts**: Automated scripts created for template and documentation generation
+The implementation of the DDD Schema System is decomposed into the child plans and tasks detailed in the **[3.1 Roadmap (In-Focus Items)](#31-roadmap-in-focus-items)**. Foundational refactoring tasks were completed first, followed by the development of the core CLI, Parser, and NPM publication capabilities.
 
 ### 6.2 Prompts (LLM reuse)
 
@@ -662,9 +635,9 @@ Debug the generation system by:
 | :----------------------------------------------------- | :---------------- | :------------------------- | :------------- |
 | **TypeScript types compile without errors**            | Unit              | TypeScript compiler        | ✅ Complete    |
 | **JSON schema files load correctly**                   | Unit              | Jest + JSON validation     | 💡 Not Started |
-| **Dual-mode rendering produces expected output**       | Unit              | Jest + snapshot testing    | 💡 Not Started |
-| **Template generation includes all required sections** | Integration       | Jest + template validation | 💡 Not Started |
-| **Documentation generation completes successfully**    | Integration       | Jest + file system mocking | 💡 Not Started |
+| **Dual-mode rendering produces expected output**       | Unit              | Jest + snapshot testing    | ✅ Complete    |
+| **Template generation includes all required sections** | Integration       | Jest + template validation | ✅ Complete    |
+| **Documentation generation completes successfully**    | Integration       | Jest + file system mocking | ✅ Complete    |
 | **Generated markdown syntax is valid**                 | Output Validation | Manual review              | ✅ Complete    |
 | **Schema coverage includes all 8 families**            | System            | Automated verification     | ✅ Complete    |
 
