@@ -1,57 +1,154 @@
 # Workflow: Plan Documentation
 
-**Objective:** To create a complete, schema-compliant `*.plan.md` file collaboratively and iteratively, ensuring quality and alignment on strategic direction.
+**Objective:** To collaboratively create a comprehensive `*.plan.md` document that serves as the strategic foundation for a project or a major component, ensuring all business, architectural, and planning requirements are defined before any sub-plans or implementation tasks begin.
 
-**Participants:** Human Developer, AI Assistant
+**Participants:**
 
-**Trigger:** A new high-level initiative or epic is identified. Its initial template is created using the `ddd template plan` command.
+- Human Developer
+- AI Assistant
+
+**Trigger:** A new project, feature, or complex component is initiated that requires strategic planning and architectural design, necessitating the creation of a new `*.plan.md` document.
 
 > **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
 
 ---
 
-## Phase 1: Scaffolding and Strategic Scope
+## Core Principles of a Workflow Document
 
-**Goal:** To establish the plan's strategic purpose, business value, and boundaries.
+A workflow document is not passive documentation; it is an **executable instruction set** for an AI assistant. Every workflow we create must adhere to the following principles:
 
-1.  **AI Assistant's Action**: Populate the following core sections of the plan file:
-    - `1 Meta & Governance` (Status, Priority Drivers)
-    - `2 Business & Scope` (Overview, Business Context, User Journeys, Personas, Success Criteria)
-    - `2.5 Boundaries & Scope` (In Scope, Out of Scope)
-2.  **Checkpoint**: The AI Assistant presents the partially completed document for review.
-3.  **Human's Action**: Review the scaffold. Confirm that the plan's strategic direction, business goals, and overall scope are correct.
-
-**Exit Criteria:** Both parties agree on the strategic goals and scope of the plan.
+- **Single, Prime Objective:** Each workflow must have a single, clearly defined `Objective`.
+- **Defined Trigger:** The specific event that initiates the workflow must be stated.
+- **Clear Participants:** The roles (e.g., Human Developer, AI Assistant) must be listed.
+- **Phased Approach:** The workflow must be broken down into logical phases, each with a clear goal.
+- **Action-Oriented Steps:** Each step must be a clear, actionable instruction for a specific participant.
+- **Checkpoints & Outcomes:** Each phase must conclude with a verifiable checkpoint and a defined outcome or exit criteria.
 
 ---
 
-## Phase 2: Decomposition and Technical Design
+## High-Level Phases
 
-**Goal:** To define the breakdown of work and the high-level technical architecture.
-
-1.  **AI Assistant's Action**: After Pass 1 approval, populate the following critical families:
-    - `3 Planning & Decomposition` (Roadmap, Backlog, Dependencies, Decomposition Graph)
-    - `4 High-Level Design` (Guiding Principles, Target Architecture, NFRs)
-2.  **Checkpoint**: The AI Assistant presents the updated document with the detailed decomposition and design.
-3.  **Human's Action**: Perform a detailed review of the proposed task breakdown and the technical architecture. This is the primary checkpoint for strategic technical decisions.
-
-**Exit Criteria:** The decomposition and high-level design are approved.
+- **Phase 1: Scaffolding and Business Context** - Establish the plan's foundation (Families 1 & 2).
+- **Phase 2: Architectural Design and Decomposition** - Define the technical approach and task breakdown (Families 3 & 4).
+- **Phase 3: Implementation and Operational Planning** - Define maintenance and implementation guidance (Families 5 & 6).
+- **Phase 4: Quality and Testing Strategy** - Define the complete quality and testing plan (Family 7).
+- **Phase 5: Final Review and Approval** - Conduct a final review and add supplementary materials (Family 8 & Finalization).
 
 ---
 
-## Phase 3: Operational Details
+## Phase 1: Scaffolding and Business Context
 
-**Goal:** To finalize the plan with all remaining details required for governance and quality assurance.
+**Goal:** To establish the plan's foundation by defining its purpose, scope, and business drivers, ensuring alignment on _why_ the work is being done. This phase populates the initial sections of the `*.plan.md` document, corresponding to Schema Families 1 and 2.
 
-1.  **AI Assistant's Action**: After Pass 2 approval, populate all remaining applicable families:
-    - `7 Quality & Operations` (Testing Strategy, Configuration, etc.)
-    - `8 Reference` (Glossary, etc.)
-2.  **Checkpoint**: The AI Assistant presents the final, complete draft.
-3.  **Human's Action**: Perform a final review of the entire document.
-4.  **Outcome**: The plan documentation is now considered "complete" and its child tasks can be created and documented.
+1.  **Human's Action: Initiate the Plan**
 
-**Focus Points for AI Assistant:**
+    - Create a new `[parent-chain].[p{id}-{name}].plan.md` file using the official template.
+    - Provide the high-level objective. For example: _"We need a plan for the new NPM publication system."_
 
-- A `plan` focuses on the **why** and the **what**. Defer granular **how** details to the child `task` documents.
-- The `3.1 Roadmap` is the most critical output of a plan, defining the work to be done.
-- Ensure all diagrams in `4 High-Level Design` are strategic and do not contain low-level implementation details.
+2.  **AI Assistant's Action: Draft Initial Sections**
+
+    - Populate the **`1.2 Status`** section with creation and update timestamps.
+    - Based on the objective, draft a first pass of the **`2.1 Overview`**, outlining the core function and business value.
+    - Draft the **`2.5 Boundaries & Scope`** section, proposing clear "In Scope" and "Out of Scope" items to establish the project's boundaries.
+
+3.  **Human's Action: Provide Business Context**
+
+    - Fill in the core business details:
+      - **`2.2 Business Context`**: The narrative explaining the "why."
+      - **`2.2.1 User Journeys`**: Define the key user paths.
+      - **`2.2.2 User Personas`**: Define the target users.
+      - **`2.2.3 Core Business Rules`**: List the critical business constraints.
+      - **`2.2.4 User Stories`**: List the primary user goals.
+
+4.  **AI Assistant's Action: Refine and Define Success**
+
+    - Review the business context provided by the human.
+    - Draft the **`2.3 Success Criteria`**, translating the business goals into measurable success metrics for the plan.
+    - Draft the **`1.3 Priority Drivers`** by selecting the appropriate driver IDs from the master list based on the provided context.
+
+5.  **Checkpoint: Business Alignment Review**
+    - The Human and AI Assistant jointly review all sections from Families 1 and 2.
+
+**Exit Criteria:** All sections within "Meta & Governance" and "Business & Scope" are complete and accurately reflect a shared understanding of the plan's strategic goals and boundaries.
+
+---
+
+## Phase 2: Architectural Design and Decomposition
+
+**Goal:** To iteratively define the decomposition of work and the supporting high-level technical architecture, ensuring they are aligned.
+
+**Core Principle for this Phase:** While the final document places Decomposition (Family 3) before Architecture (Family 4) for readability, the _creation_ of these sections is iterative. The **`3.1 Roadmap`** and the **`4.2 Target Architecture`** (including its sub-sections like Data Models, Components, and Data Flow) are the most consequential outputs of a Plan. These sections are non-negotiable and must be completed in the prescribed formats.
+
+1.  **Human & AI's Action: Iterative Design Loop**
+
+    - **a. Discuss High-Level Architecture:** Before writing, briefly discuss the likely architectural approach.
+    - **b. Draft Architecture (Family 4):** Based on the discussion, the AI drafts the core sections of **`4. High-Level Design`**, including the **`4.4 Non-Functional Requirements`**. This draft establishes the technical foundation.
+    - **c. Draft Decomposition (Family 3):** With the architectural foundation in place, the AI drafts a realistic **`3. Planning & Decomposition`**.
+    - **d. Refine and Align:** The Human and AI review both Family 3 and Family 4 together until they are consistent and stable.
+
+2.  **Checkpoint: Technical Design Review**
+    - The Human and AI Assistant jointly review the final, aligned sections from Families 3 and 4.
+
+**Exit Criteria:** The decomposition and high-level technical design are approved, documented, and mutually consistent.
+
+---
+
+## Phase 3: Implementation and Operational Planning
+
+**Goal:** To define the maintenance, monitoring, and implementation guidance for the project. This phase populates Schema Families 5 and 6.
+
+1.  **AI Assistant's Action: Draft Operational and Implementation Sections**
+
+    - **Family 5 (Maintenance & Monitoring):** Draft the `5.2 Target Maintenance and Monitoring` sections, including Error Handling and Logging strategies.
+    - **Family 6 (Implementation Guidance):** Draft the `6.1 Implementation Plan` if a phased rollout is needed.
+
+2.  **Human's Action: Review and Refine**
+
+    - Review the proposed strategies for monitoring and implementation.
+    - Ensure the plans are robust and feasible.
+
+3.  **Checkpoint: Operational and Implementation Review**
+    - The Human and AI Assistant jointly review and approve all sections from Families 5 and 6.
+
+**Exit Criteria:** All sections within Families 5 and 6 are documented and approved.
+
+---
+
+## Phase 4: Quality and Testing Strategy
+
+**Goal:** To define the complete quality assurance, testing, configuration, and deployment strategy for the project. This phase populates all of Schema Family 7.
+
+1.  **AI Assistant's Action: Draft Quality and Operations Sections**
+
+    - Propose a detailed **`7.1 Testing Strategy / Requirements`**.
+    - Define the **`7.2 Configuration`** approach for different environments.
+    - Outline **`7.3 Alerting & Response`** protocols.
+    - Detail the **`7.4 Deployment Steps`**.
+
+2.  **Human's Action: Review and Approve Quality Plan**
+
+    - Review the testing strategy, configuration, alerting, and deployment plans for completeness and correctness.
+    - This is a critical checkpoint to ensure the project can be delivered and operated with high quality.
+
+3.  **Checkpoint: Quality and Operations Review**
+    - The Human and AI Assistant jointly review and approve all sections from Family 7.
+
+**Exit Criteria:** All sections within Family 7 are documented and approved.
+
+---
+
+## Phase 5: Final Review and Approval
+
+**Goal:** To conduct a final holistic review, add any supplementary reference material, and formally approve the plan.
+
+1.  **AI Assistant's Action: Prepare for Final Review**
+
+    - **Family 8 (Reference):** Add any necessary appendices, glossaries, or links to external resources.
+    - Ensure all other sections are complete, links are working, and formatting is consistent.
+    - Announce that the plan is ready for final approval.
+
+2.  **Human's Action: Final Approval**
+    - Read the finalized `*.plan.md` document from top to bottom.
+    - Give final approval, marking the plan as the official source of truth.
+
+**Outcome:** The plan is approved and work on its child tasks can begin.

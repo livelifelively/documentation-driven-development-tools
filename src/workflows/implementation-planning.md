@@ -1,0 +1,91 @@
+# Workflow: Implementation Planning
+
+**Objective:** To generate a prioritized list of tasks that are ready for implementation by analyzing dependencies across the entire project and calculating an aggregated priority for each task.
+
+**Participants:** Human Developer, AI Assistant
+
+**Trigger:** A developer is ready to begin work on the next set of tasks and requests a prioritized work plan.
+
+> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
+
+---
+
+## Core Principles of a Workflow Document
+
+A workflow document is not passive documentation; it is an **executable instruction set** for an AI assistant. Every workflow we create must adhere to the following principles:
+
+- **Single, Prime Objective:** Each workflow must have a single, clearly defined `Objective`.
+- **Defined Trigger:** The specific event that initiates the workflow must be stated.
+- **Clear Participants:** The roles (e.g., Human Developer, AI Assistant) must be listed.
+- **Phased Approach:** The workflow must be broken down into logical phases, each with a clear goal.
+- **Action-Oriented Steps:** Each step must be a clear, actionable instruction for a specific participant.
+- **Checkpoints & Outcomes:** Each phase must conclude with a verifiable checkpoint and a defined outcome or exit criteria.
+
+---
+
+## High-Level Phases
+
+- **Phase 1: Project-Wide Data Aggregation** - Scan all documentation to build a model of all tasks and their dependencies.
+- **Phase 2: Analysis and Prioritization** - Filter for ready tasks and calculate their aggregated priority.
+- **Phase 3: Report Generation** - Produce a clear, actionable work plan.
+
+---
+
+## Phase 1: Project-Wide Data Aggregation
+
+**Goal:** For the AI Assistant to build a complete model of the project's tasks, plans, dependencies, and priorities.
+
+1.  **Human's Action: Initiate Planning**
+
+    - _"Please generate the implementation plan."_
+
+2.  **AI Assistant's Action: Scan and Model**
+
+    - Recursively scan the project for all `*.plan.md` and `*.task.md` files.
+    - For each file, parse its `Priority`, `Dependencies`, and `Status`.
+    - Build an in-memory graph of the entire project hierarchy and the dependency relationships between all tasks and plans.
+
+3.  **Checkpoint: Aggregation Confirmation**
+    - The AI Assistant confirms it has processed all files.
+    - _"I have scanned all documentation and built a project model. I am ready to analyze the tasks."_
+
+**Exit Criteria:** The AI has a complete, in-memory representation of the project's structure and dependencies.
+
+---
+
+## Phase 2: Analysis and Prioritization
+
+**Goal:** To identify all tasks that are ready for implementation and to calculate a final priority score for them.
+
+1.  **AI Assistant's Action: Dependency Analysis**
+
+    - Traverse the project graph and identify all tasks whose documented dependencies are met (i.e., the dependency tasks are marked as "Complete").
+    - Filter out any tasks that are not in a "Not Started" state.
+
+2.  **AI Assistant's Action: Aggregated Priority Calculation**
+    - For each "ready" task, calculate its aggregated priority.
+    - The priority is determined by combining the task's own priority with the priority of its entire parent chain. For example: `Plan(High).Sub-Plan(Medium).Task(High)`.
+    - Sort the list of ready tasks from highest to lowest aggregated priority.
+
+**Exit Criteria:** The AI has produced a sorted list of tasks that are ready for implementation.
+
+---
+
+## Phase 3: Report Generation
+
+**Goal:** To present the prioritized list of ready tasks in a clear and actionable format.
+
+1.  **AI Assistant's Action: Generate Implementation Plan Report**
+
+    - Create a markdown table with the following columns:
+      - **Aggregated Priority**: The calculated priority string (e.g., `H.M.H`).
+      - **Task**: The name of and a link to the `*.task.md` file.
+      - **Planning Estimate**: The story points for the task.
+      - **Status**: The current status of the task.
+    - Present this table to the human developer.
+
+2.  **Human's Action: Review and Select Work**
+    - Review the prioritized list.
+    - Select the next task(s) to be implemented.
+
+**Outcome:** A clear, data-driven implementation plan is generated, allowing developers to confidently select the most important and unblocked work.
