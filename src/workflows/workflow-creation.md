@@ -21,6 +21,14 @@ A workflow document is not passive documentation; it is an **executable instruct
 
 ---
 
+## High-Level Phases
+
+- **Phase 1: Conception and Objective Setting**
+- **Phase 2: Detailed Phase and Step Design**
+- **Phase 3: Finalization and Standardization**
+
+---
+
 ## Phase 1: Conception and Objective Setting
 
 **Goal:** To define the purpose, scope, and core components of the new workflow.
@@ -30,13 +38,13 @@ A workflow document is not passive documentation; it is an **executable instruct
     - State the need for a new workflow and its intended purpose.
     - _"Let's create a workflow for..."_
 
-2.  **AI Assistant's Action: Draft the Workflow Skeleton**
+2.  **AI Assistant's Action: Propose a Skeleton from a Template**
 
-    - Based on the proposal, create a draft of the new workflow's header and core principles. This includes:
-      - `Objective`
-      - `Participants`
-      - `Trigger`
-    - Propose a high-level, multi-phase structure for the workflow (e.g., "Phase 1: Scaffolding, Phase 2: Detailed Design...").
+    - **Scan Existing Workflows:** The AI will first list the files in `src/workflows/` to find an existing workflow with a similar purpose (e.g., for a new "planning" workflow, look at `plan-documentation.md`).
+    - **Propose a Skeleton:** Based on the most relevant existing workflow, the AI will propose a skeleton for the new workflow. This includes:
+      - `Objective`, `Participants`, `Trigger`
+      - The standard `Core Principles of a Workflow Document` section.
+      - A `High-Level Phases` section, which provides a bulleted list overview of all phases in the document, copied from the template workflow.
 
 3.  **Checkpoint: Foundational Agreement**
     - The Human and AI Assistant discuss and refine the draft.
@@ -77,7 +85,7 @@ A workflow document is not passive documentation; it is an **executable instruct
 
     - Review the entire document for consistent terminology, formatting, and clarity.
     - Ensure the language is direct and action-oriented.
-    - Add a "Core Principles" section if one doesn't exist, summarizing the key rules of the workflow.
+    - Ensure the standard `Core Principles of a Workflow Document` section is present and correct.
 
 2.  **Human's Action: Final Approval**
     - Read the finalized workflow document from top to bottom.
