@@ -42,11 +42,17 @@ export class TemplateGenerator {
         return { success: false, errors: [nameValidation.message || 'Invalid name'] };
       }
 
-      // 2. Load configuration to determine the correct directory
-      await this.configManager.loadConfig(request.outputDirectory);
-      const requirementsDir = this.configManager.getRequirementsPath();
-      const outputDir = this.fileManager.resolveOutputPath(request.outputDirectory);
-      const finalDir = path.join(outputDir, requirementsDir);
+      // 2. Determine the final output directory
+      let finalDir: string;
+      if (request.outputDirectory) {
+        // If an output directory is specified in the request, use it directly.
+        finalDir = this.fileManager.resolveOutputPath(request.outputDirectory);
+      } else {
+        // Otherwise, construct it from the configuration.
+        await this.configManager.loadConfig();
+        const requirementsDir = this.configManager.getRequirementsPath();
+        finalDir = this.fileManager.resolveOutputPath(requirementsDir);
+      }
 
       // 3. Handle parent logic
       let parentChain: string | undefined;

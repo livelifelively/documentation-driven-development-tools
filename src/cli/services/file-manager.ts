@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises as fs, statSync } from 'fs';
 import path from 'path';
 
 export class FileManager {
@@ -30,6 +30,30 @@ export class FileManager {
     } catch {
       return false;
     }
+  }
+
+  public checkDirectoryExists(dirPath: string): boolean {
+    try {
+      // Use synchronous stat to check for directory existence
+      const stats = statSync(dirPath);
+      return stats.isDirectory();
+    } catch (error) {
+      const nodeError = error as NodeJS.ErrnoException;
+      // If the error is that the file/directory doesn't exist, return false
+      if (nodeError.code === 'ENOENT') {
+        return false;
+      }
+      // For any other errors, re-throw the exception
+      throw error;
+    }
+  }
+
+  public async copyFile(source: string, destination: string): Promise<void> {
+    await fs.copyFile(source, destination);
+  }
+
+  public async deleteDirectory(dirPath: string): Promise<void> {
+    await fs.rm(dirPath, { recursive: true, force: true });
   }
 
   public async getAllFiles(dirPath: string): Promise<string[]> {

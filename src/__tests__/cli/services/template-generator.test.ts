@@ -4,6 +4,7 @@ import { NamingValidator } from '../../../cli/services/naming-validator';
 import { ConfigManager } from '../../../cli/services/config-manager';
 import { IdProvider } from '../../../cli/services/id-provider';
 import * as templateGenerators from '../../../';
+import path = require('path');
 
 // Mock all dependencies
 jest.mock('../../../cli/services/file-manager');
@@ -45,7 +46,7 @@ describe('TemplateGenerator', () => {
 
     // Setup default mock behaviors
     configManager.getRequirementsPath.mockReturnValue('requirements');
-    fileManager.resolveOutputPath.mockReturnValue('/tmp');
+    fileManager.resolveOutputPath.mockImplementation((dir) => (dir ? path.resolve(process.cwd(), dir) : process.cwd()));
     namingValidator.validateName.mockReturnValue({ isValid: true });
     idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 1, nextTaskId: 1 });
     fileManager.checkFileExists.mockResolvedValue(false); // Default to no file conflicts
@@ -90,11 +91,12 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedPath = path.join(process.cwd(), 'requirements', 'p2-my-plan.plan.md');
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe('/tmp/requirements/p2-my-plan.plan.md');
-    expect(idProvider.getNextAvailableIds).toHaveBeenCalledWith('/tmp/requirements');
+    expect(result.filePath).toBe(expectedPath);
+    expect(idProvider.getNextAvailableIds).toHaveBeenCalledWith(path.join(process.cwd(), 'requirements'));
     expect(namingValidator.generateFileName).toHaveBeenCalledWith('plan', 'my-plan', 2, undefined);
-    expect(fileManager.writeTemplate).toHaveBeenCalledWith('/tmp/requirements/p2-my-plan.plan.md', 'plan content');
+    expect(fileManager.writeTemplate).toHaveBeenCalledWith(expectedPath, 'plan content');
   });
 
   it('should generate a sub-task successfully', async () => {
@@ -110,11 +112,12 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedPath = path.join(process.cwd(), 'requirements', 'p1.t3-my-task.task.md');
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe('/tmp/requirements/p1.t3-my-task.task.md');
+    expect(result.filePath).toBe(expectedPath);
     expect(namingValidator.extractIdChainFromParent).toHaveBeenCalledWith('p1-parent.plan.md');
     expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'my-task', 3, 'p1');
-    expect(fileManager.writeTemplate).toHaveBeenCalledWith('/tmp/requirements/p1.t3-my-task.task.md', 'task content');
+    expect(fileManager.writeTemplate).toHaveBeenCalledWith(expectedPath, 'task content');
   });
 
   it('should perform a dry run correctly', async () => {
@@ -128,8 +131,9 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedPath = path.join(process.cwd(), 'requirements', 'p1-my-plan.plan.md');
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe('/tmp/requirements/p1-my-plan.plan.md');
+    expect(result.filePath).toBe(expectedPath);
     expect(result.content).toBe('plan content');
     expect(result.warnings).toContain('Dry run mode: No files were written.');
     expect(fileManager.writeTemplate).not.toHaveBeenCalled();
@@ -146,8 +150,9 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedError = `File 'p1-my-plan.plan.md' already exists in '${path.join(process.cwd(), 'requirements')}'.`;
     expect(result.success).toBe(false);
-    expect(result.errors).toContain("File 'p1-my-plan.plan.md' already exists in '/tmp/requirements'.");
+    expect(result.errors).toContain(expectedError);
   });
 
   it('should handle errors during file writing', async () => {
@@ -181,10 +186,11 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedPath = path.join(process.cwd(), 'requirements', 'p1-p2-p3.t5-my-task.task.md');
     expect(result.success).toBe(true);
     expect(namingValidator.extractIdChainFromParent).toHaveBeenCalledWith('p1-p2.p3-parent.plan.md');
     expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'my-task', 5, 'p1-p2-p3');
-    expect(result.filePath).toBe('/tmp/requirements/p1-p2-p3.t5-my-task.task.md');
+    expect(result.filePath).toBe(expectedPath);
   });
 
   it('should generate a task with dashes in its name', async () => {
@@ -204,8 +210,9 @@ describe('TemplateGenerator', () => {
     const result = await generator.generate(request);
 
     // Assert
+    const expectedPath = path.join(process.cwd(), 'requirements', 'p1.t2-a-task-with-dashes.task.md');
     expect(result.success).toBe(true);
     expect(namingValidator.generateFileName).toHaveBeenCalledWith('task', 'a-task-with-dashes', 2, 'p1');
-    expect(result.filePath).toBe('/tmp/requirements/p1.t2-a-task-with-dashes.task.md');
+    expect(result.filePath).toBe(expectedPath);
   });
 });
