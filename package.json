@@ -1,38 +1,58 @@
 {
   "name": "ddd-tools",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A collection of useful tools for my projects.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/cli/index.js",
+  "types": "dist/src/cli/index.d.ts",
   "bin": {
     "ddd": "dist/src/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
+    "prepack": "npm test",
+    "prepublishOnly": "npm test && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
+    "lint": "eslint .",
     "analyze": "echo \"Error: no test specified\" && exit 1",
     "generate-schema-doc": "tsx src/generate-schema-doc.ts",
     "generate-templates": "tsx src/generate-templates.ts"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/livelifelively/documentation-driven-development-tools.git"
+  },
+  "author": "dev.livelifelively@gmail.com",
+  "license": "MIT",
+  "keywords": [
+    "ddd",
+    "cli",
+    "documentation",
+    "codegen"
   ],
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.14",
     "@types/yargs": "^17.0.33",
+    "husky": "^9.1.7",
     "jest": "^30.0.4",
     "memfs": "^4.17.2",
     "ts-jest": "^29.4.0",
     "tslib": "^2.8.1",
-    "tsx": "^4.20.3",
-    "typescript": "^5.0.0",
-    "yargs": "^17.7.2"
+    "tsx": "^4.20.3"
   },
   "dependencies": {
     "glob": "^11.0.3",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "simple-git": "^3.28.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "yargs": "^17.7.2"
   }
 }

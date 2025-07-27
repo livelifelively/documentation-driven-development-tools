@@ -22,9 +22,11 @@ To set up the `ddd` command for local development, follow these steps:
     npm install
     ```
 2.  **Link the CLI**: This command makes the `ddd` executable available in your system's path, allowing you to run it from any directory.
-    `bash
+
+    ```bash
     npm link
-    `
+    ```
+
     After these steps, you can run `ddd --help` to verify that the command is working.
 
 ## Usage
