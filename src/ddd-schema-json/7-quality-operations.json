@@ -33,21 +33,21 @@
                   "1",
                   "Default dev logger = console only",
                   "Unit",
-                  "Jest + RTL (spy on console)",
+                  "Vitest + RTL (spy on console)",
                   "Set `process.env.NODE_ENV='development'`"
                 ],
                 [
                   "2",
                   "Prod logger fan-out to console + HTTP, minLevel respected",
                   "Unit",
-                  "Jest + fetch-mock + console spy",
+                  "Vitest + fetch-mock + console spy",
                   "`NODE_ENV='production'`"
                 ],
                 [
                   "7",
                   "Successful POST to `/api/log/client`",
                   "Integration",
-                  "Jest + MSW",
+                  "Vitest + MSW",
                   "Assert JSON body and 2xx handling"
                 ]
               ],

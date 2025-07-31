@@ -55,12 +55,14 @@ A workflow document is not passive documentation; it is an **executable instruct
     - **Identify Test Files**: Locate all test files associated with the changed source code files (referencing `6.1.2 Files Change Log` and `7.1 Testing Strategy / Requirements`).
     - **Review Test Coverage**: Compare the test cases against the `2.4 Acceptance Criteria`. Are all criteria covered by at least one test?
     - **Review Test Quality**: Evaluate the tests against the `4.2 Target Architecture` and `4.4 Non-Functional Requirements`. Do the tests validate the architecture? Do they cover performance, security, and reliability requirements?
-2.  **Checkpoint**: The AI Assistant produces a **Test Review Summary**.
-    - **Summary Format**:
-      - **Coverage Report**: A checklist mapping each Acceptance Criterion to the corresponding test(s).
+2.  **AI Assistant's Action: Generate Test Review Summary Document**
+    - Create a new markdown file named `Test-Review-Summary-<task-name>.md`.
+    - The document must contain:
+      - **Coverage Report**: A checklist mapping each Acceptance Criterion to the corresponding test(s) and its status (e.g., ✅ Covered, ❌ Incomplete).
       - **Quality Assessment**: An analysis of the test suite's robustness, including edge case and error handling.
       - **Recommendations**: A prioritized list of suggestions for new or improved test cases.
-3.  **Human's Action**: Review the summary and update the test suite to address any gaps.
+    - This file serves as a formal record of the test suite review.
+3.  **Human's Action**: Review the summary document and update the test suite to address any gaps.
 4.  **Verification**: Run the final test suite and ensure all tests pass.
 
 **Outcome:** The test suite is now considered complete and correct. The implementation is ready for the architectural review.
