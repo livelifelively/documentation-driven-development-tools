@@ -912,7 +912,7 @@ This family provides the practical, step-by-step instructions for building the c
 
 - **Example**:
 
-> Generate a Jest test for this function:
+> Generate a Vitest test for this function:
 
 > ```md
 > export const add = (a: number, b: number): number => a + b;
@@ -947,11 +947,11 @@ This family defines how we ensure the system is correct, reliable, and observabl
 
 - **Example**:
 
-> | AC  | Scenario                                                  | Test Type   | Tools / Runner                  | Notes                                    |
-> | :-- | :-------------------------------------------------------- | :---------- | :------------------------------ | :--------------------------------------- |
-> | 1   | Default dev logger = console only                         | Unit        | Jest + RTL (spy on console)     | Set `process.env.NODE_ENV='development'` |
-> | 2   | Prod logger fan-out to console + HTTP, minLevel respected | Unit        | Jest + fetch-mock + console spy | `NODE_ENV='production'`                  |
-> | 7   | Successful POST to `/api/log/client`                      | Integration | Jest + MSW                      | Assert JSON body and 2xx handling        |
+> | AC  | Scenario                                                  | Test Type   | Tools / Runner                    | Notes                                    |
+> | :-- | :-------------------------------------------------------- | :---------- | :-------------------------------- | :--------------------------------------- |
+> | 1   | Default dev logger = console only                         | Unit        | Vitest + RTL (spy on console)     | Set `process.env.NODE_ENV='development'` |
+> | 2   | Prod logger fan-out to console + HTTP, minLevel respected | Unit        | Vitest + fetch-mock + console spy | `NODE_ENV='production'`                  |
+> | 7   | Successful POST to `/api/log/client`                      | Integration | Vitest + MSW                      | Assert JSON body and 2xx handling        |
 
 #### 7.2 Configuration
 
