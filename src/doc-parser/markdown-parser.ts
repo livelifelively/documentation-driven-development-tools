@@ -1,5 +1,6 @@
-import { unified } from 'unified';
+import { unified, Processor } from 'unified';
 import remarkParse from 'remark-parse';
+import { Root } from 'mdast';
 
 /**
  * Converts markdown content to a remark AST.
@@ -11,9 +12,9 @@ export class MarkdownParser {
    * @param content The markdown content to parse
    * @returns A valid remark AST object
    */
-  toAst(content: string): any {
+  toAst(content: string): Root {
     const processor = unified().use(remarkParse);
     const ast = processor.parse(content);
-    return ast;
+    return ast as Root;
   }
 }

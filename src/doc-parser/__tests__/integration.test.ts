@@ -69,7 +69,12 @@ This is a mock section for testing.
   it('should parse a task file and extract data using a loaded plugin', async () => {
     // Arrange
     const pluginManager = new PluginManager();
-    const getProcessorSpy = vi.spyOn(pluginManager, 'getProcessor').mockReturnValue(mockPlugin);
+    const getProcessorSpy = vi.spyOn(pluginManager, 'getProcessor').mockImplementation((sectionId: string) => {
+      if (sectionId === '99.9') {
+        return mockPlugin;
+      }
+      return undefined;
+    });
 
     const engine = new CoreEngine(pluginManager);
 
@@ -77,6 +82,9 @@ This is a mock section for testing.
     const result = await engine.parse(testFilePath);
 
     // Assert
+    expect(getProcessorSpy).toHaveBeenCalledWith('1.2');
+    expect(getProcessorSpy).toHaveBeenCalledWith('2.1');
+    expect(getProcessorSpy).toHaveBeenCalledWith('3.1');
     expect(getProcessorSpy).toHaveBeenCalledWith('99.9');
     expect(result.errors).toHaveLength(0);
     expect(result.data).not.toBeNull();

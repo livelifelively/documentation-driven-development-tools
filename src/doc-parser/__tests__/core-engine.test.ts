@@ -8,7 +8,9 @@ import { SectionProcessor } from '../plugin.types.js';
 vi.mock('../markdown-parser.js');
 vi.mock('../plugin-manager.js');
 vi.mock('fs', () => ({
-  readFileSync: vi.fn(),
+  promises: {
+    readFile: vi.fn(),
+  },
 }));
 
 describe('CoreEngine', () => {
@@ -37,7 +39,7 @@ describe('CoreEngine', () => {
     vi.mocked(PluginManager).mockImplementation(() => mockPluginManager);
 
     // Get the mocked fs module
-    mockFs = await import('fs');
+    mockFs = (await import('fs')).promises;
 
     coreEngine = new CoreEngine(mockPluginManager);
   });
@@ -92,6 +94,7 @@ This is a test task.
       sectionId: '1.2',
       lint: vi.fn(),
       extract: vi.fn(),
+      getTargetPath: vi.fn().mockReturnValue('meta.status'),
     };
 
     beforeEach(() => {
@@ -107,22 +110,23 @@ This is a test task.
         currentState: '💡 Not Started',
         priority: '🟥 High',
       });
+      mockProcessor.getTargetPath.mockReturnValue('meta.status');
     });
 
     it('should read file content and parse it to AST', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       const result = await coreEngine.parse('test-file.task.md');
 
-      expect(mockFs.readFileSync).toHaveBeenCalledWith('test-file.task.md', 'utf-8');
+      expect(mockFs.readFile).toHaveBeenCalledWith('test-file.task.md', 'utf-8');
       expect(mockMarkdownParser.toAst).toHaveBeenCalledWith(mockFileContent);
       expect(result).toBeDefined();
     });
 
     it('should find and process sections with available processors', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       const result = await coreEngine.parse('test-file.task.md');
 
@@ -133,7 +137,7 @@ This is a test task.
 
     it('should skip sections without available processors', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       // Mock plugin manager to return undefined for some sections
       mockPluginManager.getProcessor
@@ -149,7 +153,7 @@ This is a test task.
 
     it('should return structured data from processors', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       const result = await coreEngine.parse('test-file.task.md');
 
@@ -160,7 +164,7 @@ This is a test task.
 
     it('should handle linting errors from processors', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       const mockErrors = [{ section: '1.2', message: 'Missing required field: Priority' }];
 
@@ -168,7 +172,7 @@ This is a test task.
       vi.clearAllMocks();
 
       // Re-setup the mocks for this specific test
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
       mockMarkdownParser.toAst.mockReturnValue(mockAst);
       mockPluginManager.getProcessor.mockReturnValue(mockProcessor);
       mockProcessor.lint.mockReturnValue(mockErrors);
@@ -176,6 +180,7 @@ This is a test task.
         currentState: '💡 Not Started',
         priority: '🟥 High',
       });
+      mockProcessor.getTargetPath.mockReturnValue('meta.status');
 
       const result = await coreEngine.parse('test-file.task.md');
 
@@ -188,9 +193,7 @@ This is a test task.
 
     it('should throw error for invalid file path', async () => {
       // Mock fs to throw error
-      mockFs.readFileSync.mockImplementation(() => {
-        throw new Error('File not found');
-      });
+      mockFs.readFile.mockRejectedValue(new Error('File not found'));
 
       await expect(coreEngine.parse('non-existent-file.task.md')).rejects.toThrow(
         'Cannot read file at non-existent-file.task.md.'
@@ -199,7 +202,7 @@ This is a test task.
 
     it('should handle runtime errors within a plugin gracefully', async () => {
       // Mock file system read
-      mockFs.readFileSync.mockReturnValue(mockFileContent);
+      mockFs.readFile.mockResolvedValue(mockFileContent);
 
       // Mock a processor that throws an error
       const errorProcessor = {
@@ -208,6 +211,7 @@ This is a test task.
           throw new Error('Plugin runtime error');
         }),
         extract: vi.fn(),
+        getTargetPath: vi.fn().mockReturnValue('meta.status'),
       };
 
       mockPluginManager.getProcessor.mockReturnValue(errorProcessor);

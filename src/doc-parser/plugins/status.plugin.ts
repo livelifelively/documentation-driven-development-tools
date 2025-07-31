@@ -1,56 +1,40 @@
 import { SectionProcessor, LintingError } from '../plugin.types.js';
-
-/**
- * Extracts text content from AST nodes.
- * @param nodes The AST nodes to extract text from
- * @returns Concatenated text content
- */
-function extractTextContent(nodes: any[]): string {
-  let content = '';
-
-  for (const node of nodes) {
-    if (node.type === 'text') {
-      content += node.value || '';
-    } else if (node.type === 'paragraph') {
-      content += extractTextContent(node.children || []) + '\n';
-    } else if (node.type === 'listItem') {
-      content += extractTextContent(node.children || []) + '\n';
-    } else if (node.children) {
-      content += extractTextContent(node.children);
-    }
-  }
-
-  return content;
-}
+import { Root } from 'mdast';
+import { visit } from 'unist-util-visit';
+import { toString } from 'mdast-util-to-string';
 
 /**
  * Plugin for processing the "1.2 Status" section of task files.
- * Extracts status information and validates required fields.
+ * Extracts status information and validates required fields using structured AST traversal.
  */
 const statusPlugin: SectionProcessor = {
   sectionId: '1.2',
 
   /**
-   * Lints the status section for required fields and valid values.
-   * @param sectionAst The AST nodes for the status section
-   * @returns Array of linting errors, empty if valid
+   * Lints the status section for required fields.
+   * @param sectionAst The AST for the status section.
+   * @returns An array of linting errors.
    */
-  lint(sectionAst: any[]): LintingError[] {
+  lint(sectionAst: Root): LintingError[] {
     const errors: LintingError[] = [];
-    const content = extractTextContent(sectionAst);
+    const foundFields = new Set<string>();
 
-    // Check for required fields
-    if (!content.includes('Current State:')) {
+    visit(sectionAst, 'listItem', (node) => {
+      const text = toString(node);
+      if (text.startsWith('Current State:')) foundFields.add('Current State');
+      if (text.startsWith('Priority:')) foundFields.add('Priority');
+    });
+
+    if (!foundFields.has('Current State')) {
       errors.push({
         section: '1.2',
-        message: 'Missing required field: Current State',
+        message: "Missing required field: 'Current State'",
       });
     }
-
-    if (!content.includes('Priority:')) {
+    if (!foundFields.has('Priority')) {
       errors.push({
         section: '1.2',
-        message: 'Missing required field: Priority',
+        message: "Missing required field: 'Priority'",
       });
     }
 
@@ -58,30 +42,38 @@ const statusPlugin: SectionProcessor = {
   },
 
   /**
-   * Extracts structured data from the status section.
-   * @param sectionAst The AST nodes for the status section
-   * @returns Structured status data
+   * Extracts structured data from the status section using AST traversal.
+   * @param sectionAst The AST for the status section.
+   * @returns A structured object with status data.
    */
-  extract(sectionAst: any[]): any {
-    const content = extractTextContent(sectionAst);
+  extract(sectionAst: Root): any {
+    const data: Record<string, any> = {};
 
-    // Extract current state - handle markdown formatting
-    const currentStateMatch = content.match(/\*\*Current State:\*\*\s*([^*\n]+)/);
-    const currentState = currentStateMatch ? currentStateMatch[1].trim() : null;
+    visit(sectionAst, 'listItem', (node) => {
+      const text = toString(node);
+      const match = text.match(/^(.*?):\s*(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim();
+        const camelKey = key.replace(/\s+/g, '').replace(/^\w/, (c) => c.toLowerCase());
 
-    // Extract priority - handle markdown formatting
-    const priorityMatch = content.match(/\*\*Priority:\*\*\s*([^*\n]+)/);
-    const priority = priorityMatch ? priorityMatch[1].trim() : null;
+        if (camelKey === 'progress' || camelKey === 'planningEstimate' || camelKey === 'estVariancePts') {
+          data[camelKey] = parseInt(value, 10) || 0;
+        } else {
+          data[camelKey] = value;
+        }
+      }
+    });
 
-    // Extract progress - handle markdown formatting
-    const progressMatch = content.match(/\*\*Progress:\*\*\s*(\d+)/);
-    const progress = progressMatch ? parseInt(progressMatch[1]) : 0;
+    return data;
+  },
 
-    return {
-      currentState,
-      priority,
-      progress,
-    };
+  /**
+   * Specifies the target path in the final JSON output.
+   * @returns The dot-notation path.
+   */
+  getTargetPath(): string {
+    return 'meta.status';
   },
 };
 

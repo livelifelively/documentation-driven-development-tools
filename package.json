@@ -49,8 +49,10 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@types/lodash-es": "^4.17.12",
     "glob": "^11.0.3",
     "gray-matter": "^4.0.3",
+    "lodash-es": "^4.17.21",
     "remark": "^15.0.1",
     "remark-parse": "^11.0.0",
     "simple-git": "^3.28.0",

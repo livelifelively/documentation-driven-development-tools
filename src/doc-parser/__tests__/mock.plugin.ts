@@ -1,4 +1,5 @@
 import { SectionProcessor, LintingError } from '../plugin.types.js';
+import { Root } from 'mdast';
 
 /**
  * Mock plugin for testing purposes.
@@ -12,7 +13,7 @@ const mockPlugin: SectionProcessor = {
    * @param sectionAst The AST nodes for the mock section
    * @returns Array of linting errors, empty if valid
    */
-  lint(sectionAst: any[]): LintingError[] {
+  lint(sectionAst: Root): LintingError[] {
     // Mock plugin always passes validation
     return [];
   },
@@ -22,11 +23,15 @@ const mockPlugin: SectionProcessor = {
    * @param sectionAst The AST nodes for the mock section
    * @returns Structured mock data
    */
-  extract(sectionAst: any[]): any {
+  extract(sectionAst: Root): any {
     // Return mock data for testing
     return {
       mockData: 'extracted successfully',
     };
+  },
+
+  getTargetPath(): string {
+    return 'mock';
   },
 };
 

@@ -13,15 +13,13 @@ export class PluginManager {
    * Loads all plugin files from the specified directory.
    * @param directory The directory containing plugin files
    */
-  loadPlugins(directory: string): void {
+  async loadPlugins(directory: string): Promise<void> {
     try {
-      // Find all plugin files in the directory
       const pluginFiles = glob.sync(`${directory}/*.plugin.ts`);
 
       for (const filePath of pluginFiles) {
         try {
-          // Dynamic import of the plugin
-          const pluginModule = require(filePath);
+          const pluginModule = await import(filePath);
           const processor = pluginModule.default as SectionProcessor;
 
           if (processor && processor.sectionId) {

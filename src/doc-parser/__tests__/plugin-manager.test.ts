@@ -4,7 +4,9 @@ import { SectionProcessor } from '../plugin.types.js';
 
 // Mock for the glob module
 vi.mock('glob', () => ({
-  sync: vi.fn(),
+  glob: {
+    sync: vi.fn(),
+  },
 }));
 
 // Mock for dynamic imports
@@ -31,7 +33,7 @@ describe('PluginManager', () => {
   describe('loadPlugins', () => {
     it('should load all plugin files from the specified directory', () => {
       // Mock glob to return plugin file paths
-      mockGlob.sync.mockReturnValue([
+      mockGlob.glob.sync.mockReturnValue([
         'src/doc-parser/plugins/status.plugin.ts',
         'src/doc-parser/plugins/business.plugin.ts',
       ]);
@@ -60,25 +62,29 @@ describe('PluginManager', () => {
     });
 
     it('should handle empty plugin directory', () => {
-      mockGlob.sync.mockReturnValue([]);
+      mockGlob.glob.sync.mockReturnValue([]);
 
       expect(() => {
         pluginManager.loadPlugins('src/doc-parser/plugins/');
       }).not.toThrow();
     });
 
-    it('should skip invalid plugin files gracefully', () => {
-      mockGlob.sync.mockReturnValue([
-        'src/doc-parser/plugins/valid.plugin.ts',
-        'src/doc-parser/plugins/invalid.plugin.ts',
-      ]);
+    it('should skip invalid plugin files gracefully', async () => {
+      mockGlob.glob.sync.mockReturnValue(['/path/to/invalid.plugin.ts']);
 
-      // Mock console.warn to capture warning messages
+      // Mock the dynamic import to throw an error for the invalid file
+      vi.doMock('/path/to/invalid.plugin.ts', () => {
+        throw new Error('Invalid plugin');
+      });
+
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      pluginManager.loadPlugins('src/doc-parser/plugins/');
+      await pluginManager.loadPlugins('src/doc-parser/plugins/');
 
-      expect(consoleSpy).toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('WARN: Could not load plugin /path/to/invalid.plugin.ts')
+      );
+
       consoleSpy.mockRestore();
     });
   });
@@ -90,6 +96,7 @@ describe('PluginManager', () => {
         sectionId: '1.2',
         lint: vi.fn(),
         extract: vi.fn(),
+        getTargetPath: vi.fn(),
       };
 
       // Mock the internal processors array
@@ -124,12 +131,14 @@ describe('PluginManager', () => {
         sectionId: '1.2',
         lint: vi.fn(),
         extract: vi.fn(),
+        getTargetPath: vi.fn(),
       };
 
       const mockProcessor2: SectionProcessor = {
         sectionId: '2.1',
         lint: vi.fn(),
         extract: vi.fn(),
+        getTargetPath: vi.fn(),
       };
 
       (pluginManager as any).processors = [mockProcessor1, mockProcessor2];

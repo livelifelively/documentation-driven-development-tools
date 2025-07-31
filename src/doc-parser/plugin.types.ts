@@ -1,3 +1,5 @@
+import { Root } from 'mdast';
+
 /**
  * Represents a single validation error found during linting.
  */
@@ -52,12 +54,18 @@ export interface SectionProcessor {
    * @param sectionAst The AST nodes belonging to this section
    * @returns Array of linting errors, empty if valid
    */
-  lint(sectionAst: any): LintingError[];
+  lint(sectionAst: Root): LintingError[];
 
   /**
    * Extracts structured data from the AST nodes for this section.
    * @param sectionAst The AST nodes belonging to this section
    * @returns Structured data object for this section
    */
-  extract(sectionAst: any): any;
+  extract(sectionAst: Root): any;
+
+  /**
+   * Returns the dot-notation path where the extracted data should be placed.
+   * @returns The target path (e.g., "meta.status")
+   */
+  getTargetPath(): string;
 }
