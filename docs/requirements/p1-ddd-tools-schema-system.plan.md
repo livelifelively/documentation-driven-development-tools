@@ -530,7 +530,7 @@ Not applicable. The system has been implemented, and this document describes the
 
 **Development Dependencies:**
 
-- **Jest**: Unit testing framework
+- **Vitest**: Unit testing framework
 - **tsx**: TypeScript execution for development scripts
 
 **Deployment:**
@@ -631,15 +631,15 @@ Debug the generation system by:
 
 ### 7.1 Testing Strategy / Requirements
 
-| Scenario                                               | Test Type         | Tools / Runner             | Status         |
-| :----------------------------------------------------- | :---------------- | :------------------------- | :------------- |
-| **TypeScript types compile without errors**            | Unit              | TypeScript compiler        | ✅ Complete    |
-| **JSON schema files load correctly**                   | Unit              | Jest + JSON validation     | 💡 Not Started |
-| **Dual-mode rendering produces expected output**       | Unit              | Jest + snapshot testing    | ✅ Complete    |
-| **Template generation includes all required sections** | Integration       | Jest + template validation | ✅ Complete    |
-| **Documentation generation completes successfully**    | Integration       | Jest + file system mocking | ✅ Complete    |
-| **Generated markdown syntax is valid**                 | Output Validation | Manual review              | ✅ Complete    |
-| **Schema coverage includes all 8 families**            | System            | Automated verification     | ✅ Complete    |
+| Scenario                                               | Test Type         | Tools / Runner               | Status         |
+| :----------------------------------------------------- | :---------------- | :--------------------------- | :------------- |
+| **TypeScript types compile without errors**            | Unit              | TypeScript compiler          | ✅ Complete    |
+| **JSON schema files load correctly**                   | Unit              | Vitest + JSON validation     | 💡 Not Started |
+| **Dual-mode rendering produces expected output**       | Unit              | Vitest + snapshot testing    | ✅ Complete    |
+| **Template generation includes all required sections** | Integration       | Vitest + template validation | ✅ Complete    |
+| **Documentation generation completes successfully**    | Integration       | Vitest + file system mocking | ✅ Complete    |
+| **Generated markdown syntax is valid**                 | Output Validation | Manual review                | ✅ Complete    |
+| **Schema coverage includes all 8 families**            | System            | Automated verification       | ✅ Complete    |
 
 ### 7.2 Configuration
 
