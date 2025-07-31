@@ -1,6 +1,6 @@
 {
   "name": "ddd-tools",
-  "version": "2.0.0",
+  "version": "0.1.0",
   "description": "A collection of useful tools for my projects.",
   "main": "dist/src/cli/index.js",
   "types": "dist/src/cli/index.d.ts",
