@@ -1,10 +1,13 @@
 import {
   fullSchema,
-  generateHumanSchemaDocumentation,
-  generateMachineSchemaDocumentation,
   generatePlanTemplate,
   generateTaskTemplate,
-} from '../index';
+  generateHumanSchemaDocumentation,
+  generateMachineSchemaDocumentation,
+  getApplicabilitySymbol,
+  renderContentElement,
+  renderContent,
+} from '../index.js';
 
 describe('DDD Schema Generation System', () => {
   // Test 1: Verify that the full schema loads correctly
@@ -53,8 +56,6 @@ describe('DDD Schema Generation System', () => {
     expect(taskTemplate).not.toContain('A section omitted for tasks');
   });
 });
-
-import { getApplicabilitySymbol, renderContentElement, renderContent } from '../index';
 
 describe('DDD Schema Rendering', () => {
   test('getApplicabilitySymbol should return "?" for unknown values', () => {

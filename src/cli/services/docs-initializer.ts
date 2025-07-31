@@ -1,5 +1,5 @@
-import { FileManager } from './file-manager';
-import { TemplateGenerator } from './template-generator';
+import { FileManager } from './file-manager.js';
+import { TemplateGenerator } from './template-generator.js';
 import * as path from 'path';
 
 export interface InitRequest {

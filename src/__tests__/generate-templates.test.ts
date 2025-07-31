@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { generatePlanTemplate, generateTaskTemplate } from '../index';
-import { run } from '../generate-templates';
+import { generatePlanTemplate, generateTaskTemplate } from '../index.js';
+import { run } from '../generate-templates.js';
 
 jest.mock('fs');
 jest.mock('../index', () => ({

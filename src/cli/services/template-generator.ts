@@ -1,9 +1,9 @@
 import path from 'path';
-import { FileManager } from './file-manager';
-import { NamingValidator } from './naming-validator';
-import { ConfigManager } from './config-manager';
-import { IdProvider } from './id-provider';
-import { generatePlanTemplate, generateTaskTemplate } from '../../';
+import { FileManager } from './file-manager.js';
+import { NamingValidator } from './naming-validator.js';
+import { ConfigManager } from './config-manager.js';
+import { IdProvider } from './id-provider.js';
+import { generatePlanTemplate, generateTaskTemplate } from '../../index.js';
 
 export interface TemplateRequest {
   documentType: 'plan' | 'task';

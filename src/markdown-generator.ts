@@ -9,7 +9,7 @@ import {
   HorizontalRuleStructure,
   Section,
   DocumentStructures,
-} from './types';
+} from './types.js';
 
 export function generateMarkdown(doc: DocumentStructures): string {
   return doc.elements.map((section) => convertSection(section)).join('\n\n');

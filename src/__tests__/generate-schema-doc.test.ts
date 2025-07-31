@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from '../index';
-import { run } from '../generate-schema-doc';
+import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from '../index.js';
+import { run } from '../generate-schema-doc.js';
 
 jest.mock('fs');
 jest.mock('../index', () => ({

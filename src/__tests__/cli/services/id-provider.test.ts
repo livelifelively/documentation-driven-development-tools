@@ -1,7 +1,7 @@
 import { vol } from 'memfs';
-import { FileManager } from '../../../cli/services/file-manager';
-import { NamingValidator } from '../../../cli/services/naming-validator';
-import { IdProvider } from '../../../cli/services/id-provider';
+import { FileManager } from '../../../cli/services/file-manager.js';
+import { NamingValidator } from '../../../cli/services/naming-validator.js';
+import { IdProvider } from '../../../cli/services/id-provider.js';
 
 jest.mock('fs', () => require('memfs').fs);
 jest.mock('fs/promises', () => require('memfs').fs.promises);

@@ -1,4 +1,4 @@
-import { FileManager } from '../../../cli/services/file-manager';
+import { FileManager } from '../../../cli/services/file-manager.js';
 import { vol } from 'memfs';
 import path from 'path';
 

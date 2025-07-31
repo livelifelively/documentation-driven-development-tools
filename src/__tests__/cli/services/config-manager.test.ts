@@ -1,5 +1,5 @@
 import { vol } from 'memfs';
-import { ConfigManager } from '../../../cli/services/config-manager';
+import { ConfigManager } from '../../../cli/services/config-manager.js';
 
 jest.mock('fs', () => require('memfs').fs);
 jest.mock('fs/promises', () => require('memfs').fs.promises);

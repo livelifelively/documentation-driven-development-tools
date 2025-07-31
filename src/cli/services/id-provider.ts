@@ -1,6 +1,6 @@
 import path from 'path';
-import { FileManager } from './file-manager';
-import { NamingValidator } from './naming-validator';
+import { FileManager } from './file-manager.js';
+import { NamingValidator } from './naming-validator.js';
 
 export class IdProvider {
   private fileManager: FileManager;

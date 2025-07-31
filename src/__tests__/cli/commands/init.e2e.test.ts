@@ -1,5 +1,5 @@
-import { main } from '../../../cli';
-import { vol, fs } from 'memfs';
+import { main } from '../../../cli/index.js';
+import { vol } from 'memfs';
 import * as path from 'path';
 
 jest.mock('fs', () => require('memfs').fs);

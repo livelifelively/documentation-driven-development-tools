@@ -1,6 +1,6 @@
-import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from '.';
-import { getConfig } from './config';
-import { writeToMultipleLocations } from './path-utils';
+import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from './index.js';
+import { getConfig } from './config.js';
+import { writeToMultipleLocations } from './path-utils.js';
 import * as path from 'path';
 
 export function run() {
@@ -36,7 +36,7 @@ export function run() {
   }
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     run();
   } catch (error) {

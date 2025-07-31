@@ -2,7 +2,7 @@ import { vol } from 'memfs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Arguments } from 'yargs';
-import { handler as templateHandler } from '../../../cli/commands/template';
+import { handler as templateHandler } from '../../../cli/commands/template.js';
 
 // Mock the file system
 jest.mock('fs', () => require('memfs').fs);

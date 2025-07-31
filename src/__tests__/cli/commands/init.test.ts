@@ -1,5 +1,5 @@
-import { main } from '../../../cli';
-import { DocsInitializer } from '../../../cli/services/docs-initializer';
+import { main } from '../../../cli/index.js';
+import { DocsInitializer } from '../../../cli/services/docs-initializer.js';
 import { vol } from 'memfs';
 import * as path from 'path';
 

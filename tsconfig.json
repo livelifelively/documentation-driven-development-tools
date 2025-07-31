@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "nodeNext",
     "rootDir": "./",
     "outDir": "./dist",
     "strict": true,
@@ -10,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true
   },
   "include": ["src", "schema", "scripts", "docs-old/modules"],
   "exclude": ["node_modules", "dist"]

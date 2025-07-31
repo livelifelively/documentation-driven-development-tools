@@ -1,5 +1,5 @@
 import type { Argv, CommandModule } from 'yargs';
-import { DocsInitializer } from '../services/docs-initializer';
+import { DocsInitializer } from '../services/docs-initializer.js';
 
 export const initCommand: CommandModule = {
   command: 'init',

@@ -1,6 +1,6 @@
-import { DocsInitializer } from '../../../cli/services/docs-initializer';
-import { FileManager } from '../../../cli/services/file-manager';
-import { TemplateGenerator } from '../../../cli/services/template-generator';
+import { DocsInitializer } from '../../../cli/services/docs-initializer.js';
+import { FileManager } from '../../../cli/services/file-manager.js';
+import { TemplateGenerator } from '../../../cli/services/template-generator.js';
 import { vol } from 'memfs';
 import * as path from 'path';
 

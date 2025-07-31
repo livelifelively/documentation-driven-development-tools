@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder, CommandModule } from 'yargs';
-import { TemplateGenerator, TemplateRequest } from '../services/template-generator';
+import { TemplateGenerator, TemplateRequest } from '../services/template-generator.js';
 
 interface Options {
   type: 'plan' | 'task';

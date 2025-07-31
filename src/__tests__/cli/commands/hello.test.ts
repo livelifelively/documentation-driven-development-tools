@@ -1,4 +1,4 @@
-import { main } from '../../../cli';
+import { main } from '../../../cli/index.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 

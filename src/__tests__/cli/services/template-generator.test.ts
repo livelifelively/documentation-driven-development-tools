@@ -1,9 +1,9 @@
-import { TemplateGenerator, TemplateRequest } from '../../../cli/services/template-generator';
-import { FileManager } from '../../../cli/services/file-manager';
-import { NamingValidator } from '../../../cli/services/naming-validator';
-import { ConfigManager } from '../../../cli/services/config-manager';
-import { IdProvider } from '../../../cli/services/id-provider';
-import * as templateGenerators from '../../../';
+import { TemplateGenerator, TemplateRequest } from '../../../cli/services/template-generator.js';
+import { FileManager } from '../../../cli/services/file-manager.js';
+import { NamingValidator } from '../../../cli/services/naming-validator.js';
+import { ConfigManager } from '../../../cli/services/config-manager.js';
+import { IdProvider } from '../../../cli/services/id-provider.js';
+import * as templateGenerators from '../../../index.js';
 import path = require('path');
 
 // Mock all dependencies

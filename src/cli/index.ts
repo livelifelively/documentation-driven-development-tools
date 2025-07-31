@@ -2,11 +2,11 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { templateCommand } from './commands/template';
-import { helloCommand } from './commands/hello';
-import { initCommand } from './commands/init';
+import { templateCommand } from './commands/template.js';
+import { helloCommand } from './commands/hello.js';
+import { initCommand } from './commands/init.js';
 
-import pkg from '../../package.json';
+import pkg from '../../package.json' with { type: 'json' };
 
 /**
  * Main CLI Application Entry Point
@@ -53,6 +53,6 @@ export async function main(args: string[]) {
 }
 
 // Execute main function only when run directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main(hideBin(process.argv));
 }

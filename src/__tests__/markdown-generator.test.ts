@@ -1,5 +1,5 @@
-import { generateMarkdown } from '../markdown-generator';
-import { DocumentStructures } from '../types';
+import { generateMarkdown } from '../markdown-generator.js';
+import { DocumentStructures } from '../types.js';
 
 describe('Markdown Generator', () => {
   it('should generate correct markdown for a complex document', () => {

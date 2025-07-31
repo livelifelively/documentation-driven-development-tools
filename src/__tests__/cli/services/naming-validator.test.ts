@@ -1,4 +1,4 @@
-import { NamingValidator } from '../../../cli/services/naming-validator';
+import { NamingValidator } from '../../../cli/services/naming-validator.js';
 
 describe('NamingValidator', () => {
   let validator: NamingValidator;

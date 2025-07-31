@@ -1,13 +1,13 @@
-import family1 from './ddd-schema-json/1-meta.json';
-import family2 from './ddd-schema-json/2-business-scope.json';
-import family3 from './ddd-schema-json/3-planning-decomposition.json';
-import family4 from './ddd-schema-json/4-high-level-design.json';
-import family5 from './ddd-schema-json/5-maintenance-monitoring.json';
-import family6 from './ddd-schema-json/6-implementation-guidance.json';
-import family7 from './ddd-schema-json/7-quality-operations.json';
-import family8 from './ddd-schema-json/8-reference.json';
-import contextExamples from './ddd-schema-json/context-examples.json';
-import { TODO_PLACEHOLDER_TEXT } from './config';
+import family1 from './ddd-schema-json/1-meta.json' with { type: 'json' };
+import family2 from './ddd-schema-json/2-business-scope.json' with { type: 'json' };
+import family3 from './ddd-schema-json/3-planning-decomposition.json' with { type: 'json' };
+import family4 from './ddd-schema-json/4-high-level-design.json' with { type: 'json' };
+import family5 from './ddd-schema-json/5-maintenance-monitoring.json' with { type: 'json' };
+import family6 from './ddd-schema-json/6-implementation-guidance.json' with { type: 'json' };
+import family7 from './ddd-schema-json/7-quality-operations.json' with { type: 'json' };
+import family8 from './ddd-schema-json/8-reference.json' with { type: 'json' };
+import contextExamples from './ddd-schema-json/context-examples.json' with { type: 'json' };
+import { TODO_PLACEHOLDER_TEXT } from './config.js';
 import {
   DocumentStructures,
   Section,
@@ -19,7 +19,7 @@ import {
   CodeBlockStructure,
   ContentElement,
   RenderingControl,
-} from './types';
+} from './types.js';
 
 // Define the types for compile-time safety
 export interface SchemaApplicability {
