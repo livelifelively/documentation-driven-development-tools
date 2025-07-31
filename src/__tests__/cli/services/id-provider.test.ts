@@ -2,9 +2,10 @@ import { vol } from 'memfs';
 import { FileManager } from '../../../cli/services/file-manager.js';
 import { NamingValidator } from '../../../cli/services/naming-validator.js';
 import { IdProvider } from '../../../cli/services/id-provider.js';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-jest.mock('fs', () => require('memfs').fs);
-jest.mock('fs/promises', () => require('memfs').fs.promises);
+vi.mock('fs', () => require('memfs').fs);
+vi.mock('fs/promises', () => require('memfs').fs.promises);
 
 const TEST_DIR = '/test-id-provider';
 

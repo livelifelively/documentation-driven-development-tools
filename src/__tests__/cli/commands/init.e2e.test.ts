@@ -1,9 +1,10 @@
 import { main } from '../../../cli/index.js';
 import { vol } from 'memfs';
 import * as path from 'path';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-jest.mock('fs', () => require('memfs').fs);
-jest.mock('fs/promises', () => require('memfs').fs.promises);
+vi.mock('fs', () => require('memfs').fs);
+vi.mock('fs/promises', () => require('memfs').fs.promises);
 
 describe('CLI init command (E2E)', () => {
   const baseDir = 'test-project-e2e';
@@ -61,7 +62,7 @@ describe('CLI init command (E2E)', () => {
     vol.mkdirSync(docsPath, { recursive: true });
     vol.writeFileSync(path.join(docsPath, 'test.txt'), 'test');
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(main(['init', '--output-dir', targetDir])).rejects.toThrow(
       `'docs/' directory already exists. Use --force to overwrite.`

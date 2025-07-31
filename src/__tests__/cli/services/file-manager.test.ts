@@ -1,9 +1,10 @@
 import { FileManager } from '../../../cli/services/file-manager.js';
 import { vol } from 'memfs';
 import path from 'path';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock the entire fs module with memfs
-jest.mock('fs', () => require('memfs').fs);
+vi.mock('fs', () => require('memfs').fs);
 
 describe('FileManager', () => {
   let fileManager: FileManager;

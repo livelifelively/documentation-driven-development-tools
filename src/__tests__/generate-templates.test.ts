@@ -1,21 +1,22 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { generatePlanTemplate, generateTaskTemplate } from '../index.js';
 import { run } from '../generate-templates.js';
 
-jest.mock('fs');
-jest.mock('../index', () => ({
-  generatePlanTemplate: jest.fn(() => 'plan-template'),
-  generateTaskTemplate: jest.fn(() => 'task-template'),
+vi.mock('fs');
+vi.mock('../index', () => ({
+  generatePlanTemplate: vi.fn(() => 'plan-template'),
+  generateTaskTemplate: vi.fn(() => 'task-template'),
 }));
 
 describe('generate-templates script', () => {
   beforeEach(() => {
     // Reset mocks before each test
-    (fs.writeFileSync as jest.Mock).mockClear();
-    (fs.mkdirSync as jest.Mock).mockClear();
-    (generatePlanTemplate as jest.Mock).mockClear();
-    (generateTaskTemplate as jest.Mock).mockClear();
+    vi.mocked(fs.writeFileSync).mockClear();
+    vi.mocked(fs.mkdirSync).mockClear();
+    vi.mocked(generatePlanTemplate).mockClear();
+    vi.mocked(generateTaskTemplate).mockClear();
   });
 
   it('should generate both plan and task templates', () => {
@@ -33,11 +34,11 @@ describe('generate-templates script', () => {
   });
 
   it('should log an error and throw if generation fails', () => {
-    (generatePlanTemplate as jest.Mock).mockImplementation(() => {
+    vi.mocked(generatePlanTemplate).mockImplementation(() => {
       throw new Error('Generation failed');
     });
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => run()).toThrow('Generation failed');
     expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Failed to generate templates:', expect.any(Error));
@@ -46,9 +47,9 @@ describe('generate-templates script', () => {
   });
 
   it('should create directories if they do not exist', () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (generatePlanTemplate as jest.Mock).mockReturnValue('plan-template');
-    (generateTaskTemplate as jest.Mock).mockReturnValue('task-template');
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+    vi.mocked(generatePlanTemplate).mockReturnValue('plan-template');
+    vi.mocked(generateTaskTemplate).mockReturnValue('task-template');
     run();
     expect(fs.mkdirSync).toHaveBeenCalledTimes(4);
   });

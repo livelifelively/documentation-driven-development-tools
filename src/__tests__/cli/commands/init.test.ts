@@ -2,16 +2,17 @@ import { main } from '../../../cli/index.js';
 import { DocsInitializer } from '../../../cli/services/docs-initializer.js';
 import { vol } from 'memfs';
 import * as path from 'path';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-jest.mock('fs/promises');
+vi.mock('fs/promises');
 
 describe('CLI init command', () => {
-  let initializeSpy: jest.SpyInstance;
+  let initializeSpy: any;
 
   beforeEach(() => {
     // Reset the mock before each test
     vol.reset();
-    initializeSpy = jest.spyOn(DocsInitializer.prototype, 'initialize');
+    initializeSpy = vi.spyOn(DocsInitializer.prototype, 'initialize');
   });
 
   afterEach(() => {
@@ -55,7 +56,7 @@ describe('CLI init command', () => {
 
   it('should log success message on successful initialization', async () => {
     initializeSpy.mockResolvedValue(undefined);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await main(['init']);
 
@@ -66,7 +67,7 @@ describe('CLI init command', () => {
   it('should log error message on failed initialization', async () => {
     const errorMessage = 'Initialization failed';
     initializeSpy.mockRejectedValue(new Error(errorMessage));
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(main(['init'])).rejects.toThrow(errorMessage);
 

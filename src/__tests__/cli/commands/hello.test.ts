@@ -1,3 +1,4 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { main } from '../../../cli/index.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -39,10 +40,10 @@ describe('CLI End-to-End Tests', () => {
 });
 
 describe('CLI Integration Tests', () => {
-  let consoleSpy: jest.SpyInstance;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {

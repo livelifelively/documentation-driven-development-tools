@@ -5,26 +5,27 @@ import { ConfigManager } from '../../../cli/services/config-manager.js';
 import { IdProvider } from '../../../cli/services/id-provider.js';
 import * as templateGenerators from '../../../index.js';
 import path = require('path');
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock all dependencies
-jest.mock('../../../cli/services/file-manager');
-jest.mock('../../../cli/services/naming-validator');
-jest.mock('../../../cli/services/config-manager');
-jest.mock('../../../cli/services/id-provider');
-jest.mock('../../../'); // Mocks generatePlanTemplate and generateTaskTemplate
+vi.mock('../../../cli/services/file-manager');
+vi.mock('../../../cli/services/naming-validator');
+vi.mock('../../../cli/services/config-manager');
+vi.mock('../../../cli/services/id-provider');
+vi.mock('../../../'); // Mocks generatePlanTemplate and generateTaskTemplate
 
-const MockedFileManager = FileManager as jest.MockedClass<typeof FileManager>;
-const MockedNamingValidator = NamingValidator as jest.MockedClass<typeof NamingValidator>;
-const MockedConfigManager = ConfigManager as jest.MockedClass<typeof ConfigManager>;
-const MockedIdProvider = IdProvider as jest.MockedClass<typeof IdProvider>;
-const mockedTemplates = templateGenerators as jest.Mocked<typeof templateGenerators>;
+const MockedFileManager = FileManager as unknown as { mockClear: () => void };
+const MockedNamingValidator = NamingValidator as unknown as { mockClear: () => void };
+const MockedConfigManager = ConfigManager as unknown as { mockClear: () => void };
+const MockedIdProvider = IdProvider as unknown as { mockClear: () => void };
+const mockedTemplates = templateGenerators as any;
 
 describe('TemplateGenerator', () => {
   let generator: TemplateGenerator;
-  let fileManager: jest.Mocked<FileManager>;
-  let namingValidator: jest.Mocked<NamingValidator>;
-  let configManager: jest.Mocked<ConfigManager>;
-  let idProvider: jest.Mocked<IdProvider>;
+  let fileManager: any;
+  let namingValidator: any;
+  let configManager: any;
+  let idProvider: any;
 
   beforeEach(() => {
     // Reset mocks before each test
@@ -46,7 +47,9 @@ describe('TemplateGenerator', () => {
 
     // Setup default mock behaviors
     configManager.getRequirementsPath.mockReturnValue('requirements');
-    fileManager.resolveOutputPath.mockImplementation((dir) => (dir ? path.resolve(process.cwd(), dir) : process.cwd()));
+    fileManager.resolveOutputPath.mockImplementation((dir: string) =>
+      dir ? path.resolve(process.cwd(), dir) : process.cwd()
+    );
     namingValidator.validateName.mockReturnValue({ isValid: true });
     idProvider.getNextAvailableIds.mockResolvedValue({ nextPlanId: 1, nextTaskId: 1 });
     fileManager.checkFileExists.mockResolvedValue(false); // Default to no file conflicts

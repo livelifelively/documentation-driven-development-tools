@@ -3,26 +3,39 @@ import { FileManager } from '../../../cli/services/file-manager.js';
 import { TemplateGenerator } from '../../../cli/services/template-generator.js';
 import { vol } from 'memfs';
 import * as path from 'path';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-jest.mock('fs/promises');
-jest.mock('../../../cli/services/file-manager');
-jest.mock('../../../cli/services/template-generator');
+vi.mock('fs/promises');
+vi.mock('../../../cli/services/file-manager');
+vi.mock('../../../cli/services/template-generator');
 
-const FileManagerMock = FileManager as jest.MockedClass<typeof FileManager>;
-const TemplateGeneratorMock = TemplateGenerator as jest.MockedClass<typeof TemplateGenerator>;
+const FileManagerMock = FileManager as unknown as { mockClear: () => void; mockImplementation: (impl: any) => void };
+const TemplateGeneratorMock = TemplateGenerator as unknown as {
+  mockClear: () => void;
+  mockImplementation: (impl: any) => void;
+};
 
 describe('DocsInitializer service', () => {
   let initializer: DocsInitializer;
-  let fileManagerMock: jest.Mocked<FileManager>;
-  let templateGeneratorMock: jest.Mocked<TemplateGenerator>;
+  let fileManagerMock: any;
+  let templateGeneratorMock: any;
 
   beforeEach(() => {
     vol.reset();
     FileManagerMock.mockClear();
     TemplateGeneratorMock.mockClear();
 
-    fileManagerMock = new FileManager() as jest.Mocked<FileManager>;
-    templateGeneratorMock = new TemplateGenerator() as jest.Mocked<TemplateGenerator>;
+    fileManagerMock = {
+      checkDirectoryExists: vi.fn(),
+      ensureDirectoryExists: vi.fn(),
+      copyFile: vi.fn(),
+      checkFileExists: vi.fn(),
+      writeTemplate: vi.fn(), // <-- add this
+      deleteDirectory: vi.fn(), // <-- add this
+    };
+    templateGeneratorMock = {
+      generate: vi.fn(),
+    };
 
     FileManagerMock.mockImplementation(() => fileManagerMock);
     TemplateGeneratorMock.mockImplementation(() => templateGeneratorMock);
@@ -34,6 +47,8 @@ describe('DocsInitializer service', () => {
     fileManagerMock.checkDirectoryExists.mockReturnValue(false);
     fileManagerMock.ensureDirectoryExists.mockResolvedValue();
     fileManagerMock.copyFile.mockResolvedValue();
+    fileManagerMock.checkFileExists.mockResolvedValue(false);
+    fileManagerMock.writeTemplate.mockResolvedValue();
     templateGeneratorMock.generate.mockResolvedValue({ success: true });
 
     const outputDir = 'test';
@@ -52,10 +67,11 @@ describe('DocsInitializer service', () => {
 
   it('should throw an error if docs directory exists and force is false', async () => {
     fileManagerMock.checkDirectoryExists.mockReturnValue(true);
+    fileManagerMock.checkFileExists.mockResolvedValue(true);
     const outputDir = 'test';
 
     await expect(initializer.initialize({ outputDir, force: false })).rejects.toThrow(
-      `'docs/' directory already exists. Use --force to overwrite.`
+      `'ddd.config.json' already exists. Use --force to overwrite.`
     );
   });
 
@@ -63,6 +79,9 @@ describe('DocsInitializer service', () => {
     fileManagerMock.checkDirectoryExists.mockReturnValue(true);
     fileManagerMock.ensureDirectoryExists.mockResolvedValue();
     fileManagerMock.copyFile.mockResolvedValue();
+    fileManagerMock.checkFileExists.mockResolvedValue(false);
+    fileManagerMock.writeTemplate.mockResolvedValue();
+    fileManagerMock.deleteDirectory.mockResolvedValue();
     templateGeneratorMock.generate.mockResolvedValue({ success: true });
 
     const outputDir = 'test';

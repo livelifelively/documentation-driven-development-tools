@@ -1,21 +1,22 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { generateHumanSchemaDocumentation, generateMachineSchemaDocumentation } from '../index.js';
 import { run } from '../generate-schema-doc.js';
 
-jest.mock('fs');
-jest.mock('../index', () => ({
-  generateHumanSchemaDocumentation: jest.fn(() => 'human-doc'),
-  generateMachineSchemaDocumentation: jest.fn(() => 'machine-doc'),
+vi.mock('fs');
+vi.mock('../index', () => ({
+  generateHumanSchemaDocumentation: vi.fn(() => 'human-doc'),
+  generateMachineSchemaDocumentation: vi.fn(() => 'machine-doc'),
 }));
 
 describe('generate-schema-doc script', () => {
   beforeEach(() => {
     // Reset mocks before each test
-    (fs.writeFileSync as jest.Mock).mockClear();
-    (fs.mkdirSync as jest.Mock).mockClear();
-    (generateHumanSchemaDocumentation as jest.Mock).mockClear();
-    (generateMachineSchemaDocumentation as jest.Mock).mockClear();
+    vi.mocked(fs.writeFileSync).mockClear();
+    vi.mocked(fs.mkdirSync).mockClear();
+    vi.mocked(generateHumanSchemaDocumentation).mockClear();
+    vi.mocked(generateMachineSchemaDocumentation).mockClear();
   });
 
   it('should generate both human and machine-readable docs', () => {
@@ -33,11 +34,11 @@ describe('generate-schema-doc script', () => {
   });
 
   it('should log an error and throw if generation fails', () => {
-    (generateHumanSchemaDocumentation as jest.Mock).mockImplementation(() => {
+    vi.mocked(generateHumanSchemaDocumentation).mockImplementation(() => {
       throw new Error('Generation failed');
     });
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => run()).toThrow('Generation failed');
     expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Failed to generate documentation:', expect.any(Error));
@@ -46,9 +47,9 @@ describe('generate-schema-doc script', () => {
   });
 
   it('should create directories if they do not exist', () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (generateHumanSchemaDocumentation as jest.Mock).mockReturnValue('human-doc');
-    (generateMachineSchemaDocumentation as jest.Mock).mockReturnValue('machine-doc');
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+    vi.mocked(generateHumanSchemaDocumentation).mockReturnValue('human-doc');
+    vi.mocked(generateMachineSchemaDocumentation).mockReturnValue('machine-doc');
     run();
     expect(fs.mkdirSync).toHaveBeenCalledTimes(4);
   });

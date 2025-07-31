@@ -2,11 +2,12 @@ import { vol } from 'memfs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Arguments } from 'yargs';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { handler as templateHandler } from '../../../cli/commands/template.js';
 
 // Mock the file system
-jest.mock('fs', () => require('memfs').fs);
-jest.mock('fs/promises', () => require('memfs').fs.promises);
+vi.mock('fs', () => require('memfs').fs);
+vi.mock('fs/promises', () => require('memfs').fs.promises);
 
 const TEMP_DIR = '/temp-test-dir';
 
@@ -22,7 +23,7 @@ const mockArgv = (args: { [key: string]: any }): Arguments<any> => {
 describe('CLI Template Command (Handler Test)', () => {
   beforeEach(() => {
     vol.reset();
-    jest.spyOn(process, 'cwd').mockReturnValue(TEMP_DIR);
+    vi.spyOn(process, 'cwd').mockReturnValue(TEMP_DIR);
 
     const config = {
       documentation: {
@@ -39,7 +40,7 @@ describe('CLI Template Command (Handler Test)', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should generate a plan template', async () => {
@@ -91,7 +92,7 @@ describe('CLI Template Command (Handler Test)', () => {
   });
 
   it('should perform a dry run correctly', async () => {
-    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const argv = mockArgv({ type: 'plan', name: 'my-dry-run-plan', 'dry-run': true });
     await templateHandler(argv);
 

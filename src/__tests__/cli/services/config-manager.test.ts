@@ -1,8 +1,9 @@
 import { vol } from 'memfs';
 import { ConfigManager } from '../../../cli/services/config-manager.js';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-jest.mock('fs', () => require('memfs').fs);
-jest.mock('fs/promises', () => require('memfs').fs.promises);
+vi.mock('fs', () => require('memfs').fs);
+vi.mock('fs/promises', () => require('memfs').fs.promises);
 
 const TEST_DIR = '/test-dir';
 
@@ -49,7 +50,7 @@ describe('ConfigManager', () => {
       TEST_DIR
     );
 
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const configManager = new ConfigManager();
     await configManager.loadConfig(TEST_DIR);
