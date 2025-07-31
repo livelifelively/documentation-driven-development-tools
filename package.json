@@ -39,6 +39,7 @@
     "codegen"
   ],
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
     "@types/node": "^24.0.14",
     "@types/yargs": "^17.0.33",
     "husky": "^9.1.7",
@@ -50,9 +51,13 @@
   "dependencies": {
     "glob": "^11.0.3",
     "gray-matter": "^4.0.3",
+    "remark": "^15.0.1",
+    "remark-parse": "^11.0.0",
     "simple-git": "^3.28.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
     "yargs": "^17.7.2"
   }
 }

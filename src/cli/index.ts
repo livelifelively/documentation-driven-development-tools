@@ -31,7 +31,7 @@ export async function main(args: string[]) {
         if (process.env.NODE_ENV !== 'test') {
           process.exit(1);
         } else {
-          // Re-throw in test env for Jest to catch
+          // Re-throw in test env for Vitest to catch
           throw err;
         }
       }

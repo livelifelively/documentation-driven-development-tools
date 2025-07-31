@@ -91,7 +91,7 @@
           "content": [
             {
               "type": "text",
-              "content": "Generate a Jest test for this function:",
+              "content": "Generate a Vitest test for this function:",
               "rendering": {
                 "renderAsCodeBlockForHuman": false,
                 "renderAsCodeBlockForMachine": false
