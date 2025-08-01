@@ -1,6 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import statusPlugin from '../plugins/status.plugin.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import StatusPlugin from '../plugins/status.plugin.js';
+import { SchemaValidator } from '../schema/schema-validator.js';
 import { Root } from 'mdast';
+
+// Mock the SchemaValidator
+vi.mock('../schema/schema-validator.js');
 
 const createMockAst = (lines: string[]): Root => ({
   type: 'root',
@@ -21,25 +25,49 @@ const createMockAst = (lines: string[]): Root => ({
 });
 
 describe('Status Plugin', () => {
+  let mockValidator: any;
+  let statusPlugin: StatusPlugin;
+
+  beforeEach(() => {
+    // Create a fresh mock for each test
+    mockValidator = {
+      validateSection: vi.fn(),
+    };
+    // Instantiate the plugin with the mock validator
+    statusPlugin = new StatusPlugin(mockValidator);
+    vi.clearAllMocks();
+  });
+
   describe('lint', () => {
-    it('should return no errors for valid status section', () => {
+    it('should call the schema validator and return its errors', () => {
+      // Arrange
       const mockAst = createMockAst(['Current State: 💡 Not Started', 'Priority: 🟥 High']);
+      const expectedErrors = [{ section: '1.2 Status', message: 'Mock validation error' }];
+      // Configure the mock to return a specific error
+      mockValidator.validateSection.mockReturnValue(expectedErrors);
+
+      // Act
       const errors = statusPlugin.lint(mockAst);
+
+      // Assert
+      // 1. Check that the validator was actually called
+      expect(mockValidator.validateSection).toHaveBeenCalledWith(mockAst, '1.2', 'task');
+      // 2. Check that the plugin returned the errors from the validator
+      expect(errors).toEqual(expectedErrors);
+    });
+
+    it('should return no errors when the validator returns none', () => {
+      // Arrange
+      const mockAst = createMockAst(['Current State: 💡 Not Started', 'Priority: 🟥 High']);
+      // Configure the mock to return an empty array
+      mockValidator.validateSection.mockReturnValue([]);
+
+      // Act
+      const errors = statusPlugin.lint(mockAst);
+
+      // Assert
+      expect(mockValidator.validateSection).toHaveBeenCalledWith(mockAst, '1.2', 'task');
       expect(errors).toHaveLength(0);
-    });
-
-    it('should return error for missing Current State', () => {
-      const mockAst = createMockAst(['Priority: 🟥 High']);
-      const errors = statusPlugin.lint(mockAst);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].message).toContain('Current State');
-    });
-
-    it('should return error for missing Priority', () => {
-      const mockAst = createMockAst(['Current State: 💡 Not Started']);
-      const errors = statusPlugin.lint(mockAst);
-      expect(errors).toHaveLength(1);
-      expect(errors[0].message).toContain('Priority');
     });
   });
 

@@ -2,44 +2,28 @@ import { SectionProcessor, LintingError } from '../plugin.types.js';
 import { Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { toString } from 'mdast-util-to-string';
+import { SchemaValidator } from '../schema/schema-validator.js';
 
 /**
  * Plugin for processing the "1.2 Status" section of task files.
- * Extracts status information and validates required fields using structured AST traversal.
+ * Extracts status information and validates required fields using the SchemaValidator.
  */
-const statusPlugin: SectionProcessor = {
-  sectionId: '1.2',
+class StatusPlugin implements SectionProcessor {
+  sectionId = '1.2';
+  private schemaValidator: SchemaValidator;
+
+  constructor(schemaValidator: SchemaValidator) {
+    this.schemaValidator = schemaValidator;
+  }
 
   /**
-   * Lints the status section for required fields.
+   * Lints the status section for required fields using the SchemaValidator.
    * @param sectionAst The AST for the status section.
    * @returns An array of linting errors.
    */
   lint(sectionAst: Root): LintingError[] {
-    const errors: LintingError[] = [];
-    const foundFields = new Set<string>();
-
-    visit(sectionAst, 'listItem', (node) => {
-      const text = toString(node);
-      if (text.startsWith('Current State:')) foundFields.add('Current State');
-      if (text.startsWith('Priority:')) foundFields.add('Priority');
-    });
-
-    if (!foundFields.has('Current State')) {
-      errors.push({
-        section: '1.2',
-        message: "Missing required field: 'Current State'",
-      });
-    }
-    if (!foundFields.has('Priority')) {
-      errors.push({
-        section: '1.2',
-        message: "Missing required field: 'Priority'",
-      });
-    }
-
-    return errors;
-  },
+    return this.schemaValidator.validateSection(sectionAst, '1.2', 'task');
+  }
 
   /**
    * Extracts structured data from the status section using AST traversal.
@@ -66,7 +50,7 @@ const statusPlugin: SectionProcessor = {
     });
 
     return data;
-  },
+  }
 
   /**
    * Specifies the target path in the final JSON output.
@@ -74,7 +58,7 @@ const statusPlugin: SectionProcessor = {
    */
   getTargetPath(): string {
     return 'meta.status';
-  },
-};
+  }
+}
 
-export default statusPlugin;
+export default StatusPlugin;
