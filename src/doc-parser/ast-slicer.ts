@@ -1,63 +1,42 @@
-import { Root, Content } from 'mdast';
+import { Root } from 'mdast';
+import { visit } from 'unist-util-visit';
 
 /**
- * Slices a remark AST into sections based on Level 2 headings.
+ * Finds a section in a document AST based on its heading.
+ * @param documentAst The full document AST.
+ * @param sectionHeading The heading text to search for (e.g., "1.2 Status").
+ * @returns The AST for the found section, or null if not found.
  */
-export class AstSlicer {
-  /**
-   * Slices the AST into a map of section IDs to their corresponding AST nodes.
-   * @param ast The root of the markdown AST.
-   * @returns A map where keys are section IDs (e.g., "1.2") and values are new ASTs for that section.
-   */
-  slice(ast: Root): Map<string, Root> {
-    const sections = new Map<string, Root>();
-    let currentSectionId: string | null = null;
-    let currentChildren: Content[] = [];
+export function findSection(documentAst: Root, sectionHeading: string): Root | null {
+  let sectionNode: Root | null = null;
+  let inSection = false;
+  const sectionChildren = [];
 
-    for (const node of ast.children) {
-      if (node.type === 'heading' && node.depth === 2) {
-        // If we are in a section, save it before starting a new one.
-        if (currentSectionId) {
-          sections.set(currentSectionId, { type: 'root', children: currentChildren });
-        }
+  const headingParts = sectionHeading.split(' ');
+  const sectionId = headingParts[0]; // e.g., "1.2"
 
-        // Start a new section
-        const headingText = this.extractHeadingText(node);
-        currentSectionId = this.extractSectionId(headingText);
-        currentChildren = [node];
-      } else if (currentSectionId) {
-        // Add node to the current section
-        currentChildren.push(node);
+  for (const node of documentAst.children) {
+    if (node.type === 'heading') {
+      if (inSection) {
+        // We've reached the next heading, so the section ends here.
+        break;
+      }
+      // A bit lenient: check if the heading starts with the section ID
+      if ('children' in node && node.children[0]?.type === 'text' && node.children[0].value.startsWith(sectionId)) {
+        inSection = true;
       }
     }
-
-    // Save the last section
-    if (currentSectionId) {
-      sections.set(currentSectionId, { type: 'root', children: currentChildren });
+    if (inSection) {
+      sectionChildren.push(node);
     }
-
-    return sections;
   }
 
-  /**
-   * Extracts the text content from a heading node.
-   * @param headingNode The heading AST node.
-   * @returns The text content of the heading.
-   */
-  private extractHeadingText(headingNode: Content): string {
-    if (headingNode.type !== 'heading' || !headingNode.children) {
-      return '';
-    }
-    return headingNode.children.map((child: any) => child.value || '').join('');
+  if (sectionChildren.length > 0) {
+    sectionNode = {
+      type: 'root',
+      children: sectionChildren,
+    };
   }
 
-  /**
-   * Extracts a section ID from a heading string (e.g., "1.2 Status" -> "1.2").
-   * @param headingText The text of the heading.
-   * @returns The section ID, or null if not found.
-   */
-  private extractSectionId(headingText: string): string | null {
-    const match = headingText.match(/^(\d+\.\d+)/);
-    return match ? match[1] : null;
-  }
+  return sectionNode;
 }

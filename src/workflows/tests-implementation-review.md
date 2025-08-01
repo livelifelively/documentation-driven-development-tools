@@ -61,6 +61,21 @@ This workflow generates the following artifacts, which are stored in a directory
 
 **Goal:** To perform a detailed audit of the test files against the task documentation.
 
+### Scope of Review
+
+**This review is strictly limited to the test suite.** The AI Assistant's feedback must focus exclusively on the correctness, coverage, and quality of the tests themselves.
+
+- **In Scope**:
+  - Verifying that all Acceptance Criteria are covered by tests.
+  - Assessing the quality and robustness of test cases (e.g., edge cases, error handling).
+  - Providing specific, actionable suggestions for improving or adding tests.
+- **Out of Scope**:
+  - Reviewing the implementation code (`*.ts` files that are not tests).
+  - Commenting on the feature's architecture or design.
+  - Suggesting changes to the feature's behavior or implementation details.
+
+This focus ensures that the feedback is directly related to the workflow's objective and avoids premature implementation review.
+
 1.  **AI Assistant's Action**:
     - **Identify Test Files**: Locate all test files associated with the changed source code files (referencing `6.1.2 Files Change Log` and `7.1 Testing Strategy / Requirements`).
     - **Review Test Coverage**: Compare the test cases against the `2.4 Acceptance Criteria`. Are all criteria covered by at least one test?

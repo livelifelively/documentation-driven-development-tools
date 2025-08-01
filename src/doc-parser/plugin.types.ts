@@ -41,7 +41,8 @@ export interface ParseResult {
 
 /**
  * Interface for section processors that handle specific schema sections.
- * Each processor is responsible for linting and extracting data from its section.
+ * Each processor is responsible for finding its section within the document,
+ * validating it, and extracting its data.
  */
 export interface SectionProcessor {
   /**
@@ -50,18 +51,14 @@ export interface SectionProcessor {
   sectionId: string;
 
   /**
-   * Validates the AST nodes for this section against schema rules.
-   * @param sectionAst The AST nodes belonging to this section
-   * @returns Array of linting errors, empty if valid
+   * Processes the entire document AST to find and handle a specific section.
+   * @param documentAst The AST for the entire document.
+   * @returns An object containing the extracted data and any linting errors.
    */
-  lint(sectionAst: Root): LintingError[];
-
-  /**
-   * Extracts structured data from the AST nodes for this section.
-   * @param sectionAst The AST nodes belonging to this section
-   * @returns Structured data object for this section
-   */
-  extract(sectionAst: Root): any;
+  process(documentAst: Root): {
+    data: any;
+    errors: LintingError[];
+  };
 
   /**
    * Returns the dot-notation path where the extracted data should be placed.

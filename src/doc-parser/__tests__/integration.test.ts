@@ -1,99 +1,93 @@
-import { describe, it, expect, beforeAll, afterAll, vi, afterEach } from 'vitest';
-import { parseTask } from '../index.js';
-import { writeFileSync, unlinkSync, existsSync } from 'fs';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { writeFileSync, existsSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { CoreEngine } from '../core-engine.js';
 import { PluginManager } from '../plugin-manager.js';
-import mockPlugin from './mock.plugin.js';
+import { SchemaProvider } from '../schema/schema-provider.js';
+import { SchemaValidator } from '../schema/schema-validator.js';
+import StatusPlugin from '../plugins/status.plugin.js';
 
+// This is a full end-to-end test of the parser with a real plugin.
 describe('Integration Test', () => {
-  const testFilePath = join(process.cwd(), 'test-task.task.md');
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  const testDir = join(process.cwd(), 'temp-test-dir');
+  const testFilePath = join(testDir, 'test-task.task.md');
 
   beforeAll(() => {
-    // Create a test task file
-    const testContent = `# Test Task
+    if (!existsSync(testDir)) {
+      mkdirSync(testDir, { recursive: true });
+    }
+  });
 
+  afterAll(() => {
+    if (existsSync(testDir)) {
+      rmSync(testDir, { recursive: true, force: true });
+    }
+  });
+
+  it('should parse a task file with a complete status section and find no errors', async () => {
+    // Arrange: Create a file with all required fields for section 1.2
+    const content = `# Test Task
 ## 1.2 Status
 - **Current State:** 💡 Not Started
 - **Priority:** 🟥 High
 - **Progress:** 0
-
-## 2.1 Overview
-This is a test task for integration testing.
-
-## 3.1 Roadmap
-- [ ] Step 1
-- [ ] Step 2
-- [ ] Step 3
-
-## 99.9 Mock Section
-This is a mock section for testing.
+- **Planning Estimate:** 5
+- **Est. Variance (pts):** 0
+- **Created:** 2025-01-01 10:00
+- **Implementation Started:** 2025-01-01 11:00
+- **Completed:** 2025-01-01 12:00
+- **Last Updated:** 2025-01-01 13:00
 `;
+    writeFileSync(testFilePath, content);
 
-    writeFileSync(testFilePath, testContent);
-  });
-
-  afterAll(() => {
-    // Clean up test file
-    if (existsSync(testFilePath)) {
-      unlinkSync(testFilePath);
-    }
-    // Don't delete mock.plugin.ts as it's a test utility file
-  });
-
-  it('should parse a complete task file end-to-end', async () => {
-    const result = await parseTask(testFilePath);
-
-    // Verify the result structure
-    expect(result).toHaveProperty('data');
-    expect(result).toHaveProperty('errors');
-    expect(Array.isArray(result.errors)).toBe(true);
-
-    // Since we don't have plugins loaded, data should be null
-    // but the parsing should work without errors
-    expect(result.errors).toHaveLength(0);
-  });
-
-  it('should handle missing plugins gracefully', async () => {
-    const result = await parseTask(testFilePath);
-
-    // Without plugins loaded, we should get no data but no errors
-    expect(result.data).toBeNull();
-    expect(result.errors).toHaveLength(0);
-  });
-
-  it('should parse a task file and extract data using a loaded plugin', async () => {
-    // Arrange
     const pluginManager = new PluginManager();
-    const getProcessorSpy = vi.spyOn(pluginManager, 'getProcessor').mockImplementation((sectionId: string) => {
-      if (sectionId === '99.9') {
-        return mockPlugin;
-      }
-      return undefined;
-    });
-
+    const schemaProvider = new SchemaProvider();
+    const schemaValidator = new SchemaValidator(schemaProvider);
+    const statusPlugin = new StatusPlugin(schemaValidator);
+    pluginManager.addProcessor(statusPlugin);
     const engine = new CoreEngine(pluginManager);
 
     // Act
     const result = await engine.parse(testFilePath);
 
     // Assert
-    expect(getProcessorSpy).toHaveBeenCalledWith('1.2');
-    expect(getProcessorSpy).toHaveBeenCalledWith('2.1');
-    expect(getProcessorSpy).toHaveBeenCalledWith('3.1');
-    expect(getProcessorSpy).toHaveBeenCalledWith('99.9');
+    console.log('DEBUG ERRORS:', result.errors);
     expect(result.errors).toHaveLength(0);
     expect(result.data).not.toBeNull();
-    expect(result.data).toHaveProperty('mock');
-    expect((result.data as any).mock).toEqual({
-      mockData: 'extracted successfully',
-    });
+    if (result.data) {
+      expect(result.data.meta?.status).toBeDefined();
+    }
+  });
 
-    // Clean up spies
-    getProcessorSpy.mockRestore();
+  it('should return exactly two linting errors for two missing required fields', async () => {
+    // Arrange: Create a file missing exactly two required fields
+    const content = `# Invalid Task
+## 1.2 Status
+- **Progress:** 0
+- **Planning Estimate:** 5
+- **Est. Variance (pts):** 0
+- **Created:** 2025-01-01 10:00
+- **Implementation Started:** 2025-01-01 11:00
+- **Completed:** 2025-01-01 12:00
+- **Last Updated:** 2025-01-01 13:00
+`;
+    writeFileSync(testFilePath, content);
+
+    const pluginManager = new PluginManager();
+    const schemaProvider = new SchemaProvider();
+    const schemaValidator = new SchemaValidator(schemaProvider);
+    const statusPlugin = new StatusPlugin(schemaValidator);
+    pluginManager.addProcessor(statusPlugin);
+    const engine = new CoreEngine(pluginManager);
+
+    // Act
+    const result = await engine.parse(testFilePath);
+
+    // Assert
+    expect(result.data).toBeNull();
+    expect(result.errors).toHaveLength(2);
+    const messages = result.errors.map((e) => e.message);
+    expect(messages).toContain('Required field "Current State" is missing.');
+    expect(messages).toContain('Required field "Priority" is missing.');
   });
 });

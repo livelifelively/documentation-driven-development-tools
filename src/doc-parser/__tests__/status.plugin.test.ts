@@ -6,9 +6,12 @@ import { Root } from 'mdast';
 // Mock the SchemaValidator
 vi.mock('../schema/schema-validator.js');
 
-const createMockAst = (lines: string[]): Root => ({
+const createMockDocumentAst = (lines: string[]): Root => ({
   type: 'root',
   children: [
+    { type: 'heading', depth: 1, children: [{ type: 'text', value: 'Some Other Section' }] },
+    { type: 'paragraph', children: [{ type: 'text', value: 'Some other content.' }] },
+    { type: 'heading', depth: 2, children: [{ type: 'text', value: '1.2 Status' }] },
     {
       type: 'list',
       children: lines.map((line) => ({
@@ -21,71 +24,97 @@ const createMockAst = (lines: string[]): Root => ({
         ],
       })),
     },
+    { type: 'heading', depth: 2, children: [{ type: 'text', value: '1.3 Another Section' }] },
   ],
 });
 
-describe('Status Plugin', () => {
+describe('StatusPlugin', () => {
   let mockValidator: any;
   let statusPlugin: StatusPlugin;
 
   beforeEach(() => {
-    // Create a fresh mock for each test
     mockValidator = {
-      validateSection: vi.fn(),
+      validate: vi.fn(),
     };
-    // Instantiate the plugin with the mock validator
     statusPlugin = new StatusPlugin(mockValidator);
     vi.clearAllMocks();
   });
 
-  describe('lint', () => {
-    it('should call the schema validator and return its errors', () => {
+  describe('process', () => {
+    it('should extract data, call the validator with it, and return the results', () => {
       // Arrange
-      const mockAst = createMockAst(['Current State: 💡 Not Started', 'Priority: 🟥 High']);
-      const expectedErrors = [{ section: '1.2 Status', message: 'Mock validation error' }];
-      // Configure the mock to return a specific error
-      mockValidator.validateSection.mockReturnValue(expectedErrors);
+      const mockAst = createMockDocumentAst(['Current State: In Progress', 'Priority: High']);
+      const expectedData = {
+        currentState: 'In Progress',
+        priority: 'High',
+      };
+      const expectedErrors = [{ section: '1.2', message: 'A mock error' }];
+      mockValidator.validate.mockReturnValue(expectedErrors);
 
       // Act
-      const errors = statusPlugin.lint(mockAst);
+      const { data, errors } = statusPlugin.process(mockAst);
 
       // Assert
-      // 1. Check that the validator was actually called
-      expect(mockValidator.validateSection).toHaveBeenCalledWith(mockAst, '1.2', 'task');
-      // 2. Check that the plugin returned the errors from the validator
+      expect(data).toEqual(expectedData);
       expect(errors).toEqual(expectedErrors);
+      expect(mockValidator.validate).toHaveBeenCalledWith(expectedData, '1.2', 'task');
     });
 
-    it('should return no errors when the validator returns none', () => {
+    it('should return extracted data and no errors when validation passes', () => {
       // Arrange
-      const mockAst = createMockAst(['Current State: 💡 Not Started', 'Priority: 🟥 High']);
-      // Configure the mock to return an empty array
-      mockValidator.validateSection.mockReturnValue([]);
+      const mockAst = createMockDocumentAst(['Current State: Done']);
+      const expectedData = {
+        currentState: 'Done',
+      };
+      mockValidator.validate.mockReturnValue([]);
 
       // Act
-      const errors = statusPlugin.lint(mockAst);
+      const { data, errors } = statusPlugin.process(mockAst);
 
       // Assert
-      expect(mockValidator.validateSection).toHaveBeenCalledWith(mockAst, '1.2', 'task');
+      expect(data).toEqual(expectedData);
       expect(errors).toHaveLength(0);
+      expect(mockValidator.validate).toHaveBeenCalledWith(expectedData, '1.2', 'task');
+    });
+
+    it('should return null data and errors if the section is not found but is required', () => {
+      // Arrange
+      const emptyAst: Root = { type: 'root', children: [] };
+      const expectedErrors = [{ section: '1.2', message: 'Required section missing' }];
+      mockValidator.validate.mockReturnValue(expectedErrors);
+
+      // Act
+      const { data, errors } = statusPlugin.process(emptyAst);
+
+      // Assert
+      expect(data).toBeNull();
+      expect(errors).toEqual(expectedErrors);
+      // It should call validate with an empty object if the section is missing
+      expect(mockValidator.validate).toHaveBeenCalledWith({}, '1.2', 'task');
+    });
+
+    it('should correctly parse and convert numeric values', () => {
+      // Arrange
+      const mockAst = createMockDocumentAst(['Progress: 50', 'Planning Estimate: 8']);
+      const expectedData = {
+        progress: 50,
+        planningEstimate: 8,
+      };
+      mockValidator.validate.mockReturnValue([]);
+
+      // Act
+      const { data, errors } = statusPlugin.process(mockAst);
+
+      // Assert
+      expect(data).toEqual(expectedData);
+      expect(errors).toHaveLength(0);
+      expect(mockValidator.validate).toHaveBeenCalledWith(expectedData, '1.2', 'task');
     });
   });
 
-  describe('extract', () => {
-    it('should extract status data correctly', () => {
-      const mockAst = createMockAst(['Current State: 💡 Not Started', 'Priority: 🟥 High', 'Progress: 25']);
-      const data = statusPlugin.extract(mockAst);
-      expect(data.currentState).toBe('💡 Not Started');
-      expect(data.priority).toBe('🟥 High');
-      expect(data.progress).toBe(25);
-    });
-
-    it('should handle missing fields gracefully', () => {
-      const mockAst = createMockAst(['Current State: 💡 Not Started']);
-      const data = statusPlugin.extract(mockAst);
-      expect(data.currentState).toBe('💡 Not Started');
-      expect(data.priority).toBeUndefined();
-      expect(data.progress).toBeUndefined();
+  describe('getTargetPath', () => {
+    it('should return the correct target path', () => {
+      expect(statusPlugin.getTargetPath()).toBe('meta.status');
     });
   });
 });

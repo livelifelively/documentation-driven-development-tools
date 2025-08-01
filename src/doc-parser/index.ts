@@ -4,10 +4,15 @@ import { ParseResult, LintingError } from './plugin.types.js';
 /**
  * Parses and validates a task file, returning its structured data and any errors.
  * @param filePath The path to the *.task.md file.
+ * @param pluginsDir Optional path to a directory of plugins, for testing.
  * @returns A promise that resolves with a ParseResult object.
  */
-export async function parseTask(filePath: string): Promise<ParseResult> {
+export async function parseTask(filePath: string, pluginsDir?: string): Promise<ParseResult> {
   const coreEngine = new CoreEngine();
+  // If a plugin directory is provided (mainly for testing), load plugins from there.
+  if (pluginsDir) {
+    await coreEngine.loadPlugins(pluginsDir);
+  }
   return await coreEngine.parse(filePath);
 }
 

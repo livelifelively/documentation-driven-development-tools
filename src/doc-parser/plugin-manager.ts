@@ -52,4 +52,14 @@ export class PluginManager {
   getAllProcessors(): SectionProcessor[] {
     return [...this.processors];
   }
+
+  /**
+   * Manually adds a processor instance. Useful for testing.
+   * @param processor The processor instance to add.
+   */
+  addProcessor(processor: SectionProcessor): void {
+    if (processor && processor.sectionId) {
+      this.processors.push(processor);
+    }
+  }
 }
