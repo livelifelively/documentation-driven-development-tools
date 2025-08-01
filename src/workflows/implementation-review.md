@@ -35,6 +35,16 @@ A workflow document is not passive documentation; it is an **executable instruct
 
 ---
 
+## Workflow Artifacts
+
+This workflow generates the following artifacts, which are stored in a directory named after the task ID.
+
+- **Path Pattern**: `docs/workflow/<task_id>/`
+- **Generated Reports**:
+  - `implementation-review.md`: A comprehensive report of the entire implementation review.
+
+---
+
 ## Phase 1: Context and Prerequisite Check
 
 **Goal:** To ensure the `Test Implementation Review` is complete and to build full context before reviewing the source code.
@@ -270,7 +280,7 @@ A workflow document is not passive documentation; it is an **executable instruct
       - **Deployment Readiness Assessment**: Final go/no-go recommendation
       - **Post-Deployment Considerations**: Monitoring and maintenance recommendations
     - **AI Assistant's Action: Generate Comprehensive Implementation Review Summary Document**
-      - Create a new markdown file named `Implementation-Review-Summary-<task-name>.md`.
+      - Create and save a new markdown file named `implementation-review-summary.md` in the task's artifact directory (`docs/workflow/<task_id>/`).
       - The document must contain all review phases in a single comprehensive report:
         - **Executive Summary**: High-level overview of the implementation review with overall quality score and deployment readiness assessment
         - **Phase 2: Architectural Alignment Review**: Complete architectural compliance report with component analysis and dependency evaluation

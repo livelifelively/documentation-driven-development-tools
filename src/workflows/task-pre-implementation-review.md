@@ -37,6 +37,16 @@ A workflow document is not passive documentation; it is an **executable instruct
 
 ---
 
+## Workflow Artifacts
+
+This workflow generates the following artifacts, which are stored in a directory named after the task ID.
+
+- **Path Pattern**: `docs/workflow/<task_id>/`
+- **Generated Reports**:
+  - `pre-implementation-review.md`: A comprehensive summary of the pre-implementation review, including all phase reports.
+
+---
+
 ## Phase 1: Context Gathering & Initial Compliance Check (Families 1 & 2 Review)
 
 **Goal:** To load the full context and perform a compliance check on the "Meta & Governance" and "Business & Scope" families.
@@ -141,13 +151,12 @@ A workflow document is not passive documentation; it is an **executable instruct
 
     - Check for any supplementary materials.
 
-2.  **AI Assistant's Action: Synthesize and Recommend**
+2.  **AI Assistant's Action: Synthesize, Recommend, and Document**
 
-    - Provide a final summary of all findings from the previous phases, organized by family.
-    - Conclude with a clear recommendation:
-      - **Go:** The task is well-defined, compliant, and ready for implementation.
-      - **Go with Conditions:** The task is mostly ready, but requires specific, minor amendments before implementation.
-      - **No-Go:** The task has significant issues and requires a major revision.
+    - **Synthesize Findings**: Consolidate the reports from all previous phases into a single, comprehensive summary.
+    - **Provide Recommendation**: Conclude with a clear "Go", "Go with Conditions", or "No-Go" recommendation.
+    - **Generate Artifact**: Create and save a `pre-implementation-review.md` file in the task's artifact directory (`docs/workflow/<task_id>/`). This document will contain the full, consolidated report and the final recommendation, serving as the formal record of the review.
+    - The AI then presents the path to this new report to the Human Developer.
 
 3.  **Human's Action: Make the Final Decision**
     - Review the AI's final recommendation.

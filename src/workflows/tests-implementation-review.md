@@ -30,6 +30,16 @@ A workflow document is not passive documentation; it is an **executable instruct
 
 ---
 
+## Workflow Artifacts
+
+This workflow generates the following artifacts, which are stored in a directory named after the task ID.
+
+- **Path Pattern**: `docs/workflow/<task_id>/`
+- **Generated Reports**:
+  - `tests-implementation-review.md`: A comprehensive summary of the test suite review.
+
+---
+
 ## Phase 1: Context Gathering
 
 **Goal:** For the AI Assistant to build a complete understanding of the task's requirements.
@@ -56,7 +66,7 @@ A workflow document is not passive documentation; it is an **executable instruct
     - **Review Test Coverage**: Compare the test cases against the `2.4 Acceptance Criteria`. Are all criteria covered by at least one test?
     - **Review Test Quality**: Evaluate the tests against the `4.2 Target Architecture` and `4.4 Non-Functional Requirements`. Do the tests validate the architecture? Do they cover performance, security, and reliability requirements?
 2.  **AI Assistant's Action: Generate Test Review Summary Document**
-    - Create a new markdown file named `Test-Review-Summary-<task-name>.md`.
+    - Create and save a new markdown file named `tests-implementation-review.md` in the task's artifact directory (`docs/workflow/<task_id>/`).
     - The document must contain:
       - **Coverage Report**: A checklist mapping each Acceptance Criterion to the corresponding test(s) and its status (e.g., ✅ Covered, ❌ Incomplete).
       - **Quality Assessment**: An analysis of the test suite's robustness, including edge case and error handling.
