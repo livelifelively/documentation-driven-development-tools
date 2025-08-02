@@ -6,7 +6,9 @@ import { templateCommand } from './commands/template.js';
 import { helloCommand } from './commands/hello.js';
 import { initCommand } from './commands/init.js';
 
-import pkg from '../../package.json' with { type: 'json' };
+import { loadPackageJson } from '../utils/file-utils.js';
+
+const pkg = loadPackageJson(import.meta.url);
 
 /**
  * Main CLI Application Entry Point
@@ -53,6 +55,6 @@ export async function main(args: string[]) {
 }
 
 // Execute main function only when run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url.endsWith('index.js') || process.argv[1].includes('ddd')) {
   main(hideBin(process.argv));
 }

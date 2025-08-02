@@ -1,12 +1,19 @@
-import family1 from './ddd-schema-json/1-meta.json' with { type: 'json' };
-import family2 from './ddd-schema-json/2-business-scope.json' with { type: 'json' };
-import family3 from './ddd-schema-json/3-planning-decomposition.json' with { type: 'json' };
-import family4 from './ddd-schema-json/4-high-level-design.json' with { type: 'json' };
-import family5 from './ddd-schema-json/5-maintenance-monitoring.json' with { type: 'json' };
-import family6 from './ddd-schema-json/6-implementation-guidance.json' with { type: 'json' };
-import family7 from './ddd-schema-json/7-quality-operations.json' with { type: 'json' };
-import family8 from './ddd-schema-json/8-reference.json' with { type: 'json' };
-import contextExamples from './ddd-schema-json/context-examples.json' with { type: 'json' };
+import { loadJsonFromModuleDir } from './utils/file-utils.js';
+
+function loadJsonFile(filename: string) {
+  return loadJsonFromModuleDir(import.meta.url, `./ddd-schema-json/${filename}`);
+}
+
+const family1 = loadJsonFile('1-meta.json');
+const family2 = loadJsonFile('2-business-scope.json');
+const family3 = loadJsonFile('3-planning-decomposition.json');
+const family4 = loadJsonFile('4-high-level-design.json');
+const family5 = loadJsonFile('5-maintenance-monitoring.json');
+const family6 = loadJsonFile('6-implementation-guidance.json');
+const family7 = loadJsonFile('7-quality-operations.json');
+const family8 = loadJsonFile('8-reference.json');
+const contextExamples = loadJsonFile('context-examples.json');
+
 import { TODO_PLACEHOLDER_TEXT } from './config.js';
 import {
   DocumentStructures,
@@ -18,61 +25,9 @@ import {
   BulletListStructure,
   CodeBlockStructure,
   ContentElement,
-  RenderingControl,
 } from './types.js';
 
-// Define the types for compile-time safety
-export interface SchemaApplicability {
-  plan: 'required' | 'optional' | 'omitted';
-  task: 'required' | 'optional' | 'omitted';
-}
-
-// Update SchemaExample interface to only support new format
-export interface SchemaExample {
-  context: string;
-  content: ContentElement[]; // Only support new structured format with rendering controls
-}
-
-export interface StructuredExampleContent {
-  type: 'structured';
-  elements: (
-    | { type: 'text'; content: string }
-    | { type: 'list'; items: string[] }
-    | { type: 'table'; headers: string[]; rows: string[][] }
-    | { type: 'codeblock'; language?: string; content: string }
-    | { type: 'mermaid'; diagramType: string; content: string }
-  )[];
-}
-
-export interface SchemaField {
-  name: string;
-  description: string;
-  applicability: SchemaApplicability;
-}
-
-export interface SchemaSection {
-  id: string;
-  name: string;
-  headingLevel: number;
-  description?: string;
-  contentFormat?: string;
-  reference?: string;
-  applicability: SchemaApplicability;
-  notes?: string;
-  fields?: SchemaField[];
-  examples?: SchemaExample[];
-}
-
-export interface SchemaFamily {
-  id: number;
-  name: string;
-  anchor: string;
-  primaryQuestion: string;
-  rationale: string;
-  applicability: SchemaApplicability;
-  notes: string;
-  sections: SchemaSection[];
-}
+import { SchemaFamily, SchemaApplicability, SchemaExample, SchemaField, SchemaSection } from './schema.types.js';
 
 // Assemble the full schema - Adding family1 for testing
 export const fullSchema: SchemaFamily[] = [
@@ -223,7 +178,7 @@ function buildLegendSection(mode: 'human' | 'machine'): Section[] {
 
   // Use data-driven approach for status examples
   const statusExamples = contextExamples.legend.statusExamples;
-  statusExamples.content.forEach((element) => {
+  statusExamples.content.forEach((element: any) => {
     const renderedElement = renderContentElement(element as ContentElement, mode);
     baseContent.push(renderedElement);
   });
@@ -250,7 +205,7 @@ function buildContextInheritanceSection(mode: 'human' | 'machine'): Section[] {
 
   // Use data-driven approach for traversal process
   const traversalProcess = contextExamples.contextInheritanceProtocol.traversalProcess;
-  traversalProcess.content.forEach((element) => {
+  traversalProcess.content.forEach((element: any) => {
     const renderedElement = renderContentElement(element as ContentElement, mode);
     content.push(renderedElement);
   });
@@ -258,13 +213,13 @@ function buildContextInheritanceSection(mode: 'human' | 'machine'): Section[] {
   content.push({ type: 'heading', level: 3, text: 'Examples:' } as HeadingStructure);
 
   // Use data-driven approach for examples
-  contextExamples.contextInheritanceProtocol.examples.forEach((example) => {
+  contextExamples.contextInheritanceProtocol.examples.forEach((example: any) => {
     content.push({
       type: 'text',
       text: example.title,
     } as TextParagraphStructure);
 
-    example.content.forEach((element) => {
+    example.content.forEach((element: any) => {
       const renderedElement = renderContentElement(element as ContentElement, mode);
       content.push(renderedElement);
     });

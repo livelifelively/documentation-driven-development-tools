@@ -4,6 +4,35 @@
 
 A command-line interface (CLI) to support and enforce a Documentation-Driven Development (DDD) workflow. This toolset helps developers create, manage, and validate a documentation-first project structure.
 
+## Quick Start
+
+### From Repository (Recommended)
+
+```bash
+# Clone and setup
+git clone <repository-url>
+cd ddd-tools
+npm install
+
+# Run CLI commands
+./ddd.sh --help
+./ddd.sh template plan my-first-plan
+```
+
+### Global Installation
+
+```bash
+# Install globally from npm registry
+npm install -g @livelifelively/ddd-tools
+
+# OR install globally from local repository
+npm install -g .
+
+# Run CLI commands
+ddd --help
+ddd template plan my-first-plan
+```
+
 ## Core Concepts
 
 This tool is built around a Documentation-Driven Development methodology, which follows a simple principle: **Document -> Implement -> Validate**. All development work is driven by clear, version-controlled documentation.

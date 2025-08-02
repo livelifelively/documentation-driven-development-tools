@@ -15,5 +15,5 @@
     "isolatedModules": true
   },
   "include": ["src", "schema", "scripts", "docs-old/modules"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/__tests__/**/*"]
 }
