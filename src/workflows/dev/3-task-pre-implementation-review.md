@@ -1,15 +1,23 @@
 # Workflow: Task Pre-Implementation Review
 
-**Objective:** To systematically review a `*.task.md` document before implementation begins, ensuring it is complete, compliant with the documentation schema, and that its technical and testing strategies are sound.
+## Workflow Definition
 
-**Participants:**
+### Objective
+
+To systematically review a `*.task.md` document before implementation begins, ensuring it is complete, compliant with the documentation schema, and that its technical and testing strategies are sound.
+
+### Participants
 
 - Human Developer
 - AI Assistant
 
-**Trigger:** A `*.task.md` document is ready for technical review before being moved to the "In Progress" state.
+### Trigger
 
-> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
+A `*.task.md` document is ready for technical review before being moved to the "In Progress" state.
+
+### Control Model
+
+**AI-Led (Autonomous)** - The AI Assistant autonomously reviews the task document against a series of checks and generates a comprehensive report. The Human Developer initiates the review and makes the final go/no-go decision based on the AI's findings.
 
 ---
 
@@ -163,3 +171,9 @@ This workflow generates the following artifacts, which are stored in a directory
     - Make the final call: Approve the task for implementation, request revisions, or cancel it.
 
 **Outcome:** A clear, documented decision on whether to proceed with the implementation of the task has been made.
+
+---
+
+## Notes
+
+> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).

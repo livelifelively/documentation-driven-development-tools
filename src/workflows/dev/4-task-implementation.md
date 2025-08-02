@@ -1,12 +1,23 @@
 # Workflow: Task Implementation
 
-**Objective:** To define a standardized, repeatable process for an AI Assistant to implement a `*.task.md` document, ensuring all contextual documentation is reviewed and the implementation adheres to the specifications defined in the DDD framework.
+## Workflow Definition
 
-**Participants:** Human Developer, AI Assistant
+### Objective
 
-**Trigger:** The Human Developer assigns a `*.task.md` file to the AI Assistant for implementation.
+To define a standardized, repeatable process for an AI Assistant to implement a `*.task.md` document, ensuring all contextual documentation is reviewed and the implementation adheres to the specifications defined in the DDD framework.
 
-> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
+### Participants
+
+- Human Developer
+- AI Assistant
+
+### Trigger
+
+The Human Developer assigns a `*.task.md` file to the AI Assistant for implementation.
+
+### Control Model
+
+**AI-Led (Autonomous)** - The AI Assistant autonomously executes the implementation plan as documented in the task. The Human Developer initiates the workflow, monitors progress, and provides final approval.
 
 ---
 
@@ -138,3 +149,9 @@ A workflow document is not passive documentation; it is an **executable instruct
     - The AI Assistant formally presents the completed task and the final, updated task document.
 
 **Outcome:** The task is successfully implemented, validated, and documented as complete. The project is ready for the next task.
+
+---
+
+## Notes
+
+> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).

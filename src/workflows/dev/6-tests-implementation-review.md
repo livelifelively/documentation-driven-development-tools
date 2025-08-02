@@ -1,12 +1,23 @@
 # Workflow: Test Implementation Review
 
-**Objective:** To audit the completed test suite for a task, ensuring it is comprehensive and correct _after_ implementation is finished but _before_ the implementation code itself is reviewed.
+## Workflow Definition
 
-**Participants:** Human Developer, AI Assistant
+### Objective
 
-**Trigger:** A developer has completed the implementation of a task, including all associated tests, and is ready for the first stage of review.
+To audit the completed test suite for a task, ensuring it is comprehensive and correct _after_ implementation is finished but _before_ the implementation code itself is reviewed.
 
-> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
+### Participants
+
+- Human Developer
+- AI Assistant
+
+### Trigger
+
+A developer has completed the implementation of a task, including all associated tests, and is ready for the first stage of review.
+
+### Control Model
+
+**AI-Led (Autonomous)** - The AI Assistant autonomously audits the test suite against the task documentation and generates a review report. The Human Developer initiates the process and implements any required changes based on the report.
 
 ---
 
@@ -76,3 +87,9 @@ This workflow generates the following artifacts, which are stored in a directory
 4.  **Verification**: Run the final test suite and ensure all tests pass.
 
 **Outcome:** The test suite is now considered complete and correct. The implementation is ready for the architectural review.
+
+---
+
+## Notes
+
+> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).

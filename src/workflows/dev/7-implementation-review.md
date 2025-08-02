@@ -1,12 +1,23 @@
 # Workflow: Implementation Review
 
-**Objective:** To review the source code's architectural alignment and quality, assuming its functional correctness has already been verified by a robust and approved test suite.
+## Workflow Definition
 
-**Participants:** Human Developer, AI Assistant
+### Objective
 
-**Trigger:** The `Test Implementation Review` for a task is complete, and the developer is ready for the source code review.
+To review the source code's architectural alignment and quality, assuming its functional correctness has already been verified by a robust and approved test suite.
 
-> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).
+### Participants
+
+- Human Developer
+- AI Assistant
+
+### Trigger
+
+The `Test Implementation Review` for a task is complete, and the developer is ready for the source code review.
+
+### Control Model
+
+**AI-Led (Autonomous)** - The AI Assistant autonomously executes the documented analysis steps for each phase and generates detailed reports. The Human Developer initiates the review, consumes the reports, and implements the necessary corrections.
 
 ---
 
@@ -302,3 +313,9 @@ This workflow generates the following artifacts, which are stored in a directory
     - Prepare for deployment
 
 **Outcome:** The implementation is thoroughly reviewed, optimized, documented, and ready for production deployment.
+
+---
+
+## Notes
+
+> **Note:** For detailed instructions on using the CLI, see the main [README.md](../../README.md).

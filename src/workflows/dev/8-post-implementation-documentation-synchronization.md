@@ -1,10 +1,23 @@
 # Workflow: Post-Implementation Documentation Synchronization
 
-**Objective:** To synchronize the `*.task.md` document and its parent `*.plan.md` documents with the final implementation. This ensures any discoveries, changes, or improvements made during the coding phase are accurately reflected in all relevant documentation, maintaining it as the definitive source of truth.
+## Workflow Definition
 
-**Participants:** Human Developer, AI Assistant
+### Objective
 
-**Trigger:** The `Implementation Review` and `Tests Implementation Review` workflows are complete. The code has been finalized, approved, and is considered ready for merge.
+To synchronize the `*.task.md` document and its parent `*.plan.md` documents with the final implementation. This ensures any discoveries, changes, or improvements made during the coding phase are accurately reflected in all relevant documentation, maintaining it as the definitive source of truth.
+
+### Participants
+
+- Human Developer
+- AI Assistant
+
+### Trigger
+
+The `Implementation Review` and `Tests Implementation Review` workflows are complete. The code has been finalized, approved, and is considered ready for merge.
+
+### Control Model
+
+**Collaborative (Peer)** - The Human Developer and AI Assistant work together to synchronize the documentation. The AI identifies discrepancies and proposes changes, while the Human reviews, refines, and approves them in an interactive loop.
 
 ---
 

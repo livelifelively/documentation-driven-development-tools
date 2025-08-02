@@ -1,10 +1,23 @@
 # Workflow: Workflow Creation
 
-**Objective:** To collaboratively design and document a new, standardized workflow that can serve as a clear, executable set of instructions for an AI assistant, ensuring consistency and effectiveness across all defined processes.
+## Workflow Definition
 
-**Participants:** Human Developer, AI Assistant
+### Objective
 
-**Trigger:** A new repeatable process has been identified that would benefit from being codified into a standard workflow.
+To collaboratively design and document a new, standardized workflow that can serve as a clear, executable set of instructions for an AI assistant, ensuring consistency and effectiveness across all defined processes.
+
+### Participants
+
+- Human Developer
+- AI Assistant
+
+### Trigger
+
+A new repeatable process has been identified that would benefit from being codified into a standard workflow.
+
+### Control Model
+
+**Collaborative (Peer)** - The Human Developer and AI Assistant work together to design and document the new workflow. The process is interactive and iterative, with the Human providing the initial vision and the AI helping to structure and refine it.
 
 ---
 
