@@ -1,7 +1,7 @@
 import { loadJsonFromModuleDir } from './utils/file-utils.js';
 
 function loadJsonFile(filename: string) {
-  return loadJsonFromModuleDir(import.meta.url, `./ddd-schema-json/${filename}`);
+  return loadJsonFromModuleDir(import.meta.url, `./schema/ddd-schema-json/${filename}`);
 }
 
 const family1 = loadJsonFile('1-meta.json');
@@ -27,7 +27,7 @@ import {
   ContentElement,
 } from './types.js';
 
-import { SchemaFamily, SchemaApplicability, SchemaExample, SchemaField, SchemaSection } from './schema.types.js';
+import { SchemaFamily, SchemaApplicability, SchemaExample, SchemaField, SchemaSection } from './schema/schema.types.js';
 
 // Assemble the full schema - Adding family1 for testing
 export const fullSchema: SchemaFamily[] = [

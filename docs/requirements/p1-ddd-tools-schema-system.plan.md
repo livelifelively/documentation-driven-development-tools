@@ -530,74 +530,6 @@ The target architecture **appends** a new validation layer to the existing syste
 
 #### 4.2.1 Data Models
 
-**Core Schema Structure (Zod):**
-
-> **Note:** These Zod schemas are the single source of truth for the **structure**. The data itself resides in the `*.json` files. TypeScript types are inferred from these Zod schemas using `z.infer<typeof SchemaName>`.
-
-```typescript
-import { z } from 'zod';
-
-const ApplicabilitySchema = z.object({
-  plan: z.enum(['✅', '❓', '➖']),
-  task: z.enum(['✅', '❓', '➖']),
-});
-
-const RenderingControlSchema = z.object({
-  renderAsCodeBlockForHuman: z.boolean(),
-  renderAsCodeBlockForMachine: z.boolean(),
-});
-
-const ContentElementSchema: z.ZodType<any> = z.lazy(() =>
-  z.object({
-    type: z.enum(['text', 'list', 'table', 'codeblock', 'mermaid']),
-    rendering: RenderingControlSchema,
-    children: z.array(ContentElementSchema).optional(),
-  })
-);
-
-const SchemaSectionSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  headingLevel: z.number(),
-  description: z.string().optional(),
-  applicability: ApplicabilitySchema,
-  examples: z.array(ContentElementSchema).optional(),
-});
-
-const SchemaFamilySchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  anchor: z.string(),
-  primaryQuestion: z.string(),
-  rationale: z.string(),
-  applicability: ApplicabilitySchema,
-  notes: z.string(),
-  sections: z.array(SchemaSectionSchema),
-});
-```
-
-**Configuration System (Zod):**
-
-```typescript
-import { z } from 'zod';
-
-const GenerationConfigSchema = z.object({
-  schema: z.object({
-    sourceDir: z.string(),
-    outputDirs: z.object({
-      src: z.string(),
-      docs: z.string(),
-    }),
-  }),
-  templates: z.object({
-    outputDirs: z.object({
-      src: z.string(),
-      docs: z.string(),
-    }),
-  }),
-});
-```
-
 **Entity Relationships:**
 
 ```mermaid
@@ -638,20 +570,6 @@ erDiagram
     SCHEMA_SECTION ||--o{ CONTENT_ELEMENT : "examples"
     CONTENT_ELEMENT ||--|| RENDERING_CONTROL : "controls"
     CONTENT_ELEMENT ||--o{ CONTENT_ELEMENT : "children"
-```
-
-**Rendering Control:**
-
-```typescript
-interface ContentElement {
-  type: 'text' | 'list' | 'table' | 'codeblock' | 'mermaid';
-  rendering: RenderingControl;
-}
-
-interface RenderingControl {
-  renderAsCodeBlockForHuman: boolean;
-  renderAsCodeBlockForMachine: boolean;
-}
 ```
 
 #### 4.2.2 Components
