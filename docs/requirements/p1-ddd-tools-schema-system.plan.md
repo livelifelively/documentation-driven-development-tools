@@ -18,15 +18,15 @@
 
 ### 2.1 Overview
 
-- **Core Function**: Provides the canonical schema definition and automated generation system for Documentation-Driven Development methodology structure.
-- **Key Capability**: Transforms JSON-based schema definitions into consistent documentation templates and schema references, ensuring all DDD projects follow identical structural patterns.
-- **Business Value**: Eliminates manual template maintenance and enables teams to adopt DDD methodology with guaranteed structural consistency across all documentation.
+- **Core Function**: Provides a type-safe, canonical schema definition, validation, and automated generation system for the Documentation-Driven Development (DDD) methodology.
+- **Key Capability**: Defines the DDD schema using TypeScript as the source of truth, validates all `*.json` schema files for integrity, and transforms them into consistent documentation templates and schema references.
+- **Business Value**: Guarantees structural consistency and correctness across all documentation, improves developer productivity by catching errors early, and eliminates manual template maintenance.
 
 ### 2.2 Business Context
 
-The Documentation-Driven Development methodology requires strict structural consistency across all project documentation to enable automation, validation, and tooling integration. Previously, template maintenance was manual and prone to drift between projects.
+The Documentation-Driven Development methodology requires strict structural consistency. Initially, this was achieved by generating artifacts from `*.json` schema files, but this approach was brittle as the JSON source could be edited incorrectly.
 
-This system establishes a schema-as-code approach where the canonical DDD structure is defined once in JSON and automatically generates all downstream artifacts (templates, documentation, examples). This ensures structural consistency while enabling methodology evolution through versioned schema updates.
+This plan outlines the system's evolution to a "type-first" architecture. By making TypeScript the canonical source of truth and introducing a validation layer, we ensure that the schema definition is robust and error-free _before_ any generation occurs. This migration to a validation-first approach significantly improves the reliability and maintainability of the entire DDD tooling ecosystem.
 
 #### 2.2.1 User Journeys
 
@@ -100,10 +100,11 @@ sequenceDiagram
 
 #### 2.2.3 Core Business Rules
 
-- **Schema as Single Source of Truth**: All documentation structure must derive from JSON schema definitions - no manual template editing.
-- **Automated Generation**: All templates and documentation must be generated programmatically to ensure consistency.
-- **Dual-Mode Support**: Must support both human-readable and machine-optimized outputs for different consumption patterns.
-- **Type Safety**: All generation must be compile-time type-safe to prevent structural errors.
+- **Zod as the Source of Truth for Structure**: The canonical schema structure is defined using Zod. TypeScript types are inferred from these schemas, ensuring a single point of maintenance for the structure itself.
+- **JSON as the Source of Truth for Content**: The content (the data) for the schema is maintained in the `*.json` files within the `src/ddd-schema-json/` directory.
+- **Validation Before Generation**: All `*.json` schema files must be validated against the canonical Zod schemas before any generation scripts are run.
+- **Automated Generation**: All templates and documentation are generated programmatically from the validated JSON schema to ensure consistency.
+- **Type Safety**: The entire validation and generation toolchain is compile-time type-safe.
 
 #### 2.2.4 User Stories
 
@@ -157,10 +158,13 @@ sequenceDiagram
 | :-- | :------------------------------------------------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- | :------------------------------ | :---------------------------------------------------------------------------------- |
 | P2  | [CLI Tools](./p1.p2-cli-tools.plan.md)                                     | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement), [TEC-Dev_Productivity_Blocker](../ddd-2.md#tec-dev_productivity_blocker)                                                                                         | ⏳ In Progress | P1 Schema System, CLI Framework | Provides command-line interface tools to wrap and extend the schema system.         |
 | P4  | [NPM Package Publication](./p1.p4-npm-publication.plan.md)                 | 🟥 High   | [MKT-Launch_Critical](../ddd-2.md#mkt-launch_critical), [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                           | 💡 Not Started | NPM Account, GitHub Secrets     | Defines the strategy for publishing and maintaining the `ddd-tools` package on NPM. |
-| P5  | [Documentation Parser & Linter](./p1.p5-doc-parser.plan.md)                | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement), [TEC-Prod_Stability_Blocker](../ddd-2.md#tec-prod_stability_blocker)                                                                                             | 💡 Not Started | remark, glob                    | A modular, schema-aware parser for extracting structured data from task files.      |
+| P6  | [Documentation Content Validation](./p1.p6-doc-content-validator.plan.md)  | 🟥 High   | [TEC-Prod_Stability_Blocker](../ddd-2.md#tec-prod_stability_blocker), [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                             | 💡 Not Started | P1 Schema System                | Provides validation engine to ensure markdown content conforms to canonical schema. |
 | T2  | [Refactor Placeholder to Constant](./p1.t2-todo-placeholder-const.task.md) | 🟧 Medium | [TEC-Tech_Debt_Refactor](../ddd-2.md#tec-tech_debt_refactor), [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                     | ✅ Done        | `src/index.ts`                  | Replace the hardcoded placeholder text in template generators with a constant.      |
 | T8  | [File Naming Pattern Change](./p1.t8-file-naming-pattern-change.task.md)   | 🟥 High   | [TEC-Debt_Maintainability](../ddd-2.md#tec-debt_maintainability), [TEC-Testability](../ddd-2.md#tec-testability), [TEC-Dev_FutureProofing](../ddd-2.md#tec-dev_futureproofing), [TEC-Dev_ParsingSimplicity](../ddd-2.md#tec-dev_parsingsimplicity) | ✅ Done        | `ddd-2.md`, `ddd-schema-json`   | Implements a new, parsing-friendly file naming convention for all DDD artefacts.    |
 | T22 | [Schema Generation Scripts](./p1.t22-schema-generation-scripts.task.md)    | 🟥 High   | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                                                                                   | ✅ Done        | `src/ddd-schema-json/*`         | Documents the core scripts that generate templates and schema docs from JSON.       |
+| T28 | [Define Canonical Schema Interfaces](p1.t28-define-schema-types.task.md)   | 🟥 High   | [TEC-Prod_Stability_Blocker](../ddd-2.md#tec-prod_stability_blocker)                                                                                                                                                                               | 💡 Not Started | —                               | Create the TypeScript interfaces that define the schema structure.                  |
+| T29 | [Implement JSON Schema Validator](p1.t29-implement-validator.task.md)      | 🟥 High   | [TEC-Prod_Stability_Blocker](../ddd-2.md#tec-prod_stability_blocker)                                                                                                                                                                               | 💡 Not Started | T28                             | Build the script to validate `*.json` files against the TS types.                   |
+| T30 | [Align Existing JSON Files](p1.t30-align-json.task.md)                     | 🟧 Medium | [TEC-Dev_Productivity_Enhancement](../ddd-2.md#tec-dev_productivity_enhancement)                                                                                                                                                                   | 💡 Not Started | T29                             | Update all existing JSON files to ensure they pass the new validator.               |
 
 ### 3.2 Backlog / Icebox
 
@@ -183,6 +187,7 @@ graph TD
         direction LR
         T2["T2: Refactor Placeholder"]
         T8["T8: File Naming Change"]
+        P6["P6: Doc Content Validator"]
         P5["P5: Doc Parser"]
         P2["P2: CLI Tools"]
         P4["P4: NPM Publication"]
@@ -190,7 +195,9 @@ graph TD
 
     T2 -- foundational refactor --> P2
     T8 -- foundational refactor --> P2
+    P6 -- provides validation schemas --> P5
     P5 -- provides parsing API --> P2
+    P6 -- provides validation API --> P2
     P2 -- must be complete before --> P4
 ```
 
@@ -200,10 +207,10 @@ graph TD
 
 ### 4.0 Guiding Principles
 
-- **Schema as Source of Truth**: All structure and content templates derive from JSON schema definitions with zero manual override capability.
-- **Type-Safe Generation**: All rendering and generation must be compile-time validated through TypeScript type system.
-- **Dual-Mode Architecture**: System must support both human-optimized and machine-optimized output formats from the same source.
-- **Automated Consistency**: No manual template maintenance - all artifacts generated programmatically to ensure structural consistency.
+- **Zod Schemas as the Source of Truth for Structure**: The manually crafted Zod schema definitions are the absolute source of truth for the data's structure. TypeScript types are inferred from them.
+- **Validation by Parsing**: We validate data (`*.json` files) by parsing them with the Zod schemas. A successful parse guarantees conformance.
+- **Fail-Fast**: Schema errors must be caught as early as possible in the development process, ideally before code is even committed.
+- **Automated Consistency**: All downstream artifacts (templates, docs) are still generated programmatically, but only after the source JSON has been validated.
 
 ### 4.1 Current Architecture
 
@@ -519,7 +526,374 @@ export const fullSchema: SchemaFamily[];
 
 ### 4.2 Target Architecture
 
-Not applicable. The system has been implemented, and this document describes the current, stable architecture. There are no planned changes that would require a separate "target" architecture definition.
+The target architecture **appends** a new validation layer to the existing system. This addition shifts the source of truth from implied structure in JSON files to explicit, canonical TypeScript types. This new **Schema Integrity System** acts as a gatekeeper for the existing **Schema Generation System**, ensuring that no malformed data enters the generation pipeline. The core generation logic remains the same, but it is now protected by this validation gate.
+
+#### 4.2.1 Data Models
+
+**Core Schema Structure (Zod):**
+
+> **Note:** These Zod schemas are the single source of truth for the **structure**. The data itself resides in the `*.json` files. TypeScript types are inferred from these Zod schemas using `z.infer<typeof SchemaName>`.
+
+```typescript
+import { z } from 'zod';
+
+const ApplicabilitySchema = z.object({
+  plan: z.enum(['✅', '❓', '➖']),
+  task: z.enum(['✅', '❓', '➖']),
+});
+
+const RenderingControlSchema = z.object({
+  renderAsCodeBlockForHuman: z.boolean(),
+  renderAsCodeBlockForMachine: z.boolean(),
+});
+
+const ContentElementSchema: z.ZodType<any> = z.lazy(() =>
+  z.object({
+    type: z.enum(['text', 'list', 'table', 'codeblock', 'mermaid']),
+    rendering: RenderingControlSchema,
+    children: z.array(ContentElementSchema).optional(),
+  })
+);
+
+const SchemaSectionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  headingLevel: z.number(),
+  description: z.string().optional(),
+  applicability: ApplicabilitySchema,
+  examples: z.array(ContentElementSchema).optional(),
+});
+
+const SchemaFamilySchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  anchor: z.string(),
+  primaryQuestion: z.string(),
+  rationale: z.string(),
+  applicability: ApplicabilitySchema,
+  notes: z.string(),
+  sections: z.array(SchemaSectionSchema),
+});
+```
+
+**Configuration System (Zod):**
+
+```typescript
+import { z } from 'zod';
+
+const GenerationConfigSchema = z.object({
+  schema: z.object({
+    sourceDir: z.string(),
+    outputDirs: z.object({
+      src: z.string(),
+      docs: z.string(),
+    }),
+  }),
+  templates: z.object({
+    outputDirs: z.object({
+      src: z.string(),
+      docs: z.string(),
+    }),
+  }),
+});
+```
+
+**Entity Relationships:**
+
+```mermaid
+erDiagram
+    SCHEMA_FAMILY {
+        number id PK
+        string name
+        string anchor
+        string primaryQuestion
+        string rationale
+        SchemaApplicability applicability
+        string notes
+    }
+
+    SCHEMA_SECTION {
+        string id PK
+        string name
+        number headingLevel
+        string description
+        string contentFormat
+        SchemaApplicability applicability
+        string notes
+    }
+
+    CONTENT_ELEMENT {
+        string type
+        string content
+        RenderingControl rendering
+        ContentElement[] children
+    }
+
+    RENDERING_CONTROL {
+        boolean renderAsCodeBlockForHuman
+        boolean renderAsCodeBlockForMachine
+    }
+
+    SCHEMA_FAMILY ||--|{ SCHEMA_SECTION : "contains"
+    SCHEMA_SECTION ||--o{ CONTENT_ELEMENT : "examples"
+    CONTENT_ELEMENT ||--|| RENDERING_CONTROL : "controls"
+    CONTENT_ELEMENT ||--o{ CONTENT_ELEMENT : "children"
+```
+
+**Rendering Control:**
+
+```typescript
+interface ContentElement {
+  type: 'text' | 'list' | 'table' | 'codeblock' | 'mermaid';
+  rendering: RenderingControl;
+}
+
+interface RenderingControl {
+  renderAsCodeBlockForHuman: boolean;
+  renderAsCodeBlockForMachine: boolean;
+}
+```
+
+#### 4.2.2 Components
+
+The target component architecture introduces a `ValidatorScript`. This script uses `ZodSchema` (the source of truth for structure) to parse raw data from the `JsonDataSource`. The output of this validation is a trusted `SchemaFamily` data object, which is then consumed by the rest of the system, such as the `TemplateGenerator` and `DualModeRenderer`.
+
+```mermaid
+classDiagram
+    direction TB
+
+    class ZodSchema {
+        <<Source of Truth for Structure>>
+        +parse(data): SchemaFamily
+    }
+
+    class SchemaFamily {
+        <<Validated Data>>
+        +number id
+        +string name
+        +string primaryQuestion
+        +SchemaApplicability applicability
+        +SchemaSection[] sections
+    }
+
+    class ContentElement {
+        +string type
+        +string content
+        +RenderingControl rendering
+        +ContentElement[] children
+        +render(mode): any
+    }
+
+    class TemplateGenerator {
+        +generatePlanTemplate(data: SchemaFamily): string
+        +generateTaskTemplate(data: SchemaFamily): string
+        +renderContent(element: ContentElement): string
+    }
+
+    class DualModeRenderer {
+        +renderContentElement(element: ContentElement, mode): any
+        +renderDocumentToMarkdown(doc: SchemaFamily): string
+        +buildDocumentStructure(mode): DocumentStructures
+    }
+
+    class SchemaDocumentationGenerator {
+        +generateHumanSchemaDocumentation(data: SchemaFamily): string
+        +generateMachineSchemaDocumentation(data: SchemaFamily): string
+    }
+
+    class ValidatorScript {
+        <<New Component>>
+        +execute(): SchemaFamily
+    }
+
+    class JsonDataSource {
+        <<Data Source>>
+        +readFiles()
+    }
+
+    ValidatorScript --> ZodSchema : "uses"
+    ValidatorScript --> JsonDataSource : "reads from"
+    ValidatorScript ..> SchemaFamily : "produces"
+
+    SchemaFamily --> ContentElement: "contains"
+    TemplateGenerator --> SchemaFamily: "consumes"
+    DualModeRenderer --> SchemaFamily: "consumes"
+    SchemaDocumentationGenerator --> DualModeRenderer: "uses"
+```
+
+#### 4.2.3 Data Flow
+
+The target data flow integrates validation directly into the `Schema Loader`. For clarity, the flow is split into two diagrams representing the two main functions of the system: Template Generation and Documentation Generation.
+
+**Target Data Flow: Template Generation**
+
+```mermaid
+graph TB
+    subgraph "JSON Schema Layer"
+        A["8 Family JSON Files"]
+        B["Context Examples"]
+    end
+
+    subgraph "TypeScript Engine"
+        C["Schema Loader (with integrated validation)"]
+        D["Type Definitions"]
+        E["Rendering Engine"]
+        F["Content Converter"]
+    end
+
+    subgraph "Generation Scripts"
+        G["Template Generator"]
+    end
+
+    subgraph "Output Artifacts"
+        I["plan.template.md"]
+        J["task.template.md"]
+    end
+
+    %% --- Data Flow Sequence ---
+    A -- "1: Load schema definitions" --> C
+    B -- "2: Load example content" --> C
+    D -- "3: Validate against canonical types" --> C
+    C -- "4: Provide validated schema" --> D
+    D -- "5: Provide type-safe interfaces" --> E
+    E -- "6: Provide rendering functions" --> F
+    F -- "7: Provide structured content" --> G
+    G -- "8: Generate content" --> I & J
+```
+
+**Target Data Flow: Documentation Generation**
+
+```mermaid
+graph TB
+    subgraph "JSON Schema Layer"
+        A["8 Family JSON Files"]
+        B["Context Examples"]
+    end
+
+    subgraph "TypeScript Engine"
+        C["Schema Loader (with integrated validation)"]
+        D["Type Definitions"]
+        E["Rendering Engine"]
+        F["Content Converter"]
+    end
+
+    subgraph "Generation Scripts"
+        H["Documentation Generator"]
+    end
+
+    subgraph "Output Artifacts"
+        K["schema.human.md"]
+        L["schema.machine.md"]
+    end
+
+    %% --- Data Flow Sequence ---
+    A -- "1: Load schema definitions" --> C
+    B -- "2: Load example content" --> C
+    D -- "3: Validate against canonical types" --> C
+    C -- "4: Provide validated schema" --> D
+    D -- "5: Provide type-safe interfaces" --> E
+    E -- "6: Provide rendering functions" --> F
+    F -- "7: Provide structured content" --> H
+    H -- "8: Generate content" --> K & L
+```
+
+#### 4.2.4 Control Flow
+
+The validation script can be invoked in two ways: automatically via a Git hook/CI pipeline, or manually by a developer. The existing generation flows remain unchanged but are now preceded by the validation step.
+
+**Updated - Template Generation Process:**
+
+```mermaid
+sequenceDiagram
+    participant User as User/Script
+    participant Generator as TemplateGenerator
+    participant Loader as SchemaLoader
+    participant Validator as ValidatorScript
+    participant FileSystem as File System
+
+    User->>Generator: generatePlanTemplate()
+    Generator->>Loader: loadSchemaFamilies()
+    Loader-->>Validator: SchemaFamily[]
+    Validator->>Validator: validate()
+    alt Validation Fails
+        Validator-->>Generator: Failure
+        Generator-->>User: Abort with error
+    else Validation Succeeds
+        Validator-->>Generator: Success
+        Generator->>Generator: buildDocumentStructure(plan)
+        Generator->>Generator: generateMarkdownSections()
+        Generator->>Generator: insertExamplesAndDescriptions()
+        Generator->>FileSystem: writeTemplate(docs/templates/plan.template.md)
+        FileSystem-->>User: Template Generated
+    end
+```
+
+**Updated - Documentation Generation Workflow:**
+
+```mermaid
+sequenceDiagram
+    participant User as User/Script
+    participant Generator as DocumentGenerator
+    participant Schema as SchemaSystem
+    participant Validator as ValidatorScript
+    participant Renderer as DualModeRenderer
+
+    User->>Generator: generateDocumentation(mode)
+    Generator->>Schema: loadSchemaFamilies()
+    Schema-->>Validator: SchemaFamily[]
+    Validator->>Validator: validate()
+    alt Validation Fails
+        Validator-->>Generator: Failure
+        Generator-->>User: Abort with error
+    else Validation Succeeds
+        Validator-->>Generator: Success
+        Generator->>Renderer: buildDocumentStructure(mode)
+
+        loop For each schema family
+            Renderer->>Schema: getContentElements(family)
+            Schema-->>Renderer: ContentElement[]
+            Renderer->>Renderer: renderContentElement(element, mode)
+        end
+
+        Renderer-->>Generator: DocumentStructures
+        Generator->>Generator: renderDocumentToMarkdown(doc)
+        Generator-->>User: Generated Documentation
+    end
+```
+
+**Updated - Data Processing Flow:**
+
+```mermaid
+sequenceDiagram
+    participant Input as JSON Schema Files
+    participant Loader as Schema Loader
+    participant Validator as ValidatorScript
+    participant Processor as Content Processor
+    participant Renderer as Mode Renderer
+    participant TemplateGen as Template Generator
+    participant DocGen as Documentation Generator
+    participant Output as File System
+
+    Input->>Loader: Read JSON files
+    Loader-->>Validator: Pass raw JSON data
+    Validator->>Validator: Validate against TS types
+    alt Validation Fails
+        Validator-->>Loader: Failure
+        Loader-->>Input: Abort with error
+    else Validation Succeeds
+        Validator-->>Processor: Pass validated schema data
+        Processor->>Processor: Convert to structured content elements
+        Processor->>Renderer: Provide ContentElement array
+
+        par Template Generation
+            Renderer->>TemplateGen: Send human-readable content
+            TemplateGen->>Output: Write plan & task templates
+        and Documentation Generation
+            Renderer->>DocGen: Send mode-specific content
+            DocGen->>Output: Write human & machine docs
+        end
+    end
+```
 
 ### 4.3 Tech Stack & Deployment
 
@@ -532,6 +906,7 @@ Not applicable. The system has been implemented, and this document describes the
 
 - **Vitest**: Unit testing framework
 - **tsx**: TypeScript execution for development scripts
+- **zod**: TypeScript-first schema validation
 
 **Deployment:**
 
@@ -551,11 +926,12 @@ Not applicable. The system has been implemented, and this document describes the
 
 #### 4.4.2 Reliability
 
-| Requirement            | Target                                     | Current Status |
-| :--------------------- | :----------------------------------------- | :------------- |
-| Type Safety            | 100% compile-time validation               | ✅ Met         |
-| Generation Consistency | Identical output for identical input       | ✅ Met         |
-| Error Handling         | Graceful failure with clear error messages | ✅ Met         |
+| Requirement                       | Target                                     | Current Status |
+| :-------------------------------- | :----------------------------------------- | :------------- |
+| Type Safety                       | 100% compile-time validation               | ✅ Met         |
+| Generation Consistency            | Identical output for identical input       | ✅ Met         |
+| Error Handling                    | Graceful failure with clear error messages | ✅ Met         |
+| **Schema Validation Enforcement** | **Mandatory, non-bypassable CI gate.**     | 💡 Not Started |
 
 #### 4.4.3 Scalability
 
@@ -577,11 +953,11 @@ Not applicable. The system has been implemented, and this document describes the
 
 #### 5.1.1 Error Handling
 
-| Error Type                       | Trigger                                   | Action                            | User Feedback                                                 |
-| :------------------------------- | :---------------------------------------- | :-------------------------------- | :------------------------------------------------------------ |
-| **TypeScript Compilation Error** | Invalid schema structure or type mismatch | Abort generation with exit code 1 | Clear compilation error message with file and line references |
-| **JSON Schema Validation Error** | Malformed JSON in schema files            | Abort generation with exit code 1 | JSON parsing error with specific file and location            |
-| **File System Error**            | Cannot write to output directories        | Abort generation with exit code 1 | Clear file system error with path and permissions information |
+| Error Type                      | Trigger                               | Action                            | User Feedback                                                 |
+| :------------------------------ | :------------------------------------ | :-------------------------------- | :------------------------------------------------------------ |
+| **Zod Schema Validation Error** | Mismatched data in `*.json` files     | Abort generation with exit code 1 | Clear validation error with file, path, and issue details     |
+| **Malformed JSON Error**        | Invalid JSON syntax in `*.json` files | Abort generation with exit code 1 | JSON parsing error with specific file and location            |
+| **File System Error**           | Cannot write to output directories    | Abort generation with exit code 1 | Clear file system error with path and permissions information |
 
 #### 5.1.2 Logging & Monitoring
 
@@ -633,8 +1009,8 @@ Debug the generation system by:
 
 | Scenario                                               | Test Type         | Tools / Runner               | Status         |
 | :----------------------------------------------------- | :---------------- | :--------------------------- | :------------- |
-| **TypeScript types compile without errors**            | Unit              | TypeScript compiler          | ✅ Complete    |
-| **JSON schema files load correctly**                   | Unit              | Vitest + JSON validation     | 💡 Not Started |
+| **TypeScript types (inferred from Zod) compile**       | Unit              | TypeScript compiler          | ✅ Complete    |
+| **JSON schema files are correctly validated by Zod**   | Unit              | Vitest + Zod                 | 💡 Not Started |
 | **Dual-mode rendering produces expected output**       | Unit              | Vitest + snapshot testing    | ✅ Complete    |
 | **Template generation includes all required sections** | Integration       | Vitest + template validation | ✅ Complete    |
 | **Documentation generation completes successfully**    | Integration       | Vitest + file system mocking | ✅ Complete    |
@@ -710,7 +1086,7 @@ DDD_SCHEMA_SRC_OUTPUT=/custom/src DDD_TEMPLATES_DOCS_OUTPUT=/custom/templates np
 - `src/config.ts`: Centralized configuration with environment variable support
 - `src/path-utils.ts`: Shared utilities for directory creation and file writing
 - `src/ddd-schema-json/`: JSON schema definitions (single source of truth)
-- `src/types.ts`: TypeScript type definitions for schema structure
+- `src/types.ts`: TypeScript types inferred from the Zod schemas
 - `src/generate-templates.ts`: Template generation script with configurable paths
 - `src/generate-schema-doc.ts`: Schema documentation generation script with configurable paths
 - `package.json`: Available scripts and dependencies
