@@ -1,6 +1,7 @@
 import { FileManager } from './file-manager.js';
 import { TemplateGenerator } from './template-generator.js';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 export interface InitRequest {
   outputDir: string;
@@ -48,7 +49,8 @@ export class DocsInitializer {
   }
 
   private async copyCoreDocuments(docsPath: string): Promise<void> {
-    const projectRoot = path.resolve(__dirname, '..', '..', '..');
+    const __filename = fileURLToPath(import.meta.url);
+    const projectRoot = path.resolve(path.dirname(__filename), '..', '..', '..');
     const coreDocsSourcePath = path.join(projectRoot, 'src');
     const templatesSourcePath = path.join(projectRoot, 'src', 'templates');
 

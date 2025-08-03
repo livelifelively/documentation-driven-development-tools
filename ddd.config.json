@@ -1,5 +1,3 @@
 {
-  "documentation": {
-    "requirementsPath": "docs/requirements"
-  }
+  "requirementsPath": "docs/requirements"
 }

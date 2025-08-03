@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 export const TODO_PLACEHOLDER_TEXT = '_ADD_CONTENT_HERE_';
 
@@ -19,6 +20,8 @@ export interface GenerationConfig {
 }
 
 export function getConfig(): GenerationConfig {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   return {
     schema: {
       sourceDir: process.env.DDD_SCHEMA_SOURCE_DIR || path.join(__dirname, 'schema', 'ddd-schema-json'),
