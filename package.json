@@ -9,7 +9,7 @@
     "ddd": "dist/src/cli/index.js"
   },
   "scripts": {
-    "build": "tsc && cp -r src/schema/ddd-schema-json dist/src/",
+    "build": "tsc && cp -r src/schema/ddd-schema-json dist/src/schema/",
     "prepare": "npm run build",
     "prepack": "npm test",
     "prepublishOnly": "npm test && npm run build",
