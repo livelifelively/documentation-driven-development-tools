@@ -12,7 +12,9 @@
     "declaration": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["src", "schema", "scripts", "docs-old/modules"],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/__tests__/**/*"]

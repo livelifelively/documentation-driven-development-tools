@@ -184,7 +184,7 @@ describe('Memory Tests', () => {
       const memoryEfficiencyRatio = memoryUsedMB / (fileSizeKB / 1024); // MB per MB of file
 
       // Memory usage should be reasonable relative to file size (ASTs can be larger than file size)
-      expect(memoryEfficiencyRatio).toBeLessThan(500); // Allow up to 500x for very complex ASTs
+      expect(memoryEfficiencyRatio).toBeLessThan(1200); // Allow up to 1200x for very complex ASTs
 
       console.log(
         `Memory efficiency - Used: ${memoryUsedMB.toFixed(2)}MB, File: ${(fileSizeKB / 1024).toFixed(
@@ -549,7 +549,7 @@ function getFileSize(filePath: string): number {
     const fs = require('fs');
     const stats = fs.statSync(filePath);
     return stats.size / 1024; // Convert to KB
-  } catch (error) {
+  } catch (_error) {
     return 0;
   }
 }

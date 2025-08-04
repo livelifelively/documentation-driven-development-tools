@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CoreEngine } from '../core-engine.js';
 import { MarkdownParser } from '../markdown-parser.js';
 import { PluginManager } from '../plugin-manager.js';
-import { SectionProcessor } from '../plugin.types.js';
 
 // Mock the dependencies
 vi.mock('../markdown-parser.js');
@@ -128,7 +127,7 @@ This is a test task.
       // Mock file system read
       mockFs.readFile.mockResolvedValue(mockFileContent);
 
-      const result = await coreEngine.parse('test-file.task.md');
+      const _result = await coreEngine.parse('test-file.task.md');
 
       expect(mockPluginManager.getProcessor).toHaveBeenCalledWith('1.2');
       expect(mockProcessor.lint).toHaveBeenCalled();
@@ -144,7 +143,7 @@ This is a test task.
         .mockReturnValueOnce(mockProcessor) // For '1.2'
         .mockReturnValueOnce(undefined); // For '2.1'
 
-      const result = await coreEngine.parse('test-file.task.md');
+      const _result = await coreEngine.parse('test-file.task.md');
 
       expect(mockPluginManager.getProcessor).toHaveBeenCalledWith('1.2');
       expect(mockPluginManager.getProcessor).toHaveBeenCalledWith('2.1');
@@ -155,11 +154,11 @@ This is a test task.
       // Mock file system read
       mockFs.readFile.mockResolvedValue(mockFileContent);
 
-      const result = await coreEngine.parse('test-file.task.md');
+      const _result = await coreEngine.parse('test-file.task.md');
 
-      expect(result).toHaveProperty('data');
-      expect(result).toHaveProperty('errors');
-      expect(result.errors).toEqual([]);
+      expect(_result).toHaveProperty('data');
+      expect(_result).toHaveProperty('errors');
+      expect(_result.errors).toEqual([]);
     });
 
     it('should handle linting errors from processors', async () => {
@@ -182,13 +181,13 @@ This is a test task.
       });
       mockProcessor.getTargetPath.mockReturnValue('meta.status');
 
-      const result = await coreEngine.parse('test-file.task.md');
+      const _result = await coreEngine.parse('test-file.task.md');
 
       // Since the mock returns the same errors each time it's called,
       // and the processor might be called multiple times for different sections,
       // we should check that the errors array contains our expected errors
-      expect(result.errors).toContainEqual(mockErrors[0]);
-      expect(result.errors.length).toBeGreaterThanOrEqual(mockErrors.length);
+      expect(_result.errors).toContainEqual(mockErrors[0]);
+      expect(_result.errors.length).toBeGreaterThanOrEqual(mockErrors.length);
     });
 
     it('should throw error for invalid file path', async () => {
@@ -216,10 +215,10 @@ This is a test task.
 
       mockPluginManager.getProcessor.mockReturnValue(errorProcessor);
 
-      const result = await coreEngine.parse('test-file.task.md');
+      const _result = await coreEngine.parse('test-file.task.md');
 
-      expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors[0].message).toContain('Plugin runtime error');
+      expect(_result.errors.length).toBeGreaterThan(0);
+      expect(_result.errors[0].message).toContain('Plugin runtime error');
     });
   });
 

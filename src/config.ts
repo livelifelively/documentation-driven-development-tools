@@ -25,7 +25,7 @@ export interface GenerationConfig {
 export function getConfig(): GenerationConfig {
   return {
     schema: {
-      sourceDir: process.env.DDD_SCHEMA_SOURCE_DIR || path.join(__dirname, 'ddd-schema-json'),
+      sourceDir: process.env.DDD_SCHEMA_SOURCE_DIR || path.join(__dirname, 'schema', 'ddd-schema-json'),
       outputDirs: {
         src: process.env.DDD_SCHEMA_SRC_OUTPUT || path.join(__dirname, 'generated-schema-docs'),
         docs: process.env.DDD_SCHEMA_DOCS_OUTPUT || path.join(__dirname, '..', 'docs'),

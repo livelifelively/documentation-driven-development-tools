@@ -30,7 +30,7 @@ export class CoreEngine {
     let fileContent;
     try {
       fileContent = await fs.readFile(filePath, 'utf-8');
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Cannot read file at ${filePath}.`);
     }
 

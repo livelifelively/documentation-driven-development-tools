@@ -8,7 +8,7 @@ vi.mock('../markdown-parser.js');
 vi.mock('../plugin-manager.js');
 
 describe('CoreEngine AST Slicing', () => {
-  let coreEngine: CoreEngine;
+  let _coreEngine: CoreEngine;
   let mockMarkdownParser: any;
   let mockPluginManager: any;
 
@@ -28,7 +28,7 @@ describe('CoreEngine AST Slicing', () => {
     vi.mocked(MarkdownParser).mockImplementation(() => mockMarkdownParser);
     vi.mocked(PluginManager).mockImplementation(() => mockPluginManager);
 
-    coreEngine = new CoreEngine();
+    _coreEngine = new CoreEngine();
   });
 
   describe('AST section identification and slicing', () => {
