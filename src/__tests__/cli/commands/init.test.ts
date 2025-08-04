@@ -1,7 +1,7 @@
 import { main } from '../../../cli/index.js';
 import { DocsInitializer } from '../../../cli/services/docs-initializer.js';
 import { vol } from 'memfs';
-import * as path from 'path';
+
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 vi.mock('fs/promises');

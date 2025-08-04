@@ -549,7 +549,7 @@ function getFileSize(filePath: string): number {
     const fs = require('fs');
     const stats = fs.statSync(filePath);
     return stats.size / 1024; // Convert to KB
-  } catch (error) {
+  } catch (_error) {
     return 0;
   }
 }

@@ -91,6 +91,6 @@ function convertCodeBlock(code: CodeBlockStructure): string {
   return `\`\`\`${language}\n${code.content}\n\`\`\``;
 }
 
-function convertHorizontalRule(hr: HorizontalRuleStructure): string {
+function convertHorizontalRule(_hr: HorizontalRuleStructure): string {
   return '---';
 }

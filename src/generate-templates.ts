@@ -31,16 +31,16 @@ export function run() {
     console.log('\n🎉 Both templates generated successfully!');
     console.log('📋 Plan template: For creating new plan documents');
     console.log('📝 Task template: For creating new task documents');
-  } catch (error) {
-    console.error('❌ Failed to generate templates:', error);
-    throw error;
+  } catch (_error) {
+    console.error('❌ Failed to generate templates:', _error);
+    throw _error;
   }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     run();
-  } catch (error) {
+  } catch (_error) {
     process.exit(1);
   }
 }

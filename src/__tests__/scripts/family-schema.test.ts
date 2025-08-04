@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { glob } from 'glob';
-import { SchemaFamily } from '../../schema/schema.zod.js';
 
 // Mock dependencies
 vi.mock('fs', () => ({
@@ -15,7 +14,7 @@ vi.mock('glob', () => ({
 }));
 
 // Import the function to test
-import { validateSchemaFiles } from '../../scripts/validate-family-schemas.js';
+import { validateSchemaFiles } from '../../schema/validate-family-schemas.js';
 
 describe('Family Schema Validation Script', () => {
   const mockReadFileSync = vi.mocked(readFileSync);
@@ -261,16 +260,16 @@ describe('Family Schema Validation Script', () => {
       });
 
       // Verify all schema files exist by mocking their content
-      schemaFiles.forEach((filePath) => {
+      schemaFiles.forEach((_filePath) => {
         mockReadFileSync.mockReturnValueOnce(mockSchemaContent);
         expect(() => {
-          readFileSync(filePath, 'utf-8');
+          readFileSync(_filePath, 'utf-8');
         }).not.toThrow();
       });
 
       // Test with actual schema files
       mockGlobSync.mockReturnValue(schemaFiles);
-      schemaFiles.forEach((filePath) => {
+      schemaFiles.forEach((_filePath) => {
         mockReadFileSync.mockReturnValueOnce(mockSchemaContent);
       });
 
