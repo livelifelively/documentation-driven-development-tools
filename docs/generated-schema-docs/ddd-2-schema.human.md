@@ -54,18 +54,18 @@ The Plan/Task Composable Hierarchy uses a strict protocol for context inheritanc
 
 ### Examples:
 
-For `p1-p2-t1-user-endpoints.task.md`:
+For `p1-p2.t1-user-endpoints.task.md`:
 
 - Read `project.plan.md` (broadest strategic context)
 - Read `p1-backend.plan.md` (backend-specific context)
-- Read `p1-p2-api.plan.md` (API-specific context)
-- Read `p1-p2-t1-user-endpoints.task.md` (implementation details)
+- Read `p1.p2-api.plan.md` (API-specific context)
+- Read `p1-p2.t1-user-endpoints.task.md` (implementation details)
 
-For `p1-t1-database-setup.task.md`:
+For `p1.t1-database-setup.task.md`:
 
 - Read `project.plan.md` (strategic context)
 - Read `p1-backend.plan.md` (backend context)
-- Read `p1-t1-database-setup.task.md` (implementation details)
+- Read `p1.t1-database-setup.task.md` (implementation details)
 
 This top-down traversal ensures each document receives progressively narrowed, inherited context. Information is never repeated - it flows downward through the hierarchy. Automated tools and LLMs **MUST** enforce this reading order.
 
@@ -146,23 +146,23 @@ Explains why the document exists, who it serves, and what success looks like. As
 
 ### Depth Matrix
 
-| ID      | Parent ID | Section Name            | Heading | Plan | Task | Notes                                                                                                |
-| :------ | :-------- | :---------------------- | :------ | :--- | :--- | :--------------------------------------------------------------------------------------------------- |
-| **2**   | `null`    | Business & Scope        | `##`    | ✅   | ✅   | The main family heading.                                                                             |
-| 2.1     | 2         | Overview                | `###`   | ✅   | ✅   | Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective. |
-| 2.2     | 2         | Business Context        | `###`   | ✅   | ➖   | Strategic context including User Journeys, User Personas, Core Business Rules.                       |
-| 2.2.1   | 2.2       | User Journeys           | `####`  | ✅   | ➖   | Container for one or more User Journey definitions.                                                  |
-| 2.2.1.1 | 2.2.1     | Journey: [Name]         | `#####` | ✅   | ➖   | A repeatable section for a single, named user journey, including a description and diagram.          |
-| 2.2.2   | 2.2       | User Personas           | `####`  | ✅   | ➖   | Table or list of personas involved.                                                                  |
-| 2.2.3   | 2.2       | Core Business Rules     | `####`  | ✅   | ❓   | Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints.       |
-| 2.2.4   | 2.2       | User Stories            | `####`  | ✅   | ➖   | User-centric goals and workflows relevant to this Plan scope.                                        |
-| 2.3     | 2         | Success Criteria        | `###`   | ✅   | ➖   | How we know this Plan's strategic objectives are achieved.                                           |
-| 2.4     | 2         | Acceptance Criteria     | `###`   | ➖   | ✅   | Verifiable conditions that define when this Task is complete.                                        |
-| 2.5     | 2         | Boundaries & Scope      | `###`   | ✅   | ➖   | Container heading for scope definitions.                                                             |
-| 2.5.1   | 2.5       | In Scope                | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly included in this Plan scope.                            |
-| 2.5.2   | 2.5       | Out of Scope            | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly excluded from this Plan scope.                          |
-| 2.6     | 2         | Core Business Processes | `###`   | ✅   | ➖   | Container for detailed business process descriptions.                                                |
-| 2.6.1   | 2.6       | Process: [Name]         | `####`  | ✅   | ➖   | A repeatable section for a single, named business process.                                           |
+| ID      | Parent ID | Section Name            | Heading | Plan | Task | Notes                                                                                                      |
+| :------ | :-------- | :---------------------- | :------ | :--- | :--- | :--------------------------------------------------------------------------------------------------------- |
+| **2**   | `null`    | Business & Scope        | `##`    | ✅   | ✅   | The main family heading.                                                                                   |
+| 2.1     | 2         | Overview                | `###`   | ✅   | ✅   | Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective.       |
+| 2.2     | 2         | Business Context        | `###`   | ✅   | ➖   | Strategic context including User Journeys, User Personas, Core Business Rules.                             |
+| 2.2.1   | 2.2       | User Journeys           | `####`  | ✅   | ➖   | Container for one or more User Journey definitions.                                                        |
+| 2.2.1.1 | 2.2.1     | Journey: [Name]         | `#####` | ✅   | ➖   | A repeatable section for a single, named user journey, including a description and diagram.                |
+| 2.2.2   | 2.2       | User Personas           | `####`  | ✅   | ➖   | Table or list of personas involved.                                                                        |
+| 2.2.3   | 2.2       | Core Business Rules     | `####`  | ✅   | ❓   | Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints.             |
+| 2.2.4   | 2.2       | User Stories            | `####`  | ✅   | ➖   | User-centric goals and workflows relevant to this Plan scope.                                              |
+| 2.3     | 2         | Success Criteria        | `###`   | ✅   | ➖   | How we know this Plan's strategic objectives are achieved.                                                 |
+| 2.4     | 2         | Definition of Done      | `###`   | ➖   | ✅   | This section defines the 'what', not the 'how'. It should be understandable by non-technical stakeholders. |
+| 2.5     | 2         | Boundaries & Scope      | `###`   | ✅   | ➖   | Container heading for scope definitions.                                                                   |
+| 2.5.1   | 2.5       | In Scope                | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly included in this Plan scope.                                  |
+| 2.5.2   | 2.5       | Out of Scope            | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly excluded from this Plan scope.                                |
+| 2.6     | 2         | Core Business Processes | `###`   | ✅   | ➖   | Container for detailed business process descriptions.                                                      |
+| 2.6.1   | 2.6       | Process: [Name]         | `####`  | ✅   | ➖   | A repeatable section for a single, named business process.                                                 |
 
 ### Field Details
 
@@ -272,19 +272,21 @@ Explains why the document exists, who it serves, and what success looks like. As
 > - The central dashboard can successfully ingest and display logs from all pipeline stages.
 > - A comprehensive set of alerts for critical failures is configured and tested.
 
-#### 2.4 Acceptance Criteria
+#### 2.4 Definition of Done
 
-- **Description**: A verifiable, tabular list of conditions that a Task must satisfy to be considered complete.
+- **Description**: A high-level, non-technical tabular list of criteria that define when the task is complete from a business perspective.
 - **Content Format**: Markdown table.
-- **Notes**: Verifiable conditions that define when this Task is complete.
+- **Notes**: This section defines the 'what', not the 'how'. It should be understandable by non-technical stakeholders.
 
 - **Example**:
 
-> | ID   | Criterion                                           | Test Reference      |
-> | :--- | :-------------------------------------------------- | :------------------ |
-> | AC-1 | Logger correctly filters messages below `minLevel`. | `logger.test.ts`    |
-> | AC-2 | `FATAL` level logs trigger a PagerDuty alert.       | `alerting.int.test` |
-> | AC-3 | Log output is valid JSON.                           | `formatter.test.ts` |
+> | ID    | Criterion                                                                                                                      |
+> | :---- | :----------------------------------------------------------------------------------------------------------------------------- |
+> | DoD-1 | A validation library is available that can check the content of documentation files.                                           |
+> | DoD-2 | The library correctly identifies when a document's 'Status' or 'Priority' section has missing or malformed information.        |
+> | DoD-3 | The library can validate the structure of all tables, such as 'Dependencies', ensuring they have the right columns.            |
+> | DoD-4 | The library successfully flags documents that contain structural errors and confirms that valid documents pass without errors. |
+> | DoD-5 | The validation logic for each of the 8 documentation families is organized separately for maintainability.                     |
 
 #### 2.5 Boundaries & Scope
 
@@ -366,10 +368,10 @@ This family answers what we are building and in what order. It provides a clear 
 
 - **Example**:
 
-> | ID  | Child Plan/Task                          | Priority  | Priority Drivers                                                                                         | Status         | Depends On | Summary                         |
-> | :-- | :--------------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------- | :------------- | :--------- | :------------------------------ |
-> | P1  | [Backend Plan](p1-backend.plan.md)       | 🟥 High   | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | —          | Core backend services and APIs. |
-> | T1  | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker)       | 💡 Not Started | —          | Configure production database.  |
+> | ID  | Child Plan/Task                                | Priority  | Priority Drivers                                                                                         | Status         | Depends On | Summary                         |
+> | :-- | :--------------------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------- | :------------- | :--------- | :------------------------------ |
+> | P1  | [Backend Plan](p1-backend.plan.md)             | 🟥 High   | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | —          | Core backend services and APIs. |
+> | T1  | [Database Setup](p1.t1-database-setup.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker)       | 💡 Not Started | —          | Configure production database.  |
 
 #### 3.2 Backlog / Icebox
 
@@ -941,17 +943,17 @@ This family defines how we ensure the system is correct, reliable, and observabl
 
 #### 7.1 Testing Strategy / Requirements
 
-- **Description**: The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria.
+- **Description**: The overall strategy for testing. This section contains the technical Acceptance Criteria, mapping specific test cases back to the business-facing Definition of Done.
 - **Content Format**: Markdown table.
 - **Notes**: Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation.
 
 - **Example**:
 
-> | AC  | Scenario                                                  | Test Type   | Tools / Runner                    | Notes                                    |
-> | :-- | :-------------------------------------------------------- | :---------- | :-------------------------------- | :--------------------------------------- |
-> | 1   | Default dev logger = console only                         | Unit        | Vitest + RTL (spy on console)     | Set `process.env.NODE_ENV='development'` |
-> | 2   | Prod logger fan-out to console + HTTP, minLevel respected | Unit        | Vitest + fetch-mock + console spy | `NODE_ENV='production'`                  |
-> | 7   | Successful POST to `/api/log/client`                      | Integration | Vitest + MSW                      | Assert JSON body and 2xx handling        |
+> | AC ID | DoD Link | Scenario                                                         | Test Type   | Test File                          |
+> | :---- | :------- | :--------------------------------------------------------------- | :---------- | :--------------------------------- |
+> | AC-1  | DoD-2    | Unit test for `metaGovernanceSchema` (valid and invalid Status)  | Unit        | `1-meta-governance.schema.test.ts` |
+> | AC-2  | DoD-3    | Unit test for `businessScopeSchema` (valid and invalid AC table) | Unit        | `2-business-scope.schema.test.ts`  |
+> | AC-3  | DoD-4    | Integration test with a fully valid mock `task.md`               | Integration | `integration.test.ts`              |
 
 #### 7.2 Configuration
 

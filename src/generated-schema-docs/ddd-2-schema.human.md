@@ -8,11 +8,11 @@ This file defines **which information appears where** in our Documentation-Drive
 
 ## Legend
 
-| Symbol | Meaning                |
-| :----- | :--------------------- |
-| ✅     | Required               |
-| ❓     | Optional (recommended) |
-| ➖     | Not applicable / omit  |
+| Symbol | Meaning |
+| :--- | :--- |
+| ✅ | Required |
+| ❓ | Optional (recommended) |
+| ➖ | Not applicable / omit |
 
 **Note on Usage in Document Headings:** In addition to their meaning in the schema tables below, these icons are used in the headings of the actual `*.md` files to indicate the **completion status** of a section.
 
@@ -26,16 +26,16 @@ This file defines **which information appears where** in our Documentation-Drive
 
 ## Family Index
 
-| #   | Family (Anchor)                                           | Primary Question Answered                                        | Plan | Task | Notes                                                                             |
-| :-- | :-------------------------------------------------------- | :--------------------------------------------------------------- | :--- | :--- | :-------------------------------------------------------------------------------- |
-| 1   | [Meta & Governance](#meta--governance)                    | How critical is this work, what is its current status?           | ✅   | ✅   | Required at all levels; Task-level includes detailed progress tracking            |
-| 2   | [Business & Scope](#business--scope)                      | Why are we doing this?                                           | ✅   | ✅   | Plans focus on strategic context; Tasks focus on acceptance criteria              |
-| 3   | [Planning & Decomposition](#planning--decomposition)      | What are we building, in what order?                             | ✅   | ❓   | Essential for Plans (roadmap of children); Optional for Tasks (dependencies only) |
-| 4   | [High-Level Design](#high-level-design)                   | What are the high-level components and interactions? (Black-Box) | ✅   | ✅   | Plans show architectural decisions; Tasks show interface details                  |
-| 5   | [Maintenance and Monitoring](#maintenance-and-monitoring) | What are the internal details needed to build it? (White-Box)    | ❓   | ✅   | Optional for high-level Plans; Required for implementation Tasks                  |
-| 6   | [Implementation Guidance](#implementation--guidance)      | What are the practical steps?                                    | ❓   | ✅   | Optional for Plans (phased approach); Required for Tasks (step-by-step)           |
-| 7   | [Quality & Operations](#quality--operations)              | How do we validate & run it?                                     | ✅   | ✅   | Plans define strategy; Tasks define specific tests and deployment                 |
-| 8   | [Reference](#reference)                                   | What other info might we need?                                   | ❓   | ❓   | Optional at all levels for supplementary information                              |
+| # | Family (Anchor) | Primary Question Answered | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | [Meta & Governance](#meta--governance) | How critical is this work, what is its current status? | ✅ | ✅ | Required at all levels; Task-level includes detailed progress tracking |
+| 2 | [Business & Scope](#business--scope) | Why are we doing this? | ✅ | ✅ | Plans focus on strategic context; Tasks focus on acceptance criteria |
+| 3 | [Planning & Decomposition](#planning--decomposition) | What are we building, in what order? | ✅ | ❓ | Essential for Plans (roadmap of children); Optional for Tasks (dependencies only) |
+| 4 | [High-Level Design](#high-level-design) | What are the high-level components and interactions? (Black-Box) | ✅ | ✅ | Plans show architectural decisions; Tasks show interface details |
+| 5 | [Maintenance and Monitoring](#maintenance-and-monitoring) | What are the internal details needed to build it? (White-Box) | ❓ | ✅ | Optional for high-level Plans; Required for implementation Tasks |
+| 6 | [Implementation Guidance](#implementation--guidance) | What are the practical steps? | ❓ | ✅ | Optional for Plans (phased approach); Required for Tasks (step-by-step) |
+| 7 | [Quality & Operations](#quality--operations) | How do we validate & run it? | ✅ | ✅ | Plans define strategy; Tasks define specific tests and deployment |
+| 8 | [Reference](#reference) | What other info might we need? | ❓ | ❓ | Optional at all levels for supplementary information |
 
 Each document begins with relevant **family headings** (`## Business & Scope`, etc.). A document includes a family only if it has relevant content; otherwise the heading may read `None (inherits from parent)`.
 
@@ -54,18 +54,18 @@ The Plan/Task Composable Hierarchy uses a strict protocol for context inheritanc
 
 ### Examples:
 
-For `p1-p2-t1-user-endpoints.task.md`:
+For `p1-p2.t1-user-endpoints.task.md`:
 
 - Read `project.plan.md` (broadest strategic context)
 - Read `p1-backend.plan.md` (backend-specific context)
-- Read `p1-p2-api.plan.md` (API-specific context)
-- Read `p1-p2-t1-user-endpoints.task.md` (implementation details)
+- Read `p1.p2-api.plan.md` (API-specific context)
+- Read `p1-p2.t1-user-endpoints.task.md` (implementation details)
 
-For `p1-t1-database-setup.task.md`:
+For `p1.t1-database-setup.task.md`:
 
 - Read `project.plan.md` (strategic context)
 - Read `p1-backend.plan.md` (backend context)
-- Read `p1-t1-database-setup.task.md` (implementation details)
+- Read `p1.t1-database-setup.task.md` (implementation details)
 
 This top-down traversal ensures each document receives progressively narrowed, inherited context. Information is never repeated - it flows downward through the hierarchy. Automated tools and LLMs **MUST** enforce this reading order.
 
@@ -75,15 +75,15 @@ This top-down traversal ensures each document receives progressively narrowed, i
 
 ### Rationale
 
-Keeps humans and CI aware of health, urgency, and blockers at any zoom level without polluting design content. Static plan docs carry only a pointer; live status tables sit in dedicated \*-status.md companions (and inside each Task doc).
+Keeps humans and CI aware of health, urgency, and blockers at any zoom level without polluting design content. Static plan docs carry only a pointer; live status tables sit in dedicated *-status.md companions (and inside each Task doc).
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name      | Heading | Plan | Task | Notes                                                                                          |
-| :---- | :-------- | :---------------- | :------ | :--- | :--- | :--------------------------------------------------------------------------------------------- |
-| **1** | `null`    | Meta & Governance | `##`    | ✅   | ✅   | The main family heading.                                                                       |
-| 1.2   | 1         | Status            | `###`   | ✅   | ✅   | Plan: Document lifecycle + strategic phase. Task: Implementation tracking + execution metrics. |
-| 1.3   | 1         | Priority Drivers  | `###`   | ✅   | ✅   | Plan: Business/strategic drivers. Task: Inherited drivers + technical execution drivers.       |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | `null` | Meta & Governance | `##` | ✅ | ✅ | The main family heading. |
+| 1.2 | 1 | Status | `###` | ✅ | ✅ | Plan: Document lifecycle + strategic phase. Task: Implementation tracking + execution metrics. |
+| 1.3 | 1 | Priority Drivers | `###` | ✅ | ✅ | Plan: Business/strategic drivers. Task: Inherited drivers + technical execution drivers. |
 
 ### Field Details
 
@@ -96,17 +96,17 @@ Keeps humans and CI aware of health, urgency, and blockers at any zoom level wit
 
 ##### Sub-Field Applicability Matrix
 
-| Field                      | Plan | Task | Notes                                                                                                                                                                                  |
-| :------------------------- | :--- | :--- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Created**                | ✅   | ✅   | The timestamp when the document was created (e.g., `2023-10-27 14:30`).                                                                                                                |
-| **Last Updated**           | ✅   | ✅   | The timestamp when this status block was last modified (e.g., `2023-10-27 15:00`).                                                                                                     |
-| **Current State**          | ➖   | ✅   | The operational status of the task (e.g., `✅ Done`, `⏳ In Progress`). See the standard status keys.                                                                                  |
-| **Priority**               | ➖   | ✅   | The task's priority level (e.g., `🟥 High`).                                                                                                                                           |
-| **Progress**               | ➖   | ✅   | A percentage representing the completion of the task.                                                                                                                                  |
-| **Planning Estimate**      | ➖   | ✅   | The initial story point estimate assigned during planning. This should not change after work begins.                                                                                   |
-| **Est. Variance (pts)**    | ➖   | ✅   | The difference between the final completed points and the `Planning Estimate`. A positive number indicates scope creep or underestimation; a negative number indicates overestimation. |
-| **Implementation Started** | ➖   | ✅   | The timestamp when a developer began working on the task.                                                                                                                              |
-| **Completed**              | ➖   | ✅   | The timestamp when the task was marked as `✅ Done`.                                                                                                                                   |
+| Field | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- |
+| **Created** | ✅ | ✅ | The timestamp when the document was created (e.g., `2023-10-27 14:30`). |
+| **Last Updated** | ✅ | ✅ | The timestamp when this status block was last modified (e.g., `2023-10-27 15:00`). |
+| **Current State** | ➖ | ✅ | The operational status of the task (e.g., `✅ Done`, `⏳ In Progress`). See the standard status keys. |
+| **Priority** | ➖ | ✅ | The task's priority level (e.g., `🟥 High`). |
+| **Progress** | ➖ | ✅ | A percentage representing the completion of the task. |
+| **Planning Estimate** | ➖ | ✅ | The initial story point estimate assigned during planning. This should not change after work begins. |
+| **Est. Variance (pts)** | ➖ | ✅ | The difference between the final completed points and the `Planning Estimate`. A positive number indicates scope creep or underestimation; a negative number indicates overestimation. |
+| **Implementation Started** | ➖ | ✅ | The timestamp when a developer began working on the task. |
+| **Completed** | ➖ | ✅ | The timestamp when the task was marked as `✅ Done`. |
 
 ##### Example for Plan
 
@@ -146,23 +146,23 @@ Explains why the document exists, who it serves, and what success looks like. As
 
 ### Depth Matrix
 
-| ID      | Parent ID | Section Name            | Heading | Plan | Task | Notes                                                                                                |
-| :------ | :-------- | :---------------------- | :------ | :--- | :--- | :--------------------------------------------------------------------------------------------------- |
-| **2**   | `null`    | Business & Scope        | `##`    | ✅   | ✅   | The main family heading.                                                                             |
-| 2.1     | 2         | Overview                | `###`   | ✅   | ✅   | Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective. |
-| 2.2     | 2         | Business Context        | `###`   | ✅   | ➖   | Strategic context including User Journeys, User Personas, Core Business Rules.                       |
-| 2.2.1   | 2.2       | User Journeys           | `####`  | ✅   | ➖   | Container for one or more User Journey definitions.                                                  |
-| 2.2.1.1 | 2.2.1     | Journey: [Name]         | `#####` | ✅   | ➖   | A repeatable section for a single, named user journey, including a description and diagram.          |
-| 2.2.2   | 2.2       | User Personas           | `####`  | ✅   | ➖   | Table or list of personas involved.                                                                  |
-| 2.2.3   | 2.2       | Core Business Rules     | `####`  | ✅   | ❓   | Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints.       |
-| 2.2.4   | 2.2       | User Stories            | `####`  | ✅   | ➖   | User-centric goals and workflows relevant to this Plan scope.                                        |
-| 2.3     | 2         | Success Criteria        | `###`   | ✅   | ➖   | How we know this Plan's strategic objectives are achieved.                                           |
-| 2.4     | 2         | Acceptance Criteria     | `###`   | ➖   | ✅   | Verifiable conditions that define when this Task is complete.                                        |
-| 2.5     | 2         | Boundaries & Scope      | `###`   | ✅   | ➖   | Container heading for scope definitions.                                                             |
-| 2.5.1   | 2.5       | In Scope                | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly included in this Plan scope.                            |
-| 2.5.2   | 2.5       | Out of Scope            | `####`  | ✅   | ➖   | A bulleted list of items that are explicitly excluded from this Plan scope.                          |
-| 2.6     | 2         | Core Business Processes | `###`   | ✅   | ➖   | Container for detailed business process descriptions.                                                |
-| 2.6.1   | 2.6       | Process: [Name]         | `####`  | ✅   | ➖   | A repeatable section for a single, named business process.                                           |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **2** | `null` | Business & Scope | `##` | ✅ | ✅ | The main family heading. |
+| 2.1 | 2 | Overview | `###` | ✅ | ✅ | Plan: Strategic identity & value proposition. Task: Specific deliverable & implementation objective. |
+| 2.2 | 2 | Business Context | `###` | ✅ | ➖ | Strategic context including User Journeys, User Personas, Core Business Rules. |
+| 2.2.1 | 2.2 | User Journeys | `####` | ✅ | ➖ | Container for one or more User Journey definitions. |
+| 2.2.1.1 | 2.2.1 | Journey: [Name] | `#####` | ✅ | ➖ | A repeatable section for a single, named user journey, including a description and diagram. |
+| 2.2.2 | 2.2 | User Personas | `####` | ✅ | ➖ | Table or list of personas involved. |
+| 2.2.3 | 2.2 | Core Business Rules | `####` | ✅ | ❓ | Plan: Domain rules that govern this scope. Task: Implementation-specific business constraints. |
+| 2.2.4 | 2.2 | User Stories | `####` | ✅ | ➖ | User-centric goals and workflows relevant to this Plan scope. |
+| 2.3 | 2 | Success Criteria | `###` | ✅ | ➖ | How we know this Plan's strategic objectives are achieved. |
+| 2.4 | 2 | Definition of Done | `###` | ➖ | ✅ | This section defines the 'what', not the 'how'. It should be understandable by non-technical stakeholders. |
+| 2.5 | 2 | Boundaries & Scope | `###` | ✅ | ➖ | Container heading for scope definitions. |
+| 2.5.1 | 2.5 | In Scope | `####` | ✅ | ➖ | A bulleted list of items that are explicitly included in this Plan scope. |
+| 2.5.2 | 2.5 | Out of Scope | `####` | ✅ | ➖ | A bulleted list of items that are explicitly excluded from this Plan scope. |
+| 2.6 | 2 | Core Business Processes | `###` | ✅ | ➖ | Container for detailed business process descriptions. |
+| 2.6.1 | 2.6 | Process: [Name] | `####` | ✅ | ➖ | A repeatable section for a single, named business process. |
 
 ### Field Details
 
@@ -202,7 +202,7 @@ Explains why the document exists, who it serves, and what success looks like. As
 - **Example**:
 
 > ##### Journey: Analyst Processes a New Document
->
+> 
 > This journey describes the end-to-end path for a data analyst supervising the processing of a single document from selection to completion.
 
 > ```mermaid
@@ -212,7 +212,7 @@ Explains why the document exists, who it serves, and what success looks like. As
 > ```
 
 > ##### Journey: DevOps Engineer Monitors Pipeline Health
->
+> 
 > This journey describes how a DevOps engineer interacts with the system's outputs to monitor for errors and performance issues.
 
 > ```mermaid
@@ -232,10 +232,10 @@ Explains why the document exists, who it serves, and what success looks like. As
 
 - **Example**:
 
-> | Persona             | Goal                                                      |
-> | :------------------ | :-------------------------------------------------------- |
+> | Persona | Goal |
+> | :--- | :--- |
 > | **DevOps Engineer** | Monitor system health and diagnose infrastructure issues. |
-> | **Support Analyst** | Triage user-reported errors and identify root cause.      |
+> | **Support Analyst** | Triage user-reported errors and identify root cause. |
 
 #### 2.2.3 Core Business Rules
 
@@ -272,19 +272,21 @@ Explains why the document exists, who it serves, and what success looks like. As
 > - The central dashboard can successfully ingest and display logs from all pipeline stages.
 > - A comprehensive set of alerts for critical failures is configured and tested.
 
-#### 2.4 Acceptance Criteria
+#### 2.4 Definition of Done
 
-- **Description**: A verifiable, tabular list of conditions that a Task must satisfy to be considered complete.
+- **Description**: A high-level, non-technical tabular list of criteria that define when the task is complete from a business perspective.
 - **Content Format**: Markdown table.
-- **Notes**: Verifiable conditions that define when this Task is complete.
+- **Notes**: This section defines the 'what', not the 'how'. It should be understandable by non-technical stakeholders.
 
 - **Example**:
 
-> | ID   | Criterion                                           | Test Reference      |
-> | :--- | :-------------------------------------------------- | :------------------ |
-> | AC-1 | Logger correctly filters messages below `minLevel`. | `logger.test.ts`    |
-> | AC-2 | `FATAL` level logs trigger a PagerDuty alert.       | `alerting.int.test` |
-> | AC-3 | Log output is valid JSON.                           | `formatter.test.ts` |
+> | ID | Criterion |
+> | :--- | :--- |
+> | DoD-1 | A validation library is available that can check the content of documentation files. |
+> | DoD-2 | The library correctly identifies when a document's 'Status' or 'Priority' section has missing or malformed information. |
+> | DoD-3 | The library can validate the structure of all tables, such as 'Dependencies', ensuring they have the right columns. |
+> | DoD-4 | The library successfully flags documents that contain structural errors and confirms that valid documents pass without errors. |
+> | DoD-5 | The validation logic for each of the 8 documentation families is organized separately for maintainability. |
 
 #### 2.5 Boundaries & Scope
 
@@ -348,13 +350,13 @@ This family answers what we are building and in what order. It provides a clear 
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name             | Heading | Plan | Task | Notes                                                                                                     |
-| :---- | :-------- | :----------------------- | :------ | :--- | :--- | :-------------------------------------------------------------------------------------------------------- |
-| **3** | `null`    | Planning & Decomposition | `##`    | ✅   | ❓   | The main family heading.                                                                                  |
-| 3.1   | 3         | Roadmap (In-Focus Items) | `###`   | ✅   | ➖   | Plan: Lists the immediate child Plans/Tasks being actively worked on.                                     |
-| 3.2   | 3         | Backlog / Icebox         | `###`   | ✅   | ➖   | Plan: Lists considered but de-scoped or deferred child Plans/Tasks.                                       |
-| 3.3   | 3         | Dependencies             | `###`   | ✅   | ✅   | Plan: External dependencies affecting this scope. Task: Other Tasks/Plans this implementation depends on. |
-| 3.4   | 3         | Decomposition Graph      | `###`   | ✅   | ➖   |                                                                                                           |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **3** | `null` | Planning & Decomposition | `##` | ✅ | ❓ | The main family heading. |
+| 3.1 | 3 | Roadmap (In-Focus Items) | `###` | ✅ | ➖ | Plan: Lists the immediate child Plans/Tasks being actively worked on. |
+| 3.2 | 3 | Backlog / Icebox | `###` | ✅ | ➖ | Plan: Lists considered but de-scoped or deferred child Plans/Tasks. |
+| 3.3 | 3 | Dependencies | `###` | ✅ | ✅ | Plan: External dependencies affecting this scope. Task: Other Tasks/Plans this implementation depends on. |
+| 3.4 | 3 | Decomposition Graph | `###` | ✅ | ➖ |  |
 
 ### Field Details
 
@@ -366,10 +368,10 @@ This family answers what we are building and in what order. It provides a clear 
 
 - **Example**:
 
-> | ID  | Child Plan/Task                          | Priority  | Priority Drivers                                                                                         | Status         | Depends On | Summary                         |
-> | :-- | :--------------------------------------- | :-------- | :------------------------------------------------------------------------------------------------------- | :------------- | :--------- | :------------------------------ |
-> | P1  | [Backend Plan](p1-backend.plan.md)       | 🟥 High   | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | —          | Core backend services and APIs. |
-> | T1  | [Database Setup](p1-t1-database.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker)       | 💡 Not Started | —          | Configure production database.  |
+> | ID | Child Plan/Task | Priority | Priority Drivers | Status | Depends On | Summary |
+> | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+> | P1 | [Backend Plan](p1-backend.plan.md) | 🟥 High | [CBP-Break_Block_Revenue_Legal](/docs/documentation-driven-development.md#cbp-break_block_revenue_legal) | 💡 Not Started | — | Core backend services and APIs. |
+> | T1 | [Database Setup](p1.t1-database-setup.task.md) | 🟧 Medium | [TEC-Prod_Stability_Blocker](/docs/documentation-driven-development.md#tec-prod_stability_blocker) | 💡 Not Started | — | Configure production database. |
 
 #### 3.2 Backlog / Icebox
 
@@ -390,10 +392,10 @@ This family answers what we are building and in what order. It provides a clear 
 
 - **Example**:
 
-> | ID  | Dependency On             | Type     | Status      | Affected Plans/Tasks | Notes                                |
-> | :-- | :------------------------ | :------- | :---------- | :------------------- | :----------------------------------- |
-> | D-1 | `shared-ui-library` v2.1+ | External | ❌ Blocked  | `p1-frontend`        | Awaiting release from Platform team. |
-> | D-2 | Plan `p2-user-profiles`   | Internal | ✅ Complete | `p3-reporting`       | User schema is now finalized.        |
+> | ID | Dependency On | Type | Status | Affected Plans/Tasks | Notes |
+> | :--- | :--- | :--- | :--- | :--- | :--- |
+> | D-1 | `shared-ui-library` v2.1+ | External | ❌ Blocked | `p1-frontend` | Awaiting release from Platform team. |
+> | D-2 | Plan `p2-user-profiles` | Internal | ✅ Complete | `p3-reporting` | User schema is now finalized. |
 
 #### 3.4 Decomposition Graph
 
@@ -427,33 +429,33 @@ This family answers how the system works from a high-level, black-box perspectiv
 
 ### Depth Matrix
 
-| ID      | Parent ID | Section Name                | Heading | Plan | Task | Notes                                                                                                            |
-| :------ | :-------- | :-------------------------- | :------ | :--- | :--- | :--------------------------------------------------------------------------------------------------------------- |
-| **4**   | `null`    | High-Level Design           | `##`    | ✅   | ✅   | The main family heading.                                                                                         |
-| 4.0     | 4         | Guiding Principles          | `###`   | ✅   | ➖   | Plan: High-level architectural rules that govern this scope.                                                     |
-| 4.1     | 4         | Current Architecture        | `###`   | ✅   | ➖   | Plan: Existing system analysis for planning. Task: Not applicable (inherits context from Plan).                  |
-| 4.1.1   | 4.1       | Data Models                 | `####`  | ✅   | ➖   | Plan: Current entity relationships analysis. Task: Not applicable.                                               |
-| 4.1.2   | 4.1       | Components                  | `####`  | ✅   | ➖   | Plan: Current component relationships analysis. Task: Not applicable.                                            |
-| 4.1.3   | 4.1       | Data Flow                   | `####`  | ✅   | ➖   | Plan: Current data movement analysis. Task: Not applicable.                                                      |
-| 4.1.4   | 4.1       | Control Flow                | `####`  | ✅   | ➖   | Plan: Current system interactions analysis. Task: Not applicable.                                                |
-| 4.1.5   | 4.1       | Integration Points          | `####`  | ✅   | ➖   | Plan: Current external system boundaries analysis. Task: Not applicable.                                         |
-| 4.1.5.1 | 4.1.5     | Upstream Integrations       | `#####` | ✅   | ➖   | Plan: Current systems this scope consumes analysis. Task: Not applicable.                                        |
-| 4.1.5.2 | 4.1.5     | Downstream Integrations     | `#####` | ✅   | ➖   | Plan: Current systems this scope serves analysis. Task: Not applicable.                                          |
-| 4.2     | 4         | Target Architecture         | `###`   | ✅   | ✅   | Plan: Proposed system design. Task: Implementation architecture requirements.                                    |
-| 4.2.1   | 4.2       | Data Models                 | `####`  | ✅   | ✅   | Plan: Target entity relationships. Task: Implementation data structures.                                         |
-| 4.2.2   | 4.2       | Components                  | `####`  | ✅   | ✅   | Plan: Target component architecture. Task: Implementation component interfaces.                                  |
-| 4.2.3   | 4.2       | Data Flow                   | `####`  | ✅   | ✅   | Plan: Target data movement patterns. Task: Implementation data transformations.                                  |
-| 4.2.4   | 4.2       | Control Flow                | `####`  | ✅   | ✅   | Plan: Target interaction patterns. Task: Implementation operation sequences.                                     |
-| 4.2.5   | 4.2       | Integration Points          | `####`  | ✅   | ✅   | Plan: Target integration strategy. Task: Implementation integration contracts.                                   |
-| 4.2.5.1 | 4.2.5     | Upstream Integrations       | `#####` | ✅   | ✅   | Plan: Target upstream systems. Task: Implementation upstream dependencies.                                       |
-| 4.2.5.2 | 4.2.5     | Downstream Integrations     | `#####` | ✅   | ✅   | Plan: Target downstream systems. Task: Implementation downstream contracts.                                      |
-| 4.2.6   | 4.2       | Exposed API                 | `####`  | ✅   | ✅   | Plan: Public API strategy. Task: Specific API implementation specification.                                      |
-| 4.3     | 4         | Tech Stack & Deployment     | `###`   | ✅   | ❓   | Plan: Technology choices and deployment strategy. Task: Implementation-specific tech requirements (if relevant). |
-| 4.4     | 4         | Non-Functional Requirements | `###`   | ✅   | ✅   | Plan: Quality attributes strategy. Task: Implementation-specific NFR targets.                                    |
-| 4.4.1   | 4.4       | Performance                 | `####`  | ✅   | ✅   | Plan: Performance strategy. Task: Specific performance targets.                                                  |
-| 4.4.2   | 4.4       | Security                    | `####`  | ✅   | ✅   | Plan: Security approach. Task: Implementation security requirements.                                             |
-| 4.4.3   | 4.4       | Reliability                 | `####`  | ✅   | ✅   | Plan: Reliability strategy. Task: Implementation reliability targets.                                            |
-| 4.4.4   | 4.4       | Permission Model            | `####`  | ✅   | ❓   | Plan: Access control strategy. Task: Implementation-specific permissions (if relevant).                          |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **4** | `null` | High-Level Design | `##` | ✅ | ✅ | The main family heading. |
+| 4.0 | 4 | Guiding Principles | `###` | ✅ | ➖ | Plan: High-level architectural rules that govern this scope. |
+| 4.1 | 4 | Current Architecture | `###` | ✅ | ➖ | Plan: Existing system analysis for planning. Task: Not applicable (inherits context from Plan). |
+| 4.1.1 | 4.1 | Data Models | `####` | ✅ | ➖ | Plan: Current entity relationships analysis. Task: Not applicable. |
+| 4.1.2 | 4.1 | Components | `####` | ✅ | ➖ | Plan: Current component relationships analysis. Task: Not applicable. |
+| 4.1.3 | 4.1 | Data Flow | `####` | ✅ | ➖ | Plan: Current data movement analysis. Task: Not applicable. |
+| 4.1.4 | 4.1 | Control Flow | `####` | ✅ | ➖ | Plan: Current system interactions analysis. Task: Not applicable. |
+| 4.1.5 | 4.1 | Integration Points | `####` | ✅ | ➖ | Plan: Current external system boundaries analysis. Task: Not applicable. |
+| 4.1.5.1 | 4.1.5 | Upstream Integrations | `#####` | ✅ | ➖ | Plan: Current systems this scope consumes analysis. Task: Not applicable. |
+| 4.1.5.2 | 4.1.5 | Downstream Integrations | `#####` | ✅ | ➖ | Plan: Current systems this scope serves analysis. Task: Not applicable. |
+| 4.2 | 4 | Target Architecture | `###` | ✅ | ✅ | Plan: Proposed system design. Task: Implementation architecture requirements. |
+| 4.2.1 | 4.2 | Data Models | `####` | ✅ | ✅ | Plan: Target entity relationships. Task: Implementation data structures. |
+| 4.2.2 | 4.2 | Components | `####` | ✅ | ✅ | Plan: Target component architecture. Task: Implementation component interfaces. |
+| 4.2.3 | 4.2 | Data Flow | `####` | ✅ | ✅ | Plan: Target data movement patterns. Task: Implementation data transformations. |
+| 4.2.4 | 4.2 | Control Flow | `####` | ✅ | ✅ | Plan: Target interaction patterns. Task: Implementation operation sequences. |
+| 4.2.5 | 4.2 | Integration Points | `####` | ✅ | ✅ | Plan: Target integration strategy. Task: Implementation integration contracts. |
+| 4.2.5.1 | 4.2.5 | Upstream Integrations | `#####` | ✅ | ✅ | Plan: Target upstream systems. Task: Implementation upstream dependencies. |
+| 4.2.5.2 | 4.2.5 | Downstream Integrations | `#####` | ✅ | ✅ | Plan: Target downstream systems. Task: Implementation downstream contracts. |
+| 4.2.6 | 4.2 | Exposed API | `####` | ✅ | ✅ | Plan: Public API strategy. Task: Specific API implementation specification. |
+| 4.3 | 4 | Tech Stack & Deployment | `###` | ✅ | ❓ | Plan: Technology choices and deployment strategy. Task: Implementation-specific tech requirements (if relevant). |
+| 4.4 | 4 | Non-Functional Requirements | `###` | ✅ | ✅ | Plan: Quality attributes strategy. Task: Implementation-specific NFR targets. |
+| 4.4.1 | 4.4 | Performance | `####` | ✅ | ✅ | Plan: Performance strategy. Task: Specific performance targets. |
+| 4.4.2 | 4.4 | Security | `####` | ✅ | ✅ | Plan: Security approach. Task: Implementation security requirements. |
+| 4.4.3 | 4.4 | Reliability | `####` | ✅ | ✅ | Plan: Reliability strategy. Task: Implementation reliability targets. |
+| 4.4.4 | 4.4 | Permission Model | `####` | ✅ | ❓ | Plan: Access control strategy. Task: Implementation-specific permissions (if relevant). |
 
 ### Field Details
 
@@ -548,7 +550,7 @@ This family answers how the system works from a high-level, black-box perspectiv
 > ```mermaid
 > classDiagram
 > direction LR
->
+> 
 >     class LogPayload {
 >         <<type>>
 >         +LogLevel level
@@ -558,58 +560,58 @@ This family answers how the system works from a high-level, black-box perspectiv
 >         +string componentStack
 >         +Record<string,any> context
 >     }
->
+> 
 >     class ClientLogger {
 >         <<interface>>
 >         +log(payload: LogPayload): Promise<void>
 >     }
->
+> 
 >     class ConsoleTransport {
 >         +log(payload: LogPayload): Promise<void>
 >     }
->
+> 
 >     class HttpTransport {
 >         +string endpoint
 >         +log(payload: LogPayload): Promise<void>
 >     }
->
+> 
 >     class CompositeLogger {
 >         +ClientLogger[] delegates
 >         +log(payload: LogPayload): Promise<void>
 >     }
->
+> 
 >     class LoggerConfig {
 >         +LogLevel minLevel
 >         +TransportConfig[] transports
 >     }
->
+> 
 >     class TransportConfig {
 >         +string name
 >         +string endpoint
 >     }
->
+> 
 >     class LoggerFactory {
 >         +create(config: LoggerConfig): ClientLogger
 >     }
->
+> 
 >     class BuildLogPayload {
 >         <<function>>
 >     }
->
+> 
 >     class SingleCallGuard {
 >         <<function>>
 >     }
->
+> 
 >     class AppErrorBoundary {
 >         +ClientLogger logger
 >         +componentDidCatch(error, info): void
 >     }
->
+> 
 >     %% Inheritance / Implementation
 >     ClientLogger <|.. ConsoleTransport
 >     ClientLogger <|.. HttpTransport
 >     ClientLogger <|.. CompositeLogger
->
+> 
 >     %% Associations / Composition
 >     CompositeLogger o-- ClientLogger : delegates
 >     LoggerFactory --> LoggerConfig
@@ -635,20 +637,20 @@ This family answers how the system works from a high-level, black-box perspectiv
 >     subgraph "Input"
 >         A[Component A]
 >     end
->
+> 
 >     subgraph "System"
 >         B(Component B)
 >         C(Component C)
 >     end
->
+> 
 >     subgraph "External Resource"
 >         D[Database]
 >     end
->
+> 
 >     subgraph "Output"
 >         E[Component D]
 >     end
->
+> 
 >     A -- "1 - Invoke with" --> B
 >     B -- "2 - Process" --> C
 >     C -- "3 - Write to" --> D
@@ -747,9 +749,9 @@ This family answers how the system works from a high-level, black-box perspectiv
 
 - **Example**:
 
-> | ID      | Requirement                                                       | Priority  |
-> | :------ | :---------------------------------------------------------------- | :-------- |
-> | PERF-01 | API endpoints must respond in < 200ms (95th percentile).          | 🟥 High   |
+> | ID | Requirement | Priority |
+> | :--- | :--- | :--- |
+> | PERF-01 | API endpoints must respond in < 200ms (95th percentile). | 🟥 High |
 > | PERF-02 | The system must support 100 concurrent users without degradation. | 🟧 Medium |
 
 #### 4.4.2 Security
@@ -760,10 +762,10 @@ This family answers how the system works from a high-level, black-box perspectiv
 
 - **Example**:
 
-> | ID     | Requirement                                                              | Priority |
-> | :----- | :----------------------------------------------------------------------- | :------- |
-> | SEC-01 | All sensitive user data must be encrypted at rest using AES-256.         | 🟥 High  |
-> | SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High  |
+> | ID | Requirement | Priority |
+> | :--- | :--- | :--- |
+> | SEC-01 | All sensitive user data must be encrypted at rest using AES-256. | 🟥 High |
+> | SEC-02 | Access to admin endpoints must be restricted to users with 'Admin' role. | 🟥 High |
 
 #### 4.4.3 Reliability
 
@@ -773,10 +775,10 @@ This family answers how the system works from a high-level, black-box perspectiv
 
 - **Example**:
 
-> | ID     | Requirement                                               | Priority |
-> | :----- | :-------------------------------------------------------- | :------- |
-> | REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High  |
-> | REL-02 | All database transactions must be atomic and durable.     | 🟥 High  |
+> | ID | Requirement | Priority |
+> | :--- | :--- | :--- |
+> | REL-01 | The service must maintain 99.9% uptime, measured monthly. | 🟥 High |
+> | REL-02 | All database transactions must be atomic and durable. | 🟥 High |
 
 #### 4.4.4 Permission Model
 
@@ -786,11 +788,11 @@ This family answers how the system works from a high-level, black-box perspectiv
 
 - **Example**:
 
-> | Role        | Permissions                                                  | Notes                               |
-> | :---------- | :----------------------------------------------------------- | :---------------------------------- |
-> | **Admin**   | - Full CRUD access to all documents<br>- Can assign roles    | For system administrators only.     |
-> | **Analyst** | - Read/Write access to assigned documents<br>- Cannot delete | The primary user role.              |
-> | **Viewer**  | - Read-only access to completed documents                    | For stakeholders or external users. |
+> | Role | Permissions | Notes |
+> | :--- | :--- | :--- |
+> | **Admin** | - Full CRUD access to all documents<br>- Can assign roles | For system administrators only. |
+> | **Analyst** | - Read/Write access to assigned documents<br>- Cannot delete | The primary user role. |
+> | **Viewer** | - Read-only access to completed documents | For stakeholders or external users. |
 
 ---
 
@@ -802,15 +804,15 @@ This family answers how the system is maintained and monitored. It provides the 
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name                       | Heading | Plan | Task | Notes                                                                                                  |
-| :---- | :-------- | :--------------------------------- | :------ | :--- | :--- | :----------------------------------------------------------------------------------------------------- |
-| **5** | `null`    | Maintenance and Monitoring         | `##`    | ❓   | ✅   | The main family heading.                                                                               |
-| 5.1   | 5         | Current Maintenance and Monitoring | `###`   | ✅   | ➖   | Plan: Existing observability analysis for planning. Task: Not applicable (inherits context from Plan). |
-| 5.1.1 | 5.1       | Error Handling                     | `####`  | ✅   | ➖   | Plan: Current error handling analysis. Task: Not applicable.                                           |
-| 5.1.2 | 5.1       | Logging & Monitoring               | `####`  | ✅   | ➖   | Plan: Current observability analysis. Task: Not applicable.                                            |
-| 5.2   | 5         | Target Maintenance and Monitoring  | `###`   | ✅   | ✅   | Plan: Target observability strategy. Task: Implementation requirements.                                |
-| 5.2.1 | 5.2       | Error Handling                     | `####`  | ✅   | ✅   | Plan: Target error handling strategy. Task: Specific error scenarios and implementation requirements.  |
-| 5.2.2 | 5.2       | Logging & Monitoring               | `####`  | ✅   | ✅   | Plan: Target observability strategy. Task: Specific logging/monitoring implementation requirements.    |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **5** | `null` | Maintenance and Monitoring | `##` | ❓ | ✅ | The main family heading. |
+| 5.1 | 5 | Current Maintenance and Monitoring | `###` | ✅ | ➖ | Plan: Existing observability analysis for planning. Task: Not applicable (inherits context from Plan). |
+| 5.1.1 | 5.1 | Error Handling | `####` | ✅ | ➖ | Plan: Current error handling analysis. Task: Not applicable. |
+| 5.1.2 | 5.1 | Logging & Monitoring | `####` | ✅ | ➖ | Plan: Current observability analysis. Task: Not applicable. |
+| 5.2 | 5 | Target Maintenance and Monitoring | `###` | ✅ | ✅ | Plan: Target observability strategy. Task: Implementation requirements. |
+| 5.2.1 | 5.2 | Error Handling | `####` | ✅ | ✅ | Plan: Target error handling strategy. Task: Specific error scenarios and implementation requirements. |
+| 5.2.2 | 5.2 | Logging & Monitoring | `####` | ✅ | ✅ | Plan: Target observability strategy. Task: Specific logging/monitoring implementation requirements. |
 
 ### Field Details
 
@@ -838,11 +840,11 @@ This family answers how the system is maintained and monitored. It provides the 
 
 - **Example**:
 
-> | Error Type                  | Trigger                                       | Action                  | User Feedback                                                             |
-> | :-------------------------- | :-------------------------------------------- | :---------------------- | :------------------------------------------------------------------------ |
-> | **File System Error**       | Cannot read a required file or directory.     | Abort with exit code 1. | `ERROR: Cannot access [path]. Please check permissions.`                  |
-> | **Schema Validation Error** | A document violates the canonical schema.     | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].`        |
-> | **API/Network Error**       | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
+> | Error Type | Trigger | Action | User Feedback |
+> | :--- | :--- | :--- | :--- |
+> | **File System Error** | Cannot read a required file or directory. | Abort with exit code 1. | `ERROR: Cannot access [path]. Please check permissions.` |
+> | **Schema Validation Error** | A document violates the canonical schema. | Abort with exit code 1. | `ERROR: Schema validation failed in [file]: [validation_details].` |
+> | **API/Network Error** | External API is unreachable or returns > 299. | Abort with exit code 1. | `ERROR: Failed to transmit status to [endpoint]: [HTTP_status_or_error].` |
 
 #### 5.2.2 Logging & Monitoring
 
@@ -866,14 +868,14 @@ This family provides the practical, step-by-step instructions for building the c
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name               | Heading | Plan | Task | Notes                                                                                                   |
-| :---- | :-------- | :------------------------- | :------ | :--- | :--- | :------------------------------------------------------------------------------------------------------ |
-| **6** | `null`    | Implementation Guidance    | `##`    | ❓   | ✅   | The main family heading.                                                                                |
-| 6.1   | 6         | Implementation Plan        | `###`   | ✅   | ❓   | Plan: Phased rollout strategy for child Plans/Tasks. Task: Direct implementation approach (if complex). |
-| 6.1   | 6         | Implementation Log / Steps | `###`   | ➖   | ✅   | Plan: Not applicable (Plans don't implement). Task: Detailed step-by-step execution log.                |
-| 6.1.1 | 6.1       | Initial Situation          | `####`  | ➖   | ✅   | Plan: Not applicable. Task: Baseline state before implementation begins.                                |
-| 6.1.2 | 6.1       | Files Change Log           | `####`  | ➖   | ✅   | Plan: Not applicable. Task: File modifications tracking during implementation.                          |
-| 6.2   | 6         | Prompts (LLM reuse)        | `###`   | ❓   | ❓   | Plan: Strategic prompts for planning. Task: Implementation-specific prompts.                            |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **6** | `null` | Implementation Guidance | `##` | ❓ | ✅ | The main family heading. |
+| 6.1 | 6 | Implementation Plan | `###` | ✅ | ❓ | Plan: Phased rollout strategy for child Plans/Tasks. Task: Direct implementation approach (if complex). |
+| 6.1 | 6 | Implementation Log / Steps | `###` | ➖ | ✅ | Plan: Not applicable (Plans don't implement). Task: Detailed step-by-step execution log. |
+| 6.1.1 | 6.1 | Initial Situation | `####` | ➖ | ✅ | Plan: Not applicable. Task: Baseline state before implementation begins. |
+| 6.1.2 | 6.1 | Files Change Log | `####` | ➖ | ✅ | Plan: Not applicable. Task: File modifications tracking during implementation. |
+| 6.2 | 6 | Prompts (LLM reuse) | `###` | ❓ | ❓ | Plan: Strategic prompts for planning. Task: Implementation-specific prompts. |
 
 ### Field Details
 
@@ -928,30 +930,30 @@ This family defines how we ensure the system is correct, reliable, and observabl
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name                    | Heading | Plan | Task | Notes                                                                                                  |
-| :---- | :-------- | :------------------------------ | :------ | :--- | :--- | :----------------------------------------------------------------------------------------------------- |
-| **7** | `null`    | Quality & Operations            | `##`    | ✅   | ✅   | The main family heading.                                                                               |
-| 7.1   | 7         | Testing Strategy / Requirements | `###`   | ✅   | ✅   | Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation. |
-| 7.2   | 7         | Configuration                   | `###`   | ✅   | ✅   | Plan: Configuration strategy and approach. Task: Implementation-specific configuration requirements.   |
-| 7.3   | 7         | Alerting & Response             | `###`   | ✅   | ✅   | Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses.    |
-| 7.4   | 7         | Deployment Steps                | `###`   | ✅   | ➖   | Plan: Deployment strategy and approach. Task: Not applicable (Tasks don't handle deployment).          |
-| 7.5   | 7         | Local Test Commands             | `###`   | ➖   | ✅   | Plan: Not applicable (Plans don't execute tests). Task: CLI commands to run tests locally.             |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **7** | `null` | Quality & Operations | `##` | ✅ | ✅ | The main family heading. |
+| 7.1 | 7 | Testing Strategy / Requirements | `###` | ✅ | ✅ | Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation. |
+| 7.2 | 7 | Configuration | `###` | ✅ | ✅ | Plan: Configuration strategy and approach. Task: Implementation-specific configuration requirements. |
+| 7.3 | 7 | Alerting & Response | `###` | ✅ | ✅ | Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses. |
+| 7.4 | 7 | Deployment Steps | `###` | ✅ | ➖ | Plan: Deployment strategy and approach. Task: Not applicable (Tasks don't handle deployment). |
+| 7.5 | 7 | Local Test Commands | `###` | ➖ | ✅ | Plan: Not applicable (Plans don't execute tests). Task: CLI commands to run tests locally. |
 
 ### Field Details
 
 #### 7.1 Testing Strategy / Requirements
 
-- **Description**: The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria.
+- **Description**: The overall strategy for testing. This section contains the technical Acceptance Criteria, mapping specific test cases back to the business-facing Definition of Done.
 - **Content Format**: Markdown table.
 - **Notes**: Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation.
 
 - **Example**:
 
-> | AC  | Scenario                                                  | Test Type   | Tools / Runner                    | Notes                                    |
-> | :-- | :-------------------------------------------------------- | :---------- | :-------------------------------- | :--------------------------------------- |
-> | 1   | Default dev logger = console only                         | Unit        | Vitest + RTL (spy on console)     | Set `process.env.NODE_ENV='development'` |
-> | 2   | Prod logger fan-out to console + HTTP, minLevel respected | Unit        | Vitest + fetch-mock + console spy | `NODE_ENV='production'`                  |
-> | 7   | Successful POST to `/api/log/client`                      | Integration | Vitest + MSW                      | Assert JSON body and 2xx handling        |
+> | AC ID | DoD Link | Scenario | Test Type | Test File |
+> | :--- | :--- | :--- | :--- | :--- |
+> | AC-1 | DoD-2 | Unit test for `metaGovernanceSchema` (valid and invalid Status) | Unit | `1-meta-governance.schema.test.ts` |
+> | AC-2 | DoD-3 | Unit test for `businessScopeSchema` (valid and invalid AC table) | Unit | `2-business-scope.schema.test.ts` |
+> | AC-3 | DoD-4 | Integration test with a fully valid mock `task.md` | Integration | `integration.test.ts` |
 
 #### 7.2 Configuration
 
@@ -961,11 +963,11 @@ This family defines how we ensure the system is correct, reliable, and observabl
 
 - **Example**:
 
-> | Setting Name          | Plan Dependency | Source               | Override Method                               | Notes                                                                   |
-> | :-------------------- | :-------------- | :------------------- | :-------------------------------------------- | :---------------------------------------------------------------------- |
-> | `analyzerApiEndpoint` | `p1-analyzer`   | `ddd.config.json`    | `DDD_ANALYZER_API_ENDPOINT` (Environment Var) | (Required) The URL of the external service for status reporting.        |
-> | `logLevel`            | (All)           | `ddd.config.json`    | `DDD_LOG_LEVEL` (Environment Variable)        | `info` (default), `debug`, `warn`, `error`. Controls logging verbosity. |
-> | `NODE_ENV`            | (All)           | Environment Variable | Not overrideable                              | `development` or `production`. Determines the operational mode.         |
+> | Setting Name | Plan Dependency | Source | Override Method | Notes |
+> | :--- | :--- | :--- | :--- | :--- |
+> | `analyzerApiEndpoint` | `p1-analyzer` | `ddd.config.json` | `DDD_ANALYZER_API_ENDPOINT` (Environment Var) | (Required) The URL of the external service for status reporting. |
+> | `logLevel` | (All) | `ddd.config.json` | `DDD_LOG_LEVEL` (Environment Variable) | `info` (default), `debug`, `warn`, `error`. Controls logging verbosity. |
+> | `NODE_ENV` | (All) | Environment Variable | Not overrideable | `development` or `production`. Determines the operational mode. |
 
 #### 7.3 Alerting & Response
 
@@ -975,11 +977,11 @@ This family defines how we ensure the system is correct, reliable, and observabl
 
 - **Example**:
 
-> | Error Condition                   | Relevant Plans | Response Plan                                                                                                | Status         |
-> | :-------------------------------- | :------------- | :----------------------------------------------------------------------------------------------------------- | :------------- |
-> | **Internal Script Failure**       | All            | Abort the `git commit` with a non-zero exit code. Print the error stack trace directly to the console.       | 💡 Not Started |
-> | **External API Non-2xx Response** | `p1-analyzer`  | Abort the `git commit` with a non-zero exit code. Log the API's error response to the console.               | 💡 Not Started |
-> | **CI/CD Pipeline Failure**        | All            | Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface. | 💡 Not Started |
+> | Error Condition | Relevant Plans | Response Plan | Status |
+> | :--- | :--- | :--- | :--- |
+> | **Internal Script Failure** | All | Abort the `git commit` with a non-zero exit code. Print the error stack trace directly to the console. | 💡 Not Started |
+> | **External API Non-2xx Response** | `p1-analyzer` | Abort the `git commit` with a non-zero exit code. Log the API's error response to the console. | 💡 Not Started |
+> | **CI/CD Pipeline Failure** | All | Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface. | 💡 Not Started |
 
 #### 7.4 Deployment Steps
 
@@ -1009,10 +1011,10 @@ This family is a catch-all for supplementary information that doesn't fit into t
 
 ### Depth Matrix
 
-| ID    | Parent ID | Section Name        | Heading | Plan | Task | Notes                                  |
-| :---- | :-------- | :------------------ | :------ | :--- | :--- | :------------------------------------- |
-| **8** | `null`    | Reference           | `##`    | ❓   | ❓   | The main family heading.               |
-| 8.1   | 8         | Appendices/Glossary | `###`   | ❓   | ❓   | Additional information or definitions. |
+| ID | Parent ID | Section Name | Heading | Plan | Task | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **8** | `null` | Reference | `##` | ❓ | ❓ | The main family heading. |
+| 8.1 | 8 | Appendices/Glossary | `###` | ❓ | ❓ | Additional information or definitions. |
 
 ### Field Details
 

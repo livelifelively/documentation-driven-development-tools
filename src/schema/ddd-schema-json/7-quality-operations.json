@@ -14,7 +14,7 @@
       "id": "7.1",
       "name": "Testing Strategy / Requirements",
       "headingLevel": 3,
-      "description": "The overall strategy for testing, and a list of specific tests that must pass, often mapping to Acceptance Criteria.",
+      "description": "The overall strategy for testing. This section contains the technical Acceptance Criteria, mapping specific test cases back to the business-facing Definition of Done.",
       "contentFormat": "Markdown table.",
       "applicability": {
         "plan": "required",
@@ -27,28 +27,28 @@
           "content": [
             {
               "type": "table",
-              "headers": ["AC", "Scenario", "Test Type", "Tools / Runner", "Notes"],
+              "headers": ["AC ID", "DoD Link", "Scenario", "Test Type", "Test File"],
               "rows": [
                 [
-                  "1",
-                  "Default dev logger = console only",
+                  "AC-1",
+                  "DoD-2",
+                  "Unit test for `metaGovernanceSchema` (valid and invalid Status)",
                   "Unit",
-                  "Vitest + RTL (spy on console)",
-                  "Set `process.env.NODE_ENV='development'`"
+                  "`1-meta-governance.schema.test.ts`"
                 ],
                 [
-                  "2",
-                  "Prod logger fan-out to console + HTTP, minLevel respected",
+                  "AC-2",
+                  "DoD-3",
+                  "Unit test for `businessScopeSchema` (valid and invalid AC table)",
                   "Unit",
-                  "Vitest + fetch-mock + console spy",
-                  "`NODE_ENV='production'`"
+                  "`2-business-scope.schema.test.ts`"
                 ],
                 [
-                  "7",
-                  "Successful POST to `/api/log/client`",
+                  "AC-3",
+                  "DoD-4",
+                  "Integration test with a fully valid mock `task.md`",
                   "Integration",
-                  "Vitest + MSW",
-                  "Assert JSON body and 2xx handling"
+                  "`integration.test.ts`"
                 ]
               ],
               "rendering": {
