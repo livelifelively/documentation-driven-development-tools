@@ -13,17 +13,17 @@ const mockPlugin: SectionProcessor = {
    * @param sectionAst The AST nodes for the mock section
    * @returns Array of linting errors, empty if valid
    */
-  lint(sectionAst: Root): LintingError[] {
+  lint(_sectionAst: Root): LintingError[] {
     // Mock plugin always passes validation
     return [];
   },
 
   /**
    * Extracts structured data from the mock section.
-   * @param sectionAst The AST nodes for the mock section
+   * @param _sectionAst The AST nodes for the mock section
    * @returns Structured mock data
    */
-  extract(sectionAst: Root): any {
+  extract(_sectionAst: Root): any {
     // Return mock data for testing
     return {
       mockData: 'extracted successfully',

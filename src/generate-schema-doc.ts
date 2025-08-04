@@ -30,16 +30,16 @@ export function run() {
     console.log('\n🎉 Both documentation versions generated successfully!');
     console.log('📖 Human version: Optimized for human readability with visible examples');
     console.log('🤖 Machine version: Optimized for LLM consumption with code block examples');
-  } catch (error) {
-    console.error('❌ Failed to generate documentation:', error);
-    throw error;
+  } catch (_error) {
+    console.error('❌ Failed to generate documentation:', _error);
+    throw _error;
   }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     run();
-  } catch (error) {
+  } catch (_error) {
     process.exit(1);
   }
 }

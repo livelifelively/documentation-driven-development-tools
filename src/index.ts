@@ -27,7 +27,7 @@ import {
   ContentElement,
 } from './types.js';
 
-import { SchemaFamily, SchemaApplicability, SchemaExample, SchemaField, SchemaSection } from './schema/schema.types.js';
+import { SchemaFamily } from './schema/schema.types.js';
 
 // Assemble the full schema - Adding family1 for testing
 export const fullSchema: SchemaFamily[] = [

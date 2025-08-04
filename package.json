@@ -20,6 +20,7 @@
     "analyze": "echo \"Error: no test specified\" && exit 1",
     "generate-schema-doc": "tsx src/generate-schema-doc.ts",
     "generate-templates": "tsx src/generate-templates.ts",
+    "validate:schema:family": "tsx src/scripts/validate-family-schemas.ts",
     "cli": "node dist/src/cli/index.js",
     "enable-ddd": "rm -rf dist node_modules && npm install && npm run build && chmod +x dist/src/cli/index.js && node dist/src/cli/index.js"
   },
@@ -44,10 +45,15 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^24.0.14",
     "@types/yargs": "^17.0.33",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "husky": "^9.1.7",
     "memfs": "^4.17.2",
     "tslib": "^2.8.1",
     "tsx": "^4.20.3",
+    "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4"
   },
   "dependencies": {
