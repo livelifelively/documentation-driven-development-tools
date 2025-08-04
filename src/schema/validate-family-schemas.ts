@@ -2,7 +2,7 @@
 
 import { readFileSync } from 'fs';
 import { glob } from 'glob';
-import { SchemaFamily } from '../schema/schema.zod.js';
+import { SchemaFamily } from './schema.zod.js';
 
 /**
  * Validates all JSON schema files against the canonical Zod schema
