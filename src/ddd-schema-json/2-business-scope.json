@@ -261,26 +261,40 @@
     },
     {
       "id": "2.4",
-      "name": "Acceptance Criteria",
+      "name": "Definition of Done",
       "headingLevel": 3,
-      "description": "A verifiable, tabular list of conditions that a Task must satisfy to be considered complete.",
+      "description": "A high-level, non-technical tabular list of criteria that define when the task is complete from a business perspective.",
       "contentFormat": "Markdown table.",
       "applicability": {
         "plan": "omitted",
         "task": "required"
       },
-      "notes": "Verifiable conditions that define when this Task is complete.",
+      "notes": "This section defines the 'what', not the 'how'. It should be understandable by non-technical stakeholders.",
       "examples": [
         {
           "context": "Default",
           "content": [
             {
               "type": "table",
-              "headers": ["ID", "Criterion", "Test Reference"],
+              "headers": ["ID", "Criterion"],
               "rows": [
-                ["AC-1", "Logger correctly filters messages below `minLevel`.", "`logger.test.ts`"],
-                ["AC-2", "`FATAL` level logs trigger a PagerDuty alert.", "`alerting.int.test`"],
-                ["AC-3", "Log output is valid JSON.", "`formatter.test.ts`"]
+                ["DoD-1", "A validation library is available that can check the content of documentation files."],
+                [
+                  "DoD-2",
+                  "The library correctly identifies when a document's 'Status' or 'Priority' section has missing or malformed information."
+                ],
+                [
+                  "DoD-3",
+                  "The library can validate the structure of all tables, such as 'Dependencies', ensuring they have the right columns."
+                ],
+                [
+                  "DoD-4",
+                  "The library successfully flags documents that contain structural errors and confirms that valid documents pass without errors."
+                ],
+                [
+                  "DoD-5",
+                  "The validation logic for each of the 8 documentation families is organized separately for maintainability."
+                ]
               ],
               "rendering": {
                 "renderAsCodeBlockForHuman": false,
