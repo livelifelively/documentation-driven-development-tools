@@ -1,5 +1,3 @@
-#!/usr/bin/env tsx
-
 import { readFileSync } from 'fs';
 import { glob } from 'glob';
 import { SchemaFamily } from './schema.zod.js';
@@ -76,16 +74,4 @@ export async function validateSchemaFiles(): Promise<{ hasErrors: boolean; error
     console.error(`   ${error instanceof Error ? error.message : String(error)}`);
     return { hasErrors: true, errorCount: 1 };
   }
-}
-
-// CLI entry point - only run if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  validateSchemaFiles()
-    .then(({ hasErrors }) => {
-      process.exit(hasErrors ? 1 : 0);
-    })
-    .catch((error) => {
-      console.error('❌ Unhandled error:', error);
-      process.exit(1);
-    });
 }
