@@ -8,6 +8,42 @@ export type DocumentType = z.infer<typeof DocumentType>;
 export const Applicability = z.enum(['required', 'optional', 'omitted']);
 export type Applicability = z.infer<typeof Applicability>;
 
+// Priority Drivers Enum - Based on canonical priority drivers from ddd-2.md
+export const PriorityDriver = z.enum([
+  // Core-Business Process (CBP)
+  'CBP-Break_Block_Revenue_Legal',
+  'CBP-SLA_Breach',
+  'CBP-Partial_Degradation_KPI',
+  'CBP-Incremental_Improvement',
+
+  // Security / Compliance (SEC)
+  'SEC-Critical_Vulnerability',
+  'SEC-Data_Leak',
+  'SEC-Upcoming_Compliance',
+  'SEC-Hardening_Low_Risk',
+
+  // User Experience (UX)
+  'UX-Task_Abandonment',
+  'UX-Severe_Usability',
+  'UX-Noticeable_Friction',
+  'UX-Cosmetic_Polish',
+
+  // Marketing / Growth (MKT)
+  'MKT-Launch_Critical',
+  'MKT-Brand_Risk',
+  'MKT-Campaign_Optimisation',
+  'MKT-Long_Tail_SEO',
+
+  // Technical Foundation / Infrastructure (TEC)
+  'TEC-Prod_Stability_Blocker',
+  'TEC-Dev_Productivity_Blocker',
+  'TEC-Dev_Productivity_Enhancement',
+  'TEC-Flaky_Test',
+  'TEC-Tech_Debt_Refactor',
+]);
+
+export type PriorityDriver = z.infer<typeof PriorityDriver>;
+
 // Configuration for schema family definitions
 export interface SchemaFamilyConfig {
   id: number;
@@ -45,6 +81,115 @@ export const PriorityLevel = z.enum(['High', 'Medium', 'Low']);
 export const DependencyStatus = z.enum(['Complete', 'Blocked', 'In Progress']);
 export const DependencyType = z.enum(['External', 'Internal']);
 export const TestType = z.enum(['Unit', 'Integration', 'E2E', 'Performance', 'Security']);
+
+// Mermaid diagram direction enum
+export const MermaidDirection = z.enum(['TB', 'TD', 'BT', 'RL', 'LR']);
+export type MermaidDirection = z.infer<typeof MermaidDirection>;
+
+// Enhanced Mermaid diagram structure with direction support
+export const MermaidDiagramStructure = z.object({
+  type: z.literal('mermaid'),
+  diagramType: z.enum(['erDiagram', 'classDiagram', 'sequenceDiagram', 'graph', 'flowchart']),
+  direction: MermaidDirection.optional(),
+  content: z.string().min(1),
+});
+export type MermaidDiagramStructure = z.infer<typeof MermaidDiagramStructure>;
+
+// Smart parser that detects diagram type and direction from string content
+export const createSmartMermaidSchema = (
+  expectedType: 'erDiagram' | 'classDiagram' | 'sequenceDiagram' | 'graph' | 'flowchart'
+) => {
+  return z
+    .string()
+    .min(1)
+    .refine(
+      (val) => {
+        const trimmed = val.trim();
+        return trimmed.startsWith(expectedType);
+      },
+      {
+        message: `Diagram must be a valid Mermaid ${expectedType}.`,
+      }
+    )
+    .transform((val) => {
+      const trimmed = val.trim();
+
+      // Extract direction if present (e.g., "graph TD", "flowchart LR")
+      let direction: MermaidDirection | undefined;
+      let content = trimmed;
+
+      if (expectedType === 'graph' || expectedType === 'flowchart') {
+        const directionMatch = trimmed.match(/^(graph|flowchart)\s+(TB|TD|BT|RL|LR)\s+/i);
+        if (directionMatch) {
+          direction = directionMatch[2].toUpperCase() as MermaidDirection;
+          content = trimmed.substring(directionMatch[0].length);
+        }
+      }
+
+      return {
+        type: 'mermaid' as const,
+        diagramType: expectedType,
+        direction,
+        content: content.trim(),
+      };
+    });
+};
+
+// Generic schema for a section that can contain a diagram and/or text
+export const createDiagramWithTextSchema = (diagramSchema: z.ZodTypeAny) =>
+  z
+    .object({
+      diagram: diagramSchema.optional(),
+      text: z.array(z.string().min(1)).optional(),
+    })
+    .refine((data) => data.diagram || (data.text && data.text.length > 0), {
+      message: 'Section must have at least a diagram or text content.',
+    });
+
+// Specialized schema for Mermaid diagrams with text content
+export const createMermaidWithTextSchema = (
+  expectedType: 'erDiagram' | 'classDiagram' | 'sequenceDiagram' | 'graph' | 'flowchart',
+  config: {
+    diagramRequired?: boolean;
+    textRequired?: boolean;
+    allowTextOnly?: boolean;
+    allowDiagramOnly?: boolean;
+  } = {}
+) => {
+  const { diagramRequired = true, textRequired = false, allowTextOnly = false, allowDiagramOnly = true } = config;
+
+  const diagramSchema = diagramRequired
+    ? createSmartMermaidSchema(expectedType)
+    : createSmartMermaidSchema(expectedType).optional();
+
+  const textSchema = textRequired ? z.array(z.string().min(1)).min(1) : z.array(z.string().min(1)).optional();
+
+  const baseSchema = z.object({
+    diagram: diagramSchema,
+    text: textSchema,
+  });
+
+  // Apply refinement based on configuration
+  if (allowTextOnly && allowDiagramOnly) {
+    // Both allowed - at least one must be present
+    return baseSchema.refine((data) => data.diagram || (data.text && data.text.length > 0), {
+      message: 'Section must have at least a diagram or text content.',
+    });
+  } else if (allowTextOnly && !allowDiagramOnly) {
+    // Only text allowed
+    return baseSchema.refine((data) => data.text && data.text.length > 0, {
+      message: 'Section must have text content.',
+    });
+  } else if (!allowTextOnly && allowDiagramOnly) {
+    // Only diagram allowed
+    return baseSchema.refine((data) => data.diagram, {
+      message: 'Section must have a diagram.',
+    });
+  } else {
+    // Neither allowed (invalid config)
+    throw new Error('Invalid configuration: at least one of text or diagram must be allowed');
+  }
+};
 
 // Shared types
 export type StatusKey = z.infer<typeof StatusKey>;
@@ -178,4 +323,130 @@ export async function loadAllSchemaDefinitions(
   }
 
   return definitions;
+}
+
+/**
+ * Applies applicability rules to a Zod schema object to create a document-type-specific schema
+ * @param schema - The base Zod schema object
+ * @param rules - The applicability rules object with 'plan' and 'task' properties
+ * @param docType - The document type ('plan' or 'task')
+ * @returns A Zod schema for required/optional, or null for omitted sections
+ */
+export function applyApplicability<T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+  rules: { plan: string; task: string },
+  docType: DocumentType
+): z.ZodTypeAny | null {
+  // First validate the applicability value
+  let applicability: Applicability;
+  try {
+    applicability = getApplicability(rules, docType);
+  } catch (error) {
+    throw new Error(`Invalid applicability value: ${rules[docType]}`);
+  }
+
+  switch (applicability) {
+    case 'required':
+      // Return the schema as-is (all fields required)
+      return schema;
+
+    case 'optional':
+      // Make the entire section optional (not individual fields)
+      return schema.optional();
+
+    case 'omitted':
+      // Return null to indicate this section should be omitted entirely
+      return null;
+
+    default:
+      // This should never happen due to Zod validation, but handle gracefully
+      throw new Error(`Invalid applicability value: ${applicability}`);
+  }
+}
+
+/**
+ * Applies applicability rules to a Zod schema object with field-level control
+ * @param schema - The base Zod schema object
+ * @param fieldRules - Object mapping field names to their applicability rules
+ * @param docType - The document type ('plan' or 'task')
+ * @returns A new Zod schema with fields picked, omitted, or made optional based on field-level applicability
+ */
+export function applyFieldLevelApplicability<T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+  fieldRules: Record<string, { plan: string; task: string }>,
+  docType: DocumentType
+): z.ZodObject<any> {
+  const shape = schema.shape;
+  const newShape: Record<string, z.ZodTypeAny> = {};
+
+  for (const [fieldName, fieldSchema] of Object.entries(shape)) {
+    const fieldRule = fieldRules[fieldName];
+
+    if (!fieldRule) {
+      // If no rule specified, keep field as-is
+      newShape[fieldName] = fieldSchema as z.ZodTypeAny;
+      continue;
+    }
+
+    // Validate the applicability value
+    let applicability: Applicability;
+    try {
+      applicability = getApplicability(fieldRule, docType);
+    } catch (error) {
+      throw new Error(`Invalid applicability value for field ${fieldName}: ${fieldRule[docType]}`);
+    }
+
+    switch (applicability) {
+      case 'required':
+        // Keep field as required
+        newShape[fieldName] = fieldSchema as z.ZodTypeAny;
+        break;
+
+      case 'optional':
+        // Make field optional
+        newShape[fieldName] = (fieldSchema as z.ZodTypeAny).optional();
+        break;
+
+      case 'omitted':
+        // Skip this field entirely (it won't be in the schema)
+        break;
+
+      default:
+        throw new Error(`Invalid applicability value for field ${fieldName}: ${applicability}`);
+    }
+  }
+
+  // Return a strict schema so that omitted fields are rejected
+  return z.object(newShape).strict();
+}
+
+/**
+ * Creates a schema with applicability handling for sections that don't have field-level applicability rules.
+ * This function is designed for sections where the entire section is either required, optional, or omitted
+ * based on the document type, rather than having individual fields with different applicability rules.
+ *
+ * @param sectionName - The name of the section to find in the JSON schema
+ * @param docType - The document type ('plan' or 'task')
+ * @param schema - The Zod schema to apply
+ * @param jsonContent - The JSON content containing section definitions
+ * @returns The schema with appropriate applicability handling (required, optional, or never)
+ */
+export function createSectionSchemaWithApplicability(
+  sectionName: string,
+  docType: DocumentType,
+  schema: z.ZodTypeAny,
+  jsonContent: any
+): z.ZodTypeAny {
+  const sectionDef = jsonContent.sections.find((s: any) => s.name === sectionName);
+  if (!sectionDef) {
+    throw new Error(`Section '${sectionName}' not found in JSON schema`);
+  }
+
+  const applicability = getApplicability(sectionDef.applicability, docType);
+
+  if (applicability === 'omitted') {
+    return z.never();
+  }
+
+  return applicability === 'optional' ? schema.optional() : schema;
 }
