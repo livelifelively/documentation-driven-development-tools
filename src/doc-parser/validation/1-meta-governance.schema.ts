@@ -1,66 +1,117 @@
 import { z } from 'zod';
-import { PriorityLevel, StatusKey, DateTimeString } from './shared.schema.js';
+import {
+  PriorityLevel,
+  StatusKey,
+  DateTimeString,
+  DocumentType,
+  getApplicability,
+  PriorityDriver,
+  createSectionSchemaWithApplicability,
+} from './shared.schema.js';
+import { camelCase } from 'lodash-es';
+import { loadDDDSchemaJsonFile } from '../../index.js';
 
-// Status section schema for Tasks
-const TaskStatusSchema = z.object({
+const metaGovernanceContent = loadDDDSchemaJsonFile('1-meta.json');
+
+// --- Field-Level Schema Definitions ---
+
+const statusFieldSchemas = {
+  created: DateTimeString,
+  lastUpdated: DateTimeString,
   currentState: StatusKey,
   priority: PriorityLevel,
   progress: z.number().min(0).max(100),
   planningEstimate: z.number().min(0),
-  estVariance: z.number(),
-  created: DateTimeString,
+  estVariancePts: z.number(), // Fixed: match the actual camelCase conversion
   implementationStarted: DateTimeString.optional(),
   completed: DateTimeString.optional(),
-  lastUpdated: DateTimeString,
-});
+};
 
-// Status section schema for Plans
-const PlanStatusSchema = z
-  .object({
-    created: DateTimeString,
-    lastUpdated: DateTimeString,
-  })
-  .strict(); // Reject any additional properties
+// --- Section-Level Factory Functions ---
 
-// Priority drivers schema
-const PriorityDriversSchema = z
-  .array(
-    z.string().refine(
-      (val) => {
-        // Check format: 3 uppercase letters, hyphen, then letters and underscores
-        const parts = val.split('-');
-        if (parts.length !== 2) return false;
+const createStatusSchema = (docType: DocumentType) => {
+  const sectionDef = metaGovernanceContent.sections.find((s: any) => s.name === 'Status');
+  if (!sectionDef || !sectionDef.fields) {
+    throw new Error("Section 'Status' or its fields not found in 1-meta.json");
+  }
 
-        const prefix = parts[0];
-        const suffix = parts[1];
-
-        // Prefix must be exactly 3 uppercase letters
-        if (prefix.length !== 3 || !/^[A-Z]{3}$/.test(prefix)) return false;
-
-        // Suffix must contain only letters and underscores
-        if (suffix.length === 0 || !/^[A-Za-z_]+$/.test(suffix)) return false;
-
-        return true;
-      },
-      {
-        message:
-          "Priority driver must be in format 'XXX-Description' where XXX is 3 uppercase letters and Description contains only letters and underscores",
+  const shape: Record<string, z.ZodTypeAny> = {};
+  for (const field of sectionDef.fields) {
+    const applicability = getApplicability(field.applicability, docType);
+    if (applicability !== 'omitted') {
+      const fieldName = camelCase(field.name);
+      const fieldSchema = (statusFieldSchemas as any)[fieldName];
+      if (fieldSchema) {
+        shape[fieldName] = applicability === 'optional' ? fieldSchema.optional() : fieldSchema;
+      } else {
+        throw new Error(
+          `Schema mismatch: No schema found for field "${fieldName}" (original: "${field.name}") in Status section. This indicates a mismatch between the schema definition and JSON files.`
+        );
       }
-    )
-  )
-  .min(1); // Require at least one priority driver
+    }
+  }
 
-// Meta & Governance family schema
-export const MetaGovernanceFamilySchema = z.object({
-  status: z.union([TaskStatusSchema, PlanStatusSchema]),
-  priorityDrivers: PriorityDriversSchema,
-});
+  return z.object(shape).strict();
+};
 
-// Export individual schemas for specific use cases
-export { TaskStatusSchema, PlanStatusSchema, PriorityDriversSchema };
+const createPriorityDriversSchema = (docType: DocumentType) => {
+  // Priority drivers are now validated against the canonical enum from ddd-2.md
+  const schema = z.array(PriorityDriver).min(1);
+  return createSectionSchemaWithApplicability('Priority Drivers', docType, schema, metaGovernanceContent);
+};
 
-// Export types
-export type MetaGovernanceFamily = z.infer<typeof MetaGovernanceFamilySchema>;
-export type TaskStatus = z.infer<typeof TaskStatusSchema>;
-export type PlanStatus = z.infer<typeof PlanStatusSchema>;
-export type PriorityDrivers = z.infer<typeof PriorityDriversSchema>;
+// --- Section Factory Map ---
+const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+  Status: createStatusSchema,
+  'Priority Drivers': createPriorityDriversSchema,
+};
+
+// --- Family-Level Factory Function ---
+
+/**
+ * Creates a fully composed Zod schema for the Meta & Governance family
+ * by iterating through the JSON definition and using a factory map.
+ *
+ * @param docType - The document type ('plan' or 'task').
+ * @returns A Zod schema for the Meta & Governance family.
+ */
+export const createMetaGovernanceSchema = (docType: DocumentType) => {
+  const familyShape: Record<string, z.ZodTypeAny> = {};
+
+  for (const section of metaGovernanceContent.sections) {
+    const applicability = getApplicability(section.applicability, docType);
+    if (applicability === 'omitted') {
+      continue;
+    }
+
+    const factory = sectionFactories[section.name];
+    if (!factory) {
+      throw new Error(
+        `Schema mismatch: No factory found for section "${section.name}". This indicates a mismatch between the schema definition and JSON files.`
+      );
+    }
+
+    const schema = factory(docType);
+    const sectionName = camelCase(section.name);
+    familyShape[sectionName] = applicability === 'optional' ? schema.optional() : schema;
+  }
+
+  return z.object(familyShape).strict();
+};
+
+// --- Convenience Functions for Backward Compatibility ---
+
+/**
+ * Creates a task-specific Meta & Governance schema
+ * @returns A Zod schema for task Meta & Governance
+ */
+export const getMetaGovernanceTaskSchema = () => createMetaGovernanceSchema('task');
+
+/**
+ * Creates a plan-specific Meta & Governance schema
+ * @returns A Zod schema for plan Meta & Governance
+ */
+export const getMetaGovernancePlanSchema = () => createMetaGovernanceSchema('plan');
+
+// Export the factory and inferred type
+export type MetaGovernanceFamily = z.infer<ReturnType<typeof createMetaGovernanceSchema>>;
