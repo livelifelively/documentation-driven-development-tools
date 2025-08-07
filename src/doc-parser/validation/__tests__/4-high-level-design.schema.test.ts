@@ -1,749 +1,761 @@
 import { describe, it, expect } from 'vitest';
 import {
-  HighLevelDesignFamilySchema,
-  GuidingPrinciplesSchema,
-  DataModelsSchema,
-  ComponentsSchema,
-  DataFlowSchema,
-  ControlFlowSchema,
-  IntegrationPointSchema,
-  UpstreamIntegrationsSchema,
-  DownstreamIntegrationsSchema,
-  IntegrationPointsSchema,
-  ExposedAPISchema,
-  TechStackItemSchema,
-  TechStackDeploymentSchema,
-  NonFunctionalRequirementSchema,
-  PerformanceSchema,
-  SecuritySchema,
-  ReliabilitySchema,
-  PermissionRoleSchema,
-  PermissionModelSchema,
-  CurrentArchitectureSchema,
-  TargetArchitectureSchema,
-  NonFunctionalRequirementsSchema,
+  createCurrentArchitectureSchema,
+  createTargetArchitectureSchema,
+  createHighLevelDesignSchema,
+  getHighLevelDesignTaskSchema,
+  getHighLevelDesignPlanSchema,
+  guidingPrinciplesSchema,
+  integrationPointSchema,
+  techStackItemSchema,
+  nonFunctionalRequirementSchema,
+  permissionRoleSchema,
 } from '../4-high-level-design.schema.js';
+import { z } from 'zod';
 
 describe('High-Level Design Schema Validation', () => {
-  describe('Guiding Principles Schema', () => {
-    it('should validate guiding principles', () => {
-      const validGuidingPrinciples = [
-        'All UI components must be stateless to allow for horizontal scaling.',
-        'Communication between major components should be asynchronous and event-driven where possible.',
-        'All services must be idempotent to ensure reliability.',
-      ];
+  describe('createCurrentArchitectureSchema', () => {
+    // Based on 4-high-level-design.json, 'Current Architecture' is 'optional' for 'plan'
+    // but if present, it must contain either a 'text' description or subsections.
 
-      const result = GuidingPrinciplesSchema.safeParse(validGuidingPrinciples);
-      expect(result.success).toBe(true);
+    const validSubsections = {
+      dataModels: { diagram: 'erDiagram ...' },
+      components: { diagram: 'classDiagram ...' },
+      dataFlow: { diagram: 'graph ...' },
+      controlFlow: { diagram: 'sequenceDiagram ...' },
+      integrationPoints: { upstream: [{ trigger: 'a', inputData: 'b' }] },
+    };
+
+    describe('for docType: "plan"', () => {
+      const schema = createCurrentArchitectureSchema('plan');
+
+      it('should be an optional schema', () => {
+        expect(schema.isOptional()).toBe(true);
+      });
+
+      it('should validate a structure with only subsections', () => {
+        const result = schema.safeParse(validSubsections);
+        expect(result.success, 'Validation should succeed with full subsections').toBe(true);
+      });
+
+      it('should validate a structure with only a text description', () => {
+        const dataWithTextOnly = { text: ['This is a greenfield project.'] };
+        const result = schema.safeParse(dataWithTextOnly);
+        expect(result.success, 'Validation should succeed with only a text description').toBe(true);
+      });
+
+      it('should validate a structure with both text and subsections', () => {
+        const dataWithBoth = { ...validSubsections, text: ['Describing the existing system.'] };
+        const result = schema.safeParse(dataWithBoth);
+        expect(result.success, 'Validation should succeed with both text and subsections').toBe(true);
+      });
+
+      it('should invalidate an empty object', () => {
+        const result = schema.safeParse({});
+        expect(result.success, 'Validation should fail for an empty object').toBe(false);
+      });
+
+      it('should invalidate data with extra properties due to .strict() in the union components', () => {
+        const invalidData = { ...validSubsections, extraProperty: 'should not be here' };
+        const result = schema.safeParse(invalidData);
+        expect(result.success, 'Validation should fail due to extra properties').toBe(false);
+      });
     });
 
-    it('should reject empty guiding principles array', () => {
-      const result = GuidingPrinciplesSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
+    describe('for docType: "task"', () => {
+      const schema = createCurrentArchitectureSchema('task');
 
-    it('should reject guiding principles with empty strings', () => {
-      const invalidGuidingPrinciples = [
-        'All UI components must be stateless.',
-        '', // Empty string
-        'All services must be idempotent.',
-      ];
+      it('should be a "never" schema, as the entire section is omitted for tasks', () => {
+        expect(schema).toBeInstanceOf(z.ZodNever);
+      });
 
-      const result = GuidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Data Models Schema', () => {
-    it('should validate data models with only a diagram', () => {
-      const validDataModels = {
-        diagram: `erDiagram
-LOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"`,
-      };
-      const result = DataModelsSchema.safeParse(validDataModels);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate data models with only text', () => {
-      const validDataModels = {
-        text: ['This is an explanation of the data model.'],
-      };
-      const result = DataModelsSchema.safeParse(validDataModels);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate data models with both a diagram and text', () => {
-      const validDataModels = {
-        diagram: 'erDiagram',
-        text: ['Some text.'],
-      };
-      const result = DataModelsSchema.safeParse(validDataModels);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject data models with neither a diagram nor text', () => {
-      const result = DataModelsSchema.safeParse({});
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject data models with an invalid diagram type', () => {
-      const result = DataModelsSchema.safeParse({ diagram: 'graph TD' });
-      expect(result.success).toBe(false);
+      it('should invalidate any data provided for a task', () => {
+        const result = schema.safeParse(validSubsections);
+        expect(result.success, 'Validation should always fail for an omitted section').toBe(false);
+      });
     });
   });
 
-  describe('Components Schema', () => {
-    it('should validate components with only a diagram', () => {
-      const validComponents = {
-        diagram: 'classDiagram',
-      };
-      const result = ComponentsSchema.safeParse(validComponents);
-      expect(result.success).toBe(true);
+  describe('createTargetArchitectureSchema', () => {
+    const validSubsections = {
+      dataModels: { diagram: 'erDiagram ...' },
+      components: { diagram: 'classDiagram ...' },
+      dataFlow: { diagram: 'graph ...' },
+      controlFlow: { diagram: 'sequenceDiagram ...' },
+      integrationPoints: { upstream: [{ trigger: 'a', inputData: 'b' }] },
+      exposedAPI: 'api details',
+    };
+
+    describe('for docType: "plan"', () => {
+      const schema = createTargetArchitectureSchema('plan');
+
+      it('should be a required schema', () => {
+        expect(schema.isOptional()).toBe(false);
+      });
+
+      it('should validate a structure with only subsections', () => {
+        const result = schema.safeParse(validSubsections);
+        expect(result.success).toBe(true);
+      });
+
+      it('should validate a structure with only a text description', () => {
+        const dataWithTextOnly = { text: ['This is a new architecture.'] };
+        const result = schema.safeParse(dataWithTextOnly);
+        expect(result.success).toBe(true);
+      });
+
+      it('should validate a structure with both text and subsections', () => {
+        const dataWithBoth = { ...validSubsections, text: ['New architecture details.'] };
+        const result = schema.safeParse(dataWithBoth);
+        expect(result.success).toBe(true);
+      });
+
+      it('should invalidate an empty object', () => {
+        const result = schema.safeParse({});
+        expect(result.success).toBe(false);
+      });
     });
 
-    it('should validate components with only text', () => {
-      const validComponents = {
-        text: ['This is an explanation of the components.'],
-      };
-      const result = ComponentsSchema.safeParse(validComponents);
-      expect(result.success).toBe(true);
-    });
+    describe('for docType: "task"', () => {
+      const schema = createTargetArchitectureSchema('task');
 
-    it('should reject components with an invalid diagram type', () => {
-      const result = ComponentsSchema.safeParse({ diagram: 'erDiagram' });
-      expect(result.success).toBe(false);
-    });
-  });
+      it('should be a required schema', () => {
+        expect(schema.isOptional()).toBe(false);
+      });
 
-  describe('Data Flow Schema', () => {
-    it('should validate data flow with only a diagram', () => {
-      const validDataFlow = {
-        diagram: 'graph TD',
-      };
-      const result = DataFlowSchema.safeParse(validDataFlow);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate data flow with only text', () => {
-      const validDataFlow = {
-        text: ['This is an explanation of the data flow.'],
-      };
-      const result = DataFlowSchema.safeParse(validDataFlow);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject data flow with an invalid diagram type', () => {
-      const result = DataFlowSchema.safeParse({ diagram: 'classDiagram' });
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Control Flow Schema', () => {
-    it('should validate control flow with only a diagram', () => {
-      const validControlFlow = {
-        diagram: 'sequenceDiagram',
-      };
-      const result = ControlFlowSchema.safeParse(validControlFlow);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate control flow with only text', () => {
-      const validControlFlow = {
-        text: ['This is an explanation of the control flow.'],
-      };
-      const result = ControlFlowSchema.safeParse(validControlFlow);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject control flow with an invalid diagram type', () => {
-      const result = ControlFlowSchema.safeParse({ diagram: 'graph TD' });
-      expect(result.success).toBe(false);
+      it('should validate a structure with only subsections', () => {
+        const result = schema.safeParse(validSubsections);
+        expect(result.success).toBe(true);
+      });
     });
   });
 
-  describe('Integration Point Schema', () => {
-    it('should validate integration point', () => {
-      const validIntegrationPoint = {
-        trigger: 'User action via UI button click.',
-        inputData: 'Receives documentId and userId from the client.',
-      };
-
-      const result = IntegrationPointSchema.safeParse(validIntegrationPoint);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject integration point with missing trigger', () => {
-      const invalidIntegrationPoint = {
-        inputData: 'Receives documentId and userId from the client.',
-      };
-
-      const result = IntegrationPointSchema.safeParse(invalidIntegrationPoint);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('trigger');
-      }
-    });
-
-    it('should reject integration point with empty input data', () => {
-      const invalidIntegrationPoint = {
-        trigger: 'User action via UI button click.',
-        inputData: '',
-      };
-
-      const result = IntegrationPointSchema.safeParse(invalidIntegrationPoint);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('inputData');
-      }
-    });
-  });
-
-  describe('Upstream Integrations Schema', () => {
-    it('should validate upstream integrations', () => {
-      const validUpstreamIntegrations = [
-        {
-          trigger: 'User action via UI button click.',
-          inputData: 'Receives documentId and userId from the client.',
-        },
-        {
-          trigger: 'Scheduled job runs every hour.',
-          inputData: 'Receives configuration from environment variables.',
-        },
-      ];
-
-      const result = UpstreamIntegrationsSchema.safeParse(validUpstreamIntegrations);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty upstream integrations array', () => {
-      const result = UpstreamIntegrationsSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Downstream Integrations Schema', () => {
-    it('should validate downstream integrations', () => {
-      const validDownstreamIntegrations = [
-        {
-          trigger: 'Emits a DOCUMENT_PROCESSED event to the message queue.',
-          inputData: 'The event payload includes documentId and status: COMPLETED.',
-        },
-        {
-          trigger: 'Sends notification to user via email service.',
-          inputData: 'Email contains processing results and next steps.',
-        },
-      ];
-
-      const result = DownstreamIntegrationsSchema.safeParse(validDownstreamIntegrations);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty downstream integrations array', () => {
-      const result = DownstreamIntegrationsSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Integration Points Schema', () => {
-    it('should validate integration points with both upstream and downstream', () => {
-      const validIntegrationPoints = {
-        upstream: [
-          {
-            trigger: 'User action via UI button click.',
-            inputData: 'Receives documentId and userId from the client.',
-          },
-        ],
-        downstream: [
-          {
-            trigger: 'Emits a DOCUMENT_PROCESSED event to the message queue.',
-            inputData: 'The event payload includes documentId and status: COMPLETED.',
-          },
-        ],
-      };
-
-      const result = IntegrationPointsSchema.safeParse(validIntegrationPoints);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate integration points with only upstream', () => {
-      const validIntegrationPoints = {
-        upstream: [
-          {
-            trigger: 'User action via UI button click.',
-            inputData: 'Receives documentId and userId from the client.',
-          },
-        ],
-      };
-
-      const result = IntegrationPointsSchema.safeParse(validIntegrationPoints);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate integration points with only downstream', () => {
-      const validIntegrationPoints = {
-        downstream: [
-          {
-            trigger: 'Emits a DOCUMENT_PROCESSED event to the message queue.',
-            inputData: 'The event payload includes documentId and status: COMPLETED.',
-          },
-        ],
-      };
-
-      const result = IntegrationPointsSchema.safeParse(validIntegrationPoints);
-      expect(result.success).toBe(true);
-    });
-  });
-
-  describe('Exposed API Schema', () => {
-    it('should validate exposed API OpenAPI content', () => {
-      const validExposedAPI = `paths:
-  /users/{userId}:
-    get:
-      summary: Get user by ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: User found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  name:
-                    type: string`;
-
-      const result = ExposedAPISchema.safeParse(validExposedAPI);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty exposed API', () => {
-      const result = ExposedAPISchema.safeParse('');
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Tech Stack Item Schema', () => {
-    it('should validate tech stack item', () => {
-      const validTechStackItem = {
-        category: 'Language',
-        technology: 'TypeScript',
-      };
-
-      const result = TechStackItemSchema.safeParse(validTechStackItem);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject tech stack item with missing category', () => {
-      const invalidTechStackItem = {
-        technology: 'TypeScript',
-      };
-
-      const result = TechStackItemSchema.safeParse(invalidTechStackItem);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('category');
-      }
-    });
-
-    it('should reject tech stack item with empty technology', () => {
-      const invalidTechStackItem = {
-        category: 'Language',
-        technology: '',
-      };
-
-      const result = TechStackItemSchema.safeParse(invalidTechStackItem);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('technology');
-      }
-    });
-  });
-
-  describe('Tech Stack & Deployment Schema', () => {
-    it('should validate tech stack deployment', () => {
-      const validTechStackDeployment = [
-        {
-          category: 'Language',
-          technology: 'TypeScript',
-        },
-        {
-          category: 'Framework',
-          technology: 'Next.js',
-        },
-        {
-          category: 'Deployment',
-          technology: 'Vercel',
-        },
-      ];
-
-      const result = TechStackDeploymentSchema.safeParse(validTechStackDeployment);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty tech stack deployment array', () => {
-      const result = TechStackDeploymentSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Non-Functional Requirement Schema', () => {
-    it('should validate non-functional requirement', () => {
-      const validNonFunctionalRequirement = {
-        id: 'PERF-01',
-        requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-        priority: 'High',
-      };
-
-      const result = NonFunctionalRequirementSchema.safeParse(validNonFunctionalRequirement);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject non-functional requirement with missing ID', () => {
-      const invalidNonFunctionalRequirement = {
-        requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-        priority: 'High',
-      };
-
-      const result = NonFunctionalRequirementSchema.safeParse(invalidNonFunctionalRequirement);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('id');
-      }
-    });
-
-    it('should reject non-functional requirement with invalid priority', () => {
-      const invalidNonFunctionalRequirement = {
-        id: 'PERF-01',
-        requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-        priority: 'Invalid', // Invalid priority
-      };
-
-      const result = NonFunctionalRequirementSchema.safeParse(invalidNonFunctionalRequirement);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('priority');
-      }
-    });
-  });
-
-  describe('Performance Schema', () => {
-    it('should validate performance requirements', () => {
-      const validPerformance = [
-        {
-          id: 'PERF-01',
-          requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-          priority: 'High',
-        },
-        {
-          id: 'PERF-02',
-          requirement: 'The system must support 100 concurrent users without degradation.',
-          priority: 'Medium',
-        },
-      ];
-
-      const result = PerformanceSchema.safeParse(validPerformance);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty performance array', () => {
-      const result = PerformanceSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Security Schema', () => {
-    it('should validate security requirements', () => {
-      const validSecurity = [
-        {
-          id: 'SEC-01',
-          requirement: 'All sensitive user data must be encrypted at rest using AES-256.',
-          priority: 'High',
-        },
-        {
-          id: 'SEC-02',
-          requirement: 'Access to admin endpoints must be restricted to users with Admin role.',
-          priority: 'High',
-        },
-      ];
-
-      const result = SecuritySchema.safeParse(validSecurity);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty security array', () => {
-      const result = SecuritySchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Reliability Schema', () => {
-    it('should validate reliability requirements', () => {
-      const validReliability = [
-        {
-          id: 'REL-01',
-          requirement: 'The service must maintain 99.9% uptime, measured monthly.',
-          priority: 'High',
-        },
-        {
-          id: 'REL-02',
-          requirement: 'All database transactions must be atomic and durable.',
-          priority: 'High',
-        },
-      ];
-
-      const result = ReliabilitySchema.safeParse(validReliability);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty reliability array', () => {
-      const result = ReliabilitySchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Permission Role Schema', () => {
-    it('should validate permission role', () => {
-      const validPermissionRole = {
-        role: 'Admin',
-        permissions: ['Full CRUD access to all documents', 'Can assign roles'],
-        notes: 'For system administrators only.',
-      };
-
-      const result = PermissionRoleSchema.safeParse(validPermissionRole);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate permission role without notes', () => {
-      const validPermissionRole = {
-        role: 'Analyst',
-        permissions: ['Read/Write access to assigned documents', 'Cannot delete'],
-      };
-
-      const result = PermissionRoleSchema.safeParse(validPermissionRole);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject permission role with missing role', () => {
-      const invalidPermissionRole = {
-        permissions: ['Full CRUD access to all documents', 'Can assign roles'],
-        notes: 'For system administrators only.',
-      };
-
-      const result = PermissionRoleSchema.safeParse(invalidPermissionRole);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('role');
-      }
-    });
-
-    it('should reject permission role with empty permissions', () => {
-      const invalidPermissionRole = {
-        role: 'Admin',
-        permissions: [],
-        notes: 'For system administrators only.',
-      };
-
-      const result = PermissionRoleSchema.safeParse(invalidPermissionRole);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('permissions');
-      }
-    });
-  });
-
-  describe('Permission Model Schema', () => {
-    it('should validate permission model', () => {
-      const validPermissionModel = [
-        {
-          role: 'Admin',
-          permissions: ['Full CRUD access to all documents', 'Can assign roles'],
-          notes: 'For system administrators only.',
-        },
-        {
-          role: 'Analyst',
-          permissions: ['Read/Write access to assigned documents', 'Cannot delete'],
-          notes: 'The primary user role.',
-        },
-        {
-          role: 'Viewer',
-          permissions: ['Read-only access to completed documents'],
-          notes: 'For stakeholders or external users.',
-        },
-      ];
-
-      const result = PermissionModelSchema.safeParse(validPermissionModel);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty permission model array', () => {
-      const result = PermissionModelSchema.safeParse([]);
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('Current Architecture Schema', () => {
-    it('should validate current architecture for Plans', () => {
-      const validCurrentArchitecture = {
-        dataModels: {
-          diagram: `erDiagram
-USER ||--o{ DOCUMENT : "owns"`,
-        },
-        components: {
-          diagram: `classDiagram
-direction LR
-    class UserService {
-        +createUser(user: User): Promise<User>
-        +getUser(id: string): Promise<User>
-    }`,
-        },
-      };
-
-      const result = CurrentArchitectureSchema.safeParse(validCurrentArchitecture);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate current architecture with partial data', () => {
-      const validCurrentArchitecture = {
-        dataModels: {
-          diagram: `erDiagram
-USER ||--o{ DOCUMENT : "owns"`,
-        },
-      };
-
-      const result = CurrentArchitectureSchema.safeParse(validCurrentArchitecture);
-      expect(result.success).toBe(true);
-    });
-  });
-
-  describe('Target Architecture Schema', () => {
-    it('should validate target architecture for Plans', () => {
-      const validTargetArchitecture = {
-        dataModels: {
-          diagram: `erDiagram
-USER ||--o{ DOCUMENT : "owns"`,
-        },
-        components: {
-          diagram: `classDiagram
-direction LR
-    class UserService {
-        +createUser(user: User): Promise<User>
-    }`,
-        },
-        integrationPoints: {
-          upstream: [
-            {
-              trigger: 'User updates document via web interface.',
-              inputData: 'Receives document ID and new content.',
-            },
+  describe('Factory Function Tests', () => {
+    describe('createHighLevelDesignSchema', () => {
+      it('should create plan schema with plan-specific sections', () => {
+        const planSchema = createHighLevelDesignSchema('plan');
+        const validPlanData = {
+          guidingPrinciples: [
+            'All UI components must be stateless to allow for horizontal scaling.',
+            'Communication between major components should be asynchronous and event-driven where possible.',
           ],
-        },
-        exposedAPI: 'paths:',
-      };
-
-      const result = TargetArchitectureSchema.safeParse(validTargetArchitecture);
-      expect(result.success).toBe(true);
+          currentArchitecture: {
+            dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass ClientLogger' },
+          },
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+            dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+            integrationPoints: {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            },
+            exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+          },
+          techStackDeployment: [
+            { category: 'Language', technology: 'TypeScript' },
+            { category: 'Framework', technology: 'Next.js' },
+            { category: 'Deployment', technology: 'Vercel' },
+          ],
+          nonFunctionalRequirements: {
+            performance: [
+              {
+                id: 'PERF-01',
+                requirement: 'API endpoints must respond in < 200ms (95th percentile).',
+                priority: 'High',
+              },
+            ],
+            security: [
+              {
+                id: 'SEC-01',
+                requirement: 'All sensitive user data must be encrypted at rest using AES-256.',
+                priority: 'High',
+              },
+            ],
+            reliability: [
+              {
+                id: 'REL-01',
+                requirement: 'The service must maintain 99.9% uptime, measured monthly.',
+                priority: 'High',
+              },
+            ],
+            permissionModel: [
+              {
+                role: 'Admin',
+                permissions: ['Full CRUD access to all documents', 'Can assign roles'],
+                notes: 'For system administrators only.',
+              },
+            ],
+          },
+        };
+        const result = planSchema.safeParse(validPlanData);
+        expect(
+          result.success,
+          result.success ? '' : result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n')
+        ).toBe(true);
+      });
+      it('should create task schema with task-specific sections', () => {
+        const taskSchema = createHighLevelDesignSchema('task');
+        const validTaskData = {
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+            dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+            integrationPoints: {
+              upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+              downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+            },
+            exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+          },
+          techStackDeployment: [
+            { category: 'Language', technology: 'TypeScript' },
+            { category: 'Testing', technology: 'Vitest' },
+          ],
+          nonFunctionalRequirements: {
+            performance: [
+              { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.', priority: 'High' },
+            ],
+            security: [{ id: 'SEC-01', requirement: 'Task data must be encrypted in transit.', priority: 'High' }],
+          },
+        };
+        const result = taskSchema.safeParse(validTaskData);
+        expect(
+          result.success,
+          result.success ? '' : result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n')
+        ).toBe(true);
+      });
+      it('should omit plan-specific sections from task schema', () => {
+        const taskSchema = createHighLevelDesignSchema('task');
+        // Test that validation passes with only task-specific sections
+        const validTaskData = {
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+            dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+            integrationPoints: {
+              upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+              downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+            },
+            exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+          },
+          techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+          nonFunctionalRequirements: {
+            performance: [
+              { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.', priority: 'High' },
+            ],
+          },
+        };
+        const validResult = taskSchema.safeParse(validTaskData);
+        expect(validResult.success).toBe(true);
+        // Verify that the schema shape only includes task-specific sections
+        const schemaShape = taskSchema.shape;
+        expect(schemaShape).toHaveProperty('targetArchitecture');
+        expect(schemaShape).toHaveProperty('techStackDeployment');
+        expect(schemaShape).toHaveProperty('nonFunctionalRequirements');
+        expect(schemaShape).not.toHaveProperty('guidingPrinciples');
+        expect(schemaShape).not.toHaveProperty('currentArchitecture');
+      });
+      it('should omit task-specific sections from plan schema', () => {
+        const planSchema = createHighLevelDesignSchema('plan');
+        // Test that validation passes with only plan-specific sections
+        const validPlanData = {
+          guidingPrinciples: ['All UI components must be stateless to allow for horizontal scaling.'],
+          currentArchitecture: {
+            dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+          },
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+            dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+            integrationPoints: {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            },
+            exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+          },
+          techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+          nonFunctionalRequirements: {
+            performance: [{ id: 'PERF-01', requirement: 'API endpoints must respond in < 200ms.', priority: 'High' }],
+          },
+        };
+        const validResult = planSchema.safeParse(validPlanData);
+        expect(validResult.success).toBe(true);
+        // Verify that the schema shape includes all plan-specific sections
+        const schemaShape = planSchema.shape;
+        expect(schemaShape).toHaveProperty('guidingPrinciples');
+        expect(schemaShape).toHaveProperty('currentArchitecture');
+        expect(schemaShape).toHaveProperty('targetArchitecture');
+        expect(schemaShape).toHaveProperty('techStackDeployment');
+        expect(schemaShape).toHaveProperty('nonFunctionalRequirements');
+      });
     });
-
-    it('should validate target architecture for Tasks', () => {
-      const validTaskTargetArchitecture = {
-        dataModels: {
-          diagram: `erDiagram
-SCHEMA ||--o{ VALIDATION_RULE : "contains"`,
-        },
-        components: {
-          diagram: `classDiagram
-direction LR
-    class SchemaValidator {
-        +validate(document: string): ValidationResult
-    }`,
-        },
-        exposedAPI: 'export interface SchemaValidator {',
-      };
-
-      const result = TargetArchitectureSchema.safeParse(validTaskTargetArchitecture);
-      expect(result.success).toBe(true);
+    describe('Convenience Functions', () => {
+      it('should create task schema via convenience function', () => {
+        const taskSchema = getHighLevelDesignTaskSchema();
+        const validTaskData = {
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+            dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+            integrationPoints: {
+              upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+              downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+            },
+            exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+          },
+          techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+          nonFunctionalRequirements: {
+            performance: [
+              { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.', priority: 'High' },
+            ],
+          },
+        };
+        const result = taskSchema.safeParse(validTaskData);
+        expect(result.success).toBe(true);
+      });
+      it('should create plan schema via convenience function', () => {
+        const planSchema = getHighLevelDesignPlanSchema();
+        const validPlanData = {
+          guidingPrinciples: ['All UI components must be stateless to allow for horizontal scaling.'],
+          currentArchitecture: {
+            dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+          },
+          targetArchitecture: {
+            dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+            dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+            integrationPoints: {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            },
+            exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+          },
+          techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+          nonFunctionalRequirements: {
+            performance: [{ id: 'PERF-01', requirement: 'API endpoints must respond in < 200ms.', priority: 'High' }],
+          },
+        };
+        const result = planSchema.safeParse(validPlanData);
+        expect(result.success).toBe(true);
+      });
     });
   });
 
-  describe('Non-Functional Requirements Schema', () => {
-    it('should validate non-functional requirements', () => {
-      const validNonFunctionalRequirements = {
-        performance: [
-          {
-            id: 'PERF-01',
-            requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-            priority: 'High',
-          },
-        ],
-        security: [
-          {
-            id: 'SEC-01',
-            requirement: 'All sensitive user data must be encrypted at rest using AES-256.',
-            priority: 'High',
-          },
-        ],
-        reliability: [
-          {
-            id: 'REL-01',
-            requirement: 'The service must maintain 99.9% uptime, measured monthly.',
-            priority: 'High',
-          },
-        ],
-        permissionModel: [
-          {
-            role: 'Admin',
-            permissions: ['Full CRUD access to all documents'],
-            notes: 'For system administrators only.',
-          },
-        ],
-      };
+  describe('Individual Section Tests', () => {
+    const planSchema = createHighLevelDesignSchema('plan');
+    const taskSchema = createHighLevelDesignSchema('task');
 
-      const result = NonFunctionalRequirementsSchema.safeParse(validNonFunctionalRequirements);
-      expect(result.success).toBe(true);
+    describe('Plan-Specific Section Tests', () => {
+      describe('Guiding Principles Schema (Plan)', () => {
+        const guidingPrinciplesSchema = (planSchema.shape as any).guidingPrinciples;
+
+        it('should validate a complete guiding principles array', () => {
+          const validGuidingPrinciples = [
+            'All UI components must be stateless to allow for horizontal scaling.',
+            'Communication between major components should be asynchronous and event-driven where possible.',
+            'All services must be idempotent to ensure reliability.',
+          ];
+
+          const result = guidingPrinciplesSchema.safeParse(validGuidingPrinciples);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject guiding principles array with empty strings', () => {
+          const invalidGuidingPrinciples = [
+            'All UI components must be stateless.',
+            '', // Empty string
+            'All services must be idempotent.',
+          ];
+
+          const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
+          expect(result.success).toBe(false);
+        });
+
+        it('should reject empty guiding principles array', () => {
+          const invalidGuidingPrinciples: any[] = [];
+
+          const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Current Architecture Schema (Plan)', () => {
+        const currentArchitectureSchema = (planSchema.shape as any).currentArchitecture;
+
+        it('should validate a complete current architecture', () => {
+          const validCurrentArchitecture = {
+            dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass ClientLogger' },
+            dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+            integrationPoints: {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            },
+          };
+
+          const result = currentArchitectureSchema.safeParse(validCurrentArchitecture);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate current architecture with only some sections', () => {
+          const validCurrentArchitecture = {
+            dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass ClientLogger' },
+          };
+
+          const result = currentArchitectureSchema.safeParse(validCurrentArchitecture);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject current architecture with invalid diagram type', () => {
+          const invalidCurrentArchitecture = {
+            dataModels: { diagram: 'graph TD\nA --> B' }, // Wrong diagram type for data models
+            components: { diagram: 'classDiagram\ndirection LR\nclass ClientLogger' },
+          };
+
+          const result = currentArchitectureSchema.safeParse(invalidCurrentArchitecture);
+          expect(result.success).toBe(false);
+        });
+      });
     });
 
-    it('should validate non-functional requirements with partial data', () => {
-      const validPartialNonFunctionalRequirements = {
-        performance: [
-          {
-            id: 'PERF-01',
-            requirement: 'API endpoints must respond in < 200ms (95th percentile).',
-            priority: 'High',
-          },
-        ],
-      };
+    describe('Both Plan and Task Section Tests', () => {
+      const targetArchitecturePlanSchema = (planSchema.shape as any).targetArchitecture;
+      const targetArchitectureTaskSchema = (taskSchema.shape as any).targetArchitecture;
+      const techStackPlanSchema = (planSchema.shape as any).techStackDeployment;
+      const techStackTaskSchema = (taskSchema.shape as any).techStackDeployment;
+      const nfrPlanSchema = (planSchema.shape as any).nonFunctionalRequirements;
+      const nfrTaskSchema = (taskSchema.shape as any).nonFunctionalRequirements;
 
-      const result = NonFunctionalRequirementsSchema.safeParse(validPartialNonFunctionalRequirements);
-      expect(result.success).toBe(true);
+      describe('Target Architecture Schema (Plan)', () => {
+        it('should validate a complete target architecture for plan', () => {
+          const validTargetArchitecture = {
+            dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+            dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+            integrationPoints: {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            },
+            exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+          };
+
+          const result = targetArchitecturePlanSchema.safeParse(validTargetArchitecture);
+          expect(result.success).toBe(true);
+        });
+
+        it('should invalidate target architecture with only some sections', () => {
+          const invalidTargetArchitecture = {
+            dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+          };
+
+          const result = targetArchitecturePlanSchema.safeParse(invalidTargetArchitecture);
+          expect(result.success).toBe(false);
+        });
+
+        it('should reject target architecture with invalid diagram type', () => {
+          const invalidTargetArchitecture = {
+            dataModels: { diagram: 'graph TD\nA --> B' }, // Wrong diagram type for data models
+            components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+          };
+
+          const result = targetArchitecturePlanSchema.safeParse(invalidTargetArchitecture);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Target Architecture Schema (Task)', () => {
+        it('should validate a complete target architecture for task', () => {
+          const validTargetArchitecture = {
+            dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+            dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+            controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+            integrationPoints: {
+              upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+              downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+            },
+            exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+          };
+
+          const result = targetArchitectureTaskSchema.safeParse(validTargetArchitecture);
+          expect(result.success).toBe(true);
+        });
+
+        it('should invalidate target architecture with only some sections for task', () => {
+          const invalidTargetArchitecture = {
+            dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+            components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+          };
+
+          const result = targetArchitectureTaskSchema.safeParse(invalidTargetArchitecture);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Tech Stack & Deployment Schema (Plan)', () => {
+        it('should validate a complete tech stack deployment array', () => {
+          const validTechStackDeployment = [
+            { category: 'Language', technology: 'TypeScript' },
+            { category: 'Framework', technology: 'Next.js' },
+            { category: 'Deployment', technology: 'Vercel' },
+            { category: 'Database', technology: 'PostgreSQL' },
+          ];
+
+          const result = techStackPlanSchema.safeParse(validTechStackDeployment);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject tech stack deployment array with missing category', () => {
+          const invalidTechStackDeployment = [
+            { category: 'Language', technology: 'TypeScript' },
+            { technology: 'Next.js' }, // Missing category
+          ];
+
+          const result = techStackPlanSchema.safeParse(invalidTechStackDeployment);
+          expect(result.success).toBe(false);
+        });
+
+        it('should reject empty tech stack deployment array', () => {
+          const invalidTechStackDeployment: any[] = [];
+
+          const result = techStackPlanSchema.safeParse(invalidTechStackDeployment);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Tech Stack & Deployment Schema (Task)', () => {
+        it('should validate a complete tech stack deployment array for task', () => {
+          const validTechStackDeployment = [
+            { category: 'Language', technology: 'TypeScript' },
+            { category: 'Testing', technology: 'Vitest' },
+            { category: 'Validation', technology: 'Zod' },
+          ];
+
+          const result = techStackTaskSchema.safeParse(validTechStackDeployment);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject tech stack deployment array with missing technology', () => {
+          const invalidTechStackDeployment = [
+            { category: 'Language', technology: 'TypeScript' },
+            { category: 'Testing' }, // Missing technology
+          ];
+
+          const result = techStackTaskSchema.safeParse(invalidTechStackDeployment);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Non-Functional Requirements Schema (Plan)', () => {
+        it('should validate a complete non-functional requirements object', () => {
+          const validNonFunctionalRequirements = {
+            performance: [
+              {
+                id: 'PERF-01',
+                requirement: 'API endpoints must respond in < 200ms (95th percentile).',
+                priority: 'High',
+              },
+              {
+                id: 'PERF-02',
+                requirement: 'The system must support 100 concurrent users without degradation.',
+                priority: 'Medium',
+              },
+            ],
+            security: [
+              {
+                id: 'SEC-01',
+                requirement: 'All sensitive user data must be encrypted at rest using AES-256.',
+                priority: 'High',
+              },
+              {
+                id: 'SEC-02',
+                requirement: 'Access to admin endpoints must be restricted to users with Admin role.',
+                priority: 'High',
+              },
+            ],
+            reliability: [
+              {
+                id: 'REL-01',
+                requirement: 'The service must maintain 99.9% uptime, measured monthly.',
+                priority: 'High',
+              },
+              { id: 'REL-02', requirement: 'All database transactions must be atomic and durable.', priority: 'High' },
+            ],
+            permissionModel: [
+              {
+                role: 'Admin',
+                permissions: ['Full CRUD access to all documents', 'Can assign roles'],
+                notes: 'For system administrators only.',
+              },
+              {
+                role: 'Analyst',
+                permissions: ['Read/Write access to assigned documents', 'Cannot delete'],
+                notes: 'The primary user role.',
+              },
+            ],
+          };
+
+          const result = nfrPlanSchema.safeParse(validNonFunctionalRequirements);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate non-functional requirements with only some sections', () => {
+          const validNonFunctionalRequirements = {
+            performance: [{ id: 'PERF-01', requirement: 'API endpoints must respond in < 200ms.', priority: 'High' }],
+            security: [
+              { id: 'SEC-01', requirement: 'All sensitive user data must be encrypted at rest.', priority: 'High' },
+            ],
+          };
+
+          const result = nfrPlanSchema.safeParse(validNonFunctionalRequirements);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject non-functional requirements with invalid priority', () => {
+          const invalidNonFunctionalRequirements = {
+            performance: [
+              { id: 'PERF-01', requirement: 'API endpoints must respond in < 200ms.', priority: 'Invalid' as any },
+            ],
+          };
+
+          const result = nfrPlanSchema.safeParse(invalidNonFunctionalRequirements);
+          expect(result.success).toBe(false);
+        });
+      });
+
+      describe('Non-Functional Requirements Schema (Task)', () => {
+        it('should validate a complete non-functional requirements object for task', () => {
+          const validNonFunctionalRequirements = {
+            performance: [
+              { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.', priority: 'High' },
+            ],
+            security: [{ id: 'SEC-01', requirement: 'Task data must be encrypted in transit.', priority: 'High' }],
+            reliability: [{ id: 'REL-01', requirement: 'Task processing must be idempotent.', priority: 'High' }],
+            permissionModel: [
+              {
+                role: 'Developer',
+                permissions: ['Can create and modify tasks', 'Cannot delete tasks'],
+                notes: 'For development team members.',
+              },
+            ],
+          };
+
+          const result = nfrTaskSchema.safeParse(validNonFunctionalRequirements);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject non-functional requirements with missing required fields', () => {
+          const invalidNonFunctionalRequirements = {
+            performance: [
+              { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.' }, // Missing priority
+            ],
+          };
+
+          const result = nfrTaskSchema.safeParse(invalidNonFunctionalRequirements);
+          expect(result.success).toBe(false);
+        });
+      });
     });
   });
 
   describe('High-Level Design Schema (Complete Family)', () => {
     it('should validate a complete high-level design for a Plan', () => {
-      const validHighLevelDesign = {
-        guidingPrinciples: ['All services must be idempotent to ensure reliability.'],
+      const planSchema = createHighLevelDesignSchema('plan');
+      const validPlanHighLevelDesign = {
+        guidingPrinciples: [
+          'All UI components must be stateless to allow for horizontal scaling.',
+          'Communication between major components should be asynchronous and event-driven where possible.',
+        ],
         currentArchitecture: {
-          dataModels: {
-            diagram: 'erDiagram',
-          },
+          dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+          components: { diagram: 'classDiagram\ndirection LR\nclass ClientLogger' },
         },
         targetArchitecture: {
-          dataModels: {
-            diagram: 'erDiagram',
+          dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+          components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+          dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+          controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+          integrationPoints: {
+            upstream: [
+              {
+                trigger: 'User action via UI button click',
+                inputData: 'Receives documentId and userId from the client',
+              },
+            ],
+            downstream: [
+              {
+                trigger: 'Emits a DOCUMENT_PROCESSED event',
+                inputData: 'The event payload includes documentId and status',
+              },
+            ],
           },
+          exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
         },
         techStackDeployment: [
-          {
-            category: 'Language',
-            technology: 'TypeScript',
-          },
+          { category: 'Language', technology: 'TypeScript' },
+          { category: 'Framework', technology: 'Next.js' },
+          { category: 'Deployment', technology: 'Vercel' },
         ],
         nonFunctionalRequirements: {
           performance: [
@@ -753,57 +765,326 @@ direction LR
               priority: 'High',
             },
           ],
-        },
-      };
-
-      const result = HighLevelDesignFamilySchema.safeParse(validHighLevelDesign);
-      expect(result.success).toBe(true);
-    });
-
-    it('should validate a complete high-level design for a Task', () => {
-      const validTaskHighLevelDesign = {
-        targetArchitecture: {
-          dataModels: {
-            diagram: 'erDiagram',
-          },
-        },
-        techStackDeployment: [
-          {
-            category: 'Language',
-            technology: 'TypeScript',
-          },
-        ],
-        nonFunctionalRequirements: {
-          performance: [
+          security: [
             {
-              id: 'PERF-01',
-              requirement: 'Schema validation must complete in < 100ms for documents up to 10KB.',
+              id: 'SEC-01',
+              requirement: 'All sensitive user data must be encrypted at rest using AES-256.',
               priority: 'High',
+            },
+          ],
+          reliability: [
+            {
+              id: 'REL-01',
+              requirement: 'The service must maintain 99.9% uptime, measured monthly.',
+              priority: 'High',
+            },
+          ],
+          permissionModel: [
+            {
+              role: 'Admin',
+              permissions: ['Full CRUD access to all documents', 'Can assign roles'],
+              notes: 'For system administrators only.',
             },
           ],
         },
       };
 
-      const result = HighLevelDesignFamilySchema.safeParse(validTaskHighLevelDesign);
-      expect(result.success).toBe(true);
+      const result = planSchema.safeParse(validPlanHighLevelDesign);
+      expect(result.success, result.success ? '' : JSON.stringify(result.error.issues, null, 2)).toBe(true);
     });
 
-    it('should reject high-level design with missing target architecture', () => {
-      const invalidHighLevelDesign = {
-        guidingPrinciples: ['All UI components must be stateless.'],
-        techStackDeployment: [
-          {
-            category: 'Language',
-            technology: 'TypeScript',
+    it('should validate a complete high-level design for a Task', () => {
+      const taskSchema = createHighLevelDesignSchema('task');
+      const validTaskHighLevelDesign = {
+        targetArchitecture: {
+          dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+          components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+          dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+          controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+          integrationPoints: {
+            upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+            downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
           },
+          exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+        },
+        techStackDeployment: [
+          { category: 'Language', technology: 'TypeScript' },
+          { category: 'Testing', technology: 'Vitest' },
         ],
+        nonFunctionalRequirements: {
+          performance: [
+            { id: 'PERF-01', requirement: 'Task processing must complete within 5 seconds.', priority: 'High' },
+          ],
+          security: [{ id: 'SEC-01', requirement: 'Task data must be encrypted in transit.', priority: 'High' }],
+        },
       };
 
-      const result = HighLevelDesignFamilySchema.safeParse(invalidHighLevelDesign);
+      const result = taskSchema.safeParse(validTaskHighLevelDesign);
+      expect(result.success, result.success ? '' : JSON.stringify(result.error.issues, null, 2)).toBe(true);
+    });
+
+    it('should reject high-level design with missing required sections for plan', () => {
+      const planSchema = createHighLevelDesignSchema('plan');
+      const invalidPlanHighLevelDesign = {
+        // Missing required targetArchitecture
+        guidingPrinciples: ['All UI components must be stateless to allow for horizontal scaling.'],
+        currentArchitecture: {
+          text: ['An existing system is in place.'],
+        },
+      };
+
+      const result = planSchema.safeParse(invalidPlanHighLevelDesign);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('targetArchitecture');
       }
+    });
+
+    it('should reject high-level design with missing required sections for task', () => {
+      const taskSchema = createHighLevelDesignSchema('task');
+      const invalidTaskHighLevelDesign = {
+        // Missing required targetArchitecture section
+        techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+      };
+
+      const result = taskSchema.safeParse(invalidTaskHighLevelDesign);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0].path).toContain('targetArchitecture');
+      }
+    });
+
+    it('should reject high-level design with invalid diagram type', () => {
+      const planSchema = createHighLevelDesignSchema('plan');
+      const invalidHighLevelDesign = {
+        guidingPrinciples: ['All UI components must be stateless to allow for horizontal scaling.'],
+        currentArchitecture: {
+          dataModels: { diagram: 'erDiagram\nLOG_LEVEL ||--o{ LOG_PAYLOAD : "sets severity"' },
+        },
+        targetArchitecture: {
+          dataModels: { diagram: 'graph TD\nA --> B' }, // Wrong diagram type for data models
+          components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+          dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+          controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+          integrationPoints: {
+            upstream: [
+              {
+                trigger: 'User action via UI button click',
+                inputData: 'Receives documentId and userId from the client',
+              },
+            ],
+          },
+          exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+        },
+        techStackDeployment: [{ category: 'Language', technology: 'TypeScript' }],
+        nonFunctionalRequirements: {
+          performance: [{ id: 'PERF-01', requirement: 'API endpoints must respond in < 200ms.', priority: 'High' }],
+        },
+      };
+
+      const result = planSchema.safeParse(invalidHighLevelDesign);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        // The error should be in targetArchitecture.dataModels.diagram
+        expect(result.error.issues[0].path).toEqual(['targetArchitecture', 'dataModels', 'diagram']);
+      }
+    });
+  });
+
+  describe('Individual Schema Tests (Backward Compatibility)', () => {
+    describe('Guiding Principles Schema', () => {
+      it('should validate a complete guiding principles array', () => {
+        const validGuidingPrinciples = [
+          'All UI components must be stateless to allow for horizontal scaling.',
+          'Communication between major components should be asynchronous and event-driven where possible.',
+          'All services must be idempotent to ensure reliability.',
+        ];
+
+        const result = guidingPrinciplesSchema.safeParse(validGuidingPrinciples);
+        expect(result.success).toBe(true);
+      });
+
+      it('should reject guiding principles array with empty strings', () => {
+        const invalidGuidingPrinciples = [
+          'All UI components must be stateless.',
+          '', // Empty string
+          'All services must be idempotent.',
+        ];
+
+        const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
+        expect(result.success).toBe(false);
+      });
+
+      it('should reject empty guiding principles array', () => {
+        const invalidGuidingPrinciples: any[] = [];
+
+        const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
+        expect(result.success).toBe(false);
+      });
+    });
+
+    describe('Integration Point Schema', () => {
+      it('should validate a complete integration point', () => {
+        const validIntegrationPoint = {
+          trigger: 'User action via UI button click',
+          inputData: 'Receives documentId and userId from the client',
+        };
+
+        const result = integrationPointSchema.safeParse(validIntegrationPoint);
+        expect(result.success).toBe(true);
+      });
+
+      it('should reject integration point with missing trigger', () => {
+        const invalidIntegrationPoint = {
+          inputData: 'Receives documentId and userId from the client',
+        };
+
+        const result = integrationPointSchema.safeParse(invalidIntegrationPoint);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('trigger');
+        }
+      });
+
+      it('should reject integration point with empty inputData', () => {
+        const invalidIntegrationPoint = {
+          trigger: 'User action via UI button click',
+          inputData: '',
+        };
+
+        const result = integrationPointSchema.safeParse(invalidIntegrationPoint);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('inputData');
+        }
+      });
+    });
+
+    describe('Tech Stack Item Schema', () => {
+      it('should validate a complete tech stack item', () => {
+        const validTechStackItem = {
+          category: 'Language',
+          technology: 'TypeScript',
+        };
+
+        const result = techStackItemSchema.safeParse(validTechStackItem);
+        expect(result.success).toBe(true);
+      });
+
+      it('should reject tech stack item with missing category', () => {
+        const invalidTechStackItem = {
+          technology: 'TypeScript',
+        };
+
+        const result = techStackItemSchema.safeParse(invalidTechStackItem);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('category');
+        }
+      });
+
+      it('should reject tech stack item with empty technology', () => {
+        const invalidTechStackItem = {
+          category: 'Language',
+          technology: '',
+        };
+
+        const result = techStackItemSchema.safeParse(invalidTechStackItem);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('technology');
+        }
+      });
+    });
+
+    describe('Non-Functional Requirement Schema', () => {
+      it('should validate a complete non-functional requirement', () => {
+        const validNonFunctionalRequirement = {
+          id: 'PERF-01',
+          requirement: 'API endpoints must respond in < 200ms (95th percentile).',
+          priority: 'High',
+        };
+
+        const result = nonFunctionalRequirementSchema.safeParse(validNonFunctionalRequirement);
+        expect(result.success).toBe(true);
+      });
+
+      it('should reject non-functional requirement with missing ID', () => {
+        const invalidNonFunctionalRequirement = {
+          requirement: 'API endpoints must respond in < 200ms (95th percentile).',
+          priority: 'High',
+        };
+
+        const result = nonFunctionalRequirementSchema.safeParse(invalidNonFunctionalRequirement);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('id');
+        }
+      });
+
+      it('should reject non-functional requirement with invalid priority', () => {
+        const invalidNonFunctionalRequirement = {
+          id: 'PERF-01',
+          requirement: 'API endpoints must respond in < 200ms (95th percentile).',
+          priority: 'Invalid' as any,
+        };
+
+        const result = nonFunctionalRequirementSchema.safeParse(invalidNonFunctionalRequirement);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('priority');
+        }
+      });
+    });
+
+    describe('Permission Role Schema', () => {
+      it('should validate a complete permission role', () => {
+        const validPermissionRole = {
+          role: 'Admin',
+          permissions: ['Full CRUD access to all documents', 'Can assign roles'],
+          notes: 'For system administrators only.',
+        };
+
+        const result = permissionRoleSchema.safeParse(validPermissionRole);
+        expect(result.success).toBe(true);
+      });
+
+      it('should validate permission role without notes', () => {
+        const validPermissionRole = {
+          role: 'Viewer',
+          permissions: ['Read-only access to completed documents'],
+        };
+
+        const result = permissionRoleSchema.safeParse(validPermissionRole);
+        expect(result.success).toBe(true);
+      });
+
+      it('should reject permission role with missing role', () => {
+        const invalidPermissionRole = {
+          permissions: ['Full CRUD access to all documents', 'Can assign roles'],
+          notes: 'For system administrators only.',
+        };
+
+        const result = permissionRoleSchema.safeParse(invalidPermissionRole);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('role');
+        }
+      });
+
+      it('should reject permission role with empty permissions array', () => {
+        const invalidPermissionRole = {
+          role: 'Admin',
+          permissions: [], // Empty array
+          notes: 'For system administrators only.',
+        };
+
+        const result = permissionRoleSchema.safeParse(invalidPermissionRole);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].path).toContain('permissions');
+        }
+      });
     });
   });
 });

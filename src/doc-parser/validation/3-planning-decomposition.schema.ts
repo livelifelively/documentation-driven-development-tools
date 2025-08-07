@@ -48,22 +48,17 @@ const decompositionGraphSchema = createSmartMermaidSchema('graph');
 
 const createRoadmapSchema = (docType: DocumentType) => {
   const schema = z.array(roadmapItemSchema).min(1);
-  return createSectionSchemaWithApplicability(
-    'Roadmap (In-Focus Items)',
-    docType,
-    schema,
-    planningDecompositionContent
-  );
+  return createSectionSchemaWithApplicability('3.1', docType, schema, planningDecompositionContent);
 };
 
 const createBacklogSchema = (docType: DocumentType) => {
   const schema = z.array(backlogItemSchema).min(1);
-  return createSectionSchemaWithApplicability('Backlog / Icebox', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability('3.2', docType, schema, planningDecompositionContent);
 };
 
 const createDependenciesSchema = (docType: DocumentType) => {
   const schema = z.array(dependencySchema).min(1);
-  return createSectionSchemaWithApplicability('Dependencies', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability('3.3', docType, schema, planningDecompositionContent);
 };
 
 const createDecompositionGraphSchema = (docType: DocumentType) => {
@@ -73,15 +68,15 @@ const createDecompositionGraphSchema = (docType: DocumentType) => {
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability('Decomposition Graph', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability('3.4', docType, schema, planningDecompositionContent);
 };
 
 // --- Section Factory Map ---
 const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
-  'Roadmap (In-Focus Items)': createRoadmapSchema,
-  'Backlog / Icebox': createBacklogSchema,
-  Dependencies: createDependenciesSchema,
-  'Decomposition Graph': createDecompositionGraphSchema,
+  '3.1': createRoadmapSchema,
+  '3.2': createBacklogSchema,
+  '3.3': createDependenciesSchema,
+  '3.4': createDecompositionGraphSchema,
 };
 
 // --- Family-Level Factory Function ---
@@ -102,10 +97,10 @@ export const createPlanningDecompositionSchema = (docType: DocumentType) => {
       continue;
     }
 
-    const factory = sectionFactories[section.name];
+    const factory = sectionFactories[section.id];
     if (!factory) {
       throw new Error(
-        `Schema mismatch: No factory found for section "${section.name}". This indicates a mismatch between the schema definition and JSON files.`
+        `Schema mismatch: No factory found for section ID "${section.id}" (${section.name}). This indicates a mismatch between the schema definition and JSON files.`
       );
     }
 

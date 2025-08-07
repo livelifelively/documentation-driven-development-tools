@@ -44,8 +44,10 @@
       "id": "4.1",
       "name": "Current Architecture",
       "headingLevel": 3,
+      "description": "An optional text field can be used to explain the absence of a current architecture in greenfield projects. If the section is present, it must contain either a text description or at least one subsection.",
+      "contentFormat": "An optional text description followed by the standard subsections.",
       "applicability": {
-        "plan": "required",
+        "plan": "optional",
         "task": "omitted"
       },
       "notes": "Plan: Existing system analysis for planning. Task: Not applicable (inherits context from Plan)."

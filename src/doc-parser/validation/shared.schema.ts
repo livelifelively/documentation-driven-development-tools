@@ -425,21 +425,21 @@ export function applyFieldLevelApplicability<T extends z.ZodRawShape>(
  * This function is designed for sections where the entire section is either required, optional, or omitted
  * based on the document type, rather than having individual fields with different applicability rules.
  *
- * @param sectionName - The name of the section to find in the JSON schema
+ * @param sectionId - The ID of the section to find in the JSON schema (e.g., "1.2")
  * @param docType - The document type ('plan' or 'task')
  * @param schema - The Zod schema to apply
  * @param jsonContent - The JSON content containing section definitions
  * @returns The schema with appropriate applicability handling (required, optional, or never)
  */
 export function createSectionSchemaWithApplicability(
-  sectionName: string,
+  sectionId: string,
   docType: DocumentType,
   schema: z.ZodTypeAny,
   jsonContent: any
 ): z.ZodTypeAny {
-  const sectionDef = jsonContent.sections.find((s: any) => s.name === sectionName);
+  const sectionDef = jsonContent.sections.find((s: any) => s.id === sectionId);
   if (!sectionDef) {
-    throw new Error(`Section '${sectionName}' not found in JSON schema`);
+    throw new Error(`Section with ID '${sectionId}' not found in JSON schema`);
   }
 
   const applicability = getApplicability(sectionDef.applicability, docType);

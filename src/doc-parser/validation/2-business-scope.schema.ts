@@ -14,12 +14,12 @@ const createOverviewSchema = (docType: DocumentType) => {
     businessValue: z.string().min(1),
   });
 
-  return createSectionSchemaWithApplicability('Overview', docType, overviewSchema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.1', docType, overviewSchema, businessScopeContent);
 };
 
 const createBusinessContextSchema = (docType: DocumentType) => {
   const schema = z.string().min(1);
-  return createSectionSchemaWithApplicability('Business Context', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.2', docType, schema, businessScopeContent);
 };
 
 const createUserJourneysSchema = (docType: DocumentType) => {
@@ -30,7 +30,7 @@ const createUserJourneysSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(userJourneySchema).min(1);
-  return createSectionSchemaWithApplicability('User Journeys', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.2.1', docType, schema, businessScopeContent);
 };
 
 const createUserPersonasSchema = (docType: DocumentType) => {
@@ -40,22 +40,22 @@ const createUserPersonasSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(userPersonaSchema).min(1);
-  return createSectionSchemaWithApplicability('User Personas', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.2.2', docType, schema, businessScopeContent);
 };
 
 const createCoreBusinessRulesSchema = (docType: DocumentType) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('Core Business Rules', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.2.3', docType, schema, businessScopeContent);
 };
 
 const createUserStoriesSchema = (docType: DocumentType) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('User Stories', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.2.4', docType, schema, businessScopeContent);
 };
 
 const createSuccessCriteriaSchema = (docType: DocumentType) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('Success Criteria', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.3', docType, schema, businessScopeContent);
 };
 
 const createDefinitionOfDoneSchema = (docType: DocumentType) => {
@@ -65,23 +65,23 @@ const createDefinitionOfDoneSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(definitionOfDoneItemSchema).min(1);
-  return createSectionSchemaWithApplicability('Definition of Done', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.4', docType, schema, businessScopeContent);
 };
 
 const createBoundariesAndScopeSchema = (docType: DocumentType) => {
   // This is a container section, so we'll return a placeholder schema
   const schema = z.object({}).optional();
-  return createSectionSchemaWithApplicability('Boundaries & Scope', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.5', docType, schema, businessScopeContent);
 };
 
 const createInScopeSchema = (docType: DocumentType) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('In Scope', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.5.1', docType, schema, businessScopeContent);
 };
 
 const createOutOfScopeSchema = (docType: DocumentType) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('Out of Scope', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.5.2', docType, schema, businessScopeContent);
 };
 
 const createCoreBusinessProcessesSchema = (docType: DocumentType) => {
@@ -93,23 +93,23 @@ const createCoreBusinessProcessesSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(businessProcessSchema).min(1);
-  return createSectionSchemaWithApplicability('Core Business Processes', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability('2.6', docType, schema, businessScopeContent);
 };
 
 // --- Section Factory Map ---
 const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
-  Overview: createOverviewSchema,
-  'Business Context': createBusinessContextSchema,
-  'User Journeys': createUserJourneysSchema,
-  'User Personas': createUserPersonasSchema,
-  'Core Business Rules': createCoreBusinessRulesSchema,
-  'User Stories': createUserStoriesSchema,
-  'Success Criteria': createSuccessCriteriaSchema,
-  'Definition of Done': createDefinitionOfDoneSchema,
-  'Boundaries & Scope': createBoundariesAndScopeSchema,
-  'In Scope': createInScopeSchema,
-  'Out of Scope': createOutOfScopeSchema,
-  'Core Business Processes': createCoreBusinessProcessesSchema,
+  '2.1': createOverviewSchema,
+  '2.2': createBusinessContextSchema,
+  '2.2.1': createUserJourneysSchema,
+  '2.2.2': createUserPersonasSchema,
+  '2.2.3': createCoreBusinessRulesSchema,
+  '2.2.4': createUserStoriesSchema,
+  '2.3': createSuccessCriteriaSchema,
+  '2.4': createDefinitionOfDoneSchema,
+  '2.5': createBoundariesAndScopeSchema,
+  '2.5.1': createInScopeSchema,
+  '2.5.2': createOutOfScopeSchema,
+  '2.6': createCoreBusinessProcessesSchema,
 };
 
 // --- Family-Level Factory Function ---
@@ -135,10 +135,10 @@ export const createBusinessScopeSchema = (docType: DocumentType) => {
       continue;
     }
 
-    const factory = sectionFactories[section.name];
+    const factory = sectionFactories[section.id];
     if (!factory) {
       throw new Error(
-        `Schema mismatch: No factory found for section "${section.name}". This indicates a mismatch between the schema definition and JSON files.`
+        `Schema mismatch: No factory found for section ID "${section.id}" (${section.name}). This indicates a mismatch between the schema definition and JSON files.`
       );
     }
 

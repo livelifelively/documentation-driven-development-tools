@@ -30,7 +30,7 @@ const statusFieldSchemas = {
 // --- Section-Level Factory Functions ---
 
 const createStatusSchema = (docType: DocumentType) => {
-  const sectionDef = metaGovernanceContent.sections.find((s: any) => s.name === 'Status');
+  const sectionDef = metaGovernanceContent.sections.find((s: any) => s.id === '1.2');
   if (!sectionDef || !sectionDef.fields) {
     throw new Error("Section 'Status' or its fields not found in 1-meta.json");
   }
@@ -57,13 +57,13 @@ const createStatusSchema = (docType: DocumentType) => {
 const createPriorityDriversSchema = (docType: DocumentType) => {
   // Priority drivers are now validated against the canonical enum from ddd-2.md
   const schema = z.array(PriorityDriver).min(1);
-  return createSectionSchemaWithApplicability('Priority Drivers', docType, schema, metaGovernanceContent);
+  return createSectionSchemaWithApplicability('1.3', docType, schema, metaGovernanceContent);
 };
 
 // --- Section Factory Map ---
 const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
-  Status: createStatusSchema,
-  'Priority Drivers': createPriorityDriversSchema,
+  '1.2': createStatusSchema,
+  '1.3': createPriorityDriversSchema,
 };
 
 // --- Family-Level Factory Function ---
@@ -84,10 +84,10 @@ export const createMetaGovernanceSchema = (docType: DocumentType) => {
       continue;
     }
 
-    const factory = sectionFactories[section.name];
+    const factory = sectionFactories[section.id];
     if (!factory) {
       throw new Error(
-        `Schema mismatch: No factory found for section "${section.name}". This indicates a mismatch between the schema definition and JSON files.`
+        `Schema mismatch: No factory found for section ID "${section.id}" (${section.name}). This indicates a mismatch between the schema definition and JSON files.`
       );
     }
 

@@ -1,185 +1,282 @@
 import { z } from 'zod';
+import {
+  PriorityLevel,
+  DocumentType,
+  getApplicability,
+  createSectionSchemaWithApplicability,
+  createMermaidWithTextSchema,
+} from './shared.schema.js';
+import { loadDDDSchemaJsonFile } from '../../index.js';
+import { camelCase } from 'lodash-es';
 
-// Priority levels enum for validation
-const PriorityLevel = z.enum(['High', 'Medium', 'Low']);
+const highLevelDesignContent = loadDDDSchemaJsonFile('4-high-level-design.json');
 
-// Specific Mermaid diagram type schemas
-const ErDiagramSchema = z.string().refine((val) => val.trim().startsWith('erDiagram'), {
-  message: 'Diagram must be a valid Mermaid erDiagram.',
-});
-const ClassDiagramSchema = z.string().refine((val) => val.trim().startsWith('classDiagram'), {
-  message: 'Diagram must be a valid Mermaid classDiagram.',
-});
-const GraphDiagramSchema = z.string().refine((val) => val.trim().startsWith('graph'), {
-  message: 'Diagram must be a valid Mermaid graph.',
-});
-const SequenceDiagramSchema = z.string().refine((val) => val.trim().startsWith('sequenceDiagram'), {
-  message: 'Diagram must be a valid Mermaid sequenceDiagram.',
-});
+// --- Field-Level Schema Definitions ---
 
-// Generic schema for a section that can contain a diagram and/or text
-const createDiagramWithTextSchema = (diagramSchema: z.ZodString) =>
-  z
-    .object({
-      diagram: diagramSchema.optional(),
-      text: z.array(z.string().min(1)).optional(),
-    })
-    .refine((data) => data.diagram || (data.text && data.text.length > 0), {
-      message: 'Section must have at least a diagram or text content.',
-    });
-
-// Data Models schema
-const DataModelsSchema = createDiagramWithTextSchema(ErDiagramSchema);
-
-// Components schema
-const ComponentsSchema = createDiagramWithTextSchema(ClassDiagramSchema);
-
-// Data Flow schema
-const DataFlowSchema = createDiagramWithTextSchema(GraphDiagramSchema);
-
-// Control Flow schema
-const ControlFlowSchema = createDiagramWithTextSchema(SequenceDiagramSchema);
-
-// Guiding Principles schema - list of architectural rules
-const GuidingPrinciplesSchema = z.array(z.string().min(1)).min(1);
+// Guiding Principles - list of architectural rules
+const guidingPrinciplesSchema = z.array(z.string().min(1)).min(1);
 
 // Integration Point schema
-const IntegrationPointSchema = z.object({
+const integrationPointSchema = z.object({
   trigger: z.string().min(1),
   inputData: z.string().min(1),
 });
 
-// Upstream Integrations schema - list of integration points
-const UpstreamIntegrationsSchema = z.array(IntegrationPointSchema).min(1);
-
-// Downstream Integrations schema - list of integration points
-const DownstreamIntegrationsSchema = z.array(IntegrationPointSchema).min(1);
-
-// Integration Points schema - container for upstream and downstream
-const IntegrationPointsSchema = z.object({
-  upstream: UpstreamIntegrationsSchema.optional(),
-  downstream: DownstreamIntegrationsSchema.optional(),
-});
-
-// Exposed API schema - OpenAPI/Swagger content or markdown table
-const ExposedAPISchema = z.string().min(1);
-
 // Tech Stack Item schema
-const TechStackItemSchema = z.object({
+const techStackItemSchema = z.object({
   category: z.string().min(1), // e.g., "Language", "Framework", "Deployment"
   technology: z.string().min(1), // e.g., "TypeScript", "Next.js", "Vercel"
 });
 
-// Tech Stack & Deployment schema - list of tech stack items
-const TechStackDeploymentSchema = z.array(TechStackItemSchema).min(1);
-
 // Non-Functional Requirement schema
-const NonFunctionalRequirementSchema = z.object({
+const nonFunctionalRequirementSchema = z.object({
   id: z.string().min(1), // e.g., "PERF-01", "SEC-01", "REL-01"
   requirement: z.string().min(1),
   priority: PriorityLevel,
 });
 
-// Performance schema - table of performance requirements
-const PerformanceSchema = z.array(NonFunctionalRequirementSchema).min(1);
-
-// Security schema - table of security requirements
-const SecuritySchema = z.array(NonFunctionalRequirementSchema).min(1);
-
-// Reliability schema - table of reliability requirements
-const ReliabilitySchema = z.array(NonFunctionalRequirementSchema).min(1);
-
 // Permission Role schema
-const PermissionRoleSchema = z.object({
+const permissionRoleSchema = z.object({
   role: z.string().min(1),
   permissions: z.array(z.string().min(1)).min(1),
   notes: z.string().optional(),
 });
 
-// Permission Model schema - table of roles and permissions
-const PermissionModelSchema = z.array(PermissionRoleSchema).min(1);
+// --- Section-Level Factory Functions ---
 
-// Current Architecture schema (for Plans only)
-const CurrentArchitectureSchema = z.object({
-  dataModels: DataModelsSchema.optional(),
-  components: ComponentsSchema.optional(),
-  dataFlow: DataFlowSchema.optional(),
-  controlFlow: ControlFlowSchema.optional(),
-  integrationPoints: IntegrationPointsSchema.optional(),
-});
-
-// Target Architecture schema (for Plans and Tasks)
-const TargetArchitectureSchema = z.object({
-  dataModels: DataModelsSchema.optional(),
-  components: ComponentsSchema.optional(),
-  dataFlow: DataFlowSchema.optional(),
-  controlFlow: ControlFlowSchema.optional(),
-  integrationPoints: IntegrationPointsSchema.optional(),
-  exposedAPI: ExposedAPISchema.optional(),
-});
-
-// Non-Functional Requirements schema
-const NonFunctionalRequirementsSchema = z.object({
-  performance: PerformanceSchema.optional(),
-  security: SecuritySchema.optional(),
-  reliability: ReliabilitySchema.optional(),
-  permissionModel: PermissionModelSchema.optional(),
-});
-
-// High-Level Design family schema
-export const HighLevelDesignFamilySchema = z.object({
-  guidingPrinciples: GuidingPrinciplesSchema.optional(), // For Plans
-  currentArchitecture: CurrentArchitectureSchema.optional(), // For Plans
-  targetArchitecture: TargetArchitectureSchema,
-  techStackDeployment: TechStackDeploymentSchema.optional(),
-  nonFunctionalRequirements: NonFunctionalRequirementsSchema.optional(),
-});
-
-// Export individual schemas for specific use cases
-export {
-  GuidingPrinciplesSchema,
-  DataModelsSchema,
-  ComponentsSchema,
-  DataFlowSchema,
-  ControlFlowSchema,
-  IntegrationPointSchema,
-  UpstreamIntegrationsSchema,
-  DownstreamIntegrationsSchema,
-  IntegrationPointsSchema,
-  ExposedAPISchema,
-  TechStackItemSchema,
-  TechStackDeploymentSchema,
-  NonFunctionalRequirementSchema,
-  PerformanceSchema,
-  SecuritySchema,
-  ReliabilitySchema,
-  PermissionRoleSchema,
-  PermissionModelSchema,
-  CurrentArchitectureSchema,
-  TargetArchitectureSchema,
-  NonFunctionalRequirementsSchema,
+const createGuidingPrinciplesSchema = (docType: DocumentType) => {
+  const schema = guidingPrinciplesSchema;
+  return createSectionSchemaWithApplicability('4.0', docType, schema, highLevelDesignContent);
 };
 
-// Export types
-export type HighLevelDesignFamily = z.infer<typeof HighLevelDesignFamilySchema>;
-export type GuidingPrinciples = z.infer<typeof GuidingPrinciplesSchema>;
-export type DataModels = z.infer<typeof DataModelsSchema>;
-export type Components = z.infer<typeof ComponentsSchema>;
-export type DataFlow = z.infer<typeof DataFlowSchema>;
-export type ControlFlow = z.infer<typeof ControlFlowSchema>;
-export type IntegrationPoint = z.infer<typeof IntegrationPointSchema>;
-export type UpstreamIntegrations = z.infer<typeof UpstreamIntegrationsSchema>;
-export type DownstreamIntegrations = z.infer<typeof DownstreamIntegrationsSchema>;
-export type IntegrationPoints = z.infer<typeof IntegrationPointsSchema>;
-export type ExposedAPI = z.infer<typeof ExposedAPISchema>;
-export type TechStackItem = z.infer<typeof TechStackItemSchema>;
-export type TechStackDeployment = z.infer<typeof TechStackDeploymentSchema>;
-export type NonFunctionalRequirement = z.infer<typeof NonFunctionalRequirementSchema>;
-export type Performance = z.infer<typeof PerformanceSchema>;
-export type Security = z.infer<typeof SecuritySchema>;
-export type Reliability = z.infer<typeof ReliabilitySchema>;
-export type PermissionRole = z.infer<typeof PermissionRoleSchema>;
-export type PermissionModel = z.infer<typeof PermissionModelSchema>;
-export type CurrentArchitecture = z.infer<typeof CurrentArchitectureSchema>;
-export type TargetArchitecture = z.infer<typeof TargetArchitectureSchema>;
-export type NonFunctionalRequirements = z.infer<typeof NonFunctionalRequirementsSchema>;
+// --- Reusable Architectural Component Factories ---
+
+const createDataModelsSchema = (sectionId: string, docType: DocumentType) => {
+  const schema = createMermaidWithTextSchema('erDiagram', {
+    diagramRequired: true,
+    textRequired: false,
+    allowTextOnly: false,
+    allowDiagramOnly: true,
+  });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+};
+
+const createComponentsSchema = (sectionId: string, docType: DocumentType) => {
+  const schema = createMermaidWithTextSchema('classDiagram', {
+    diagramRequired: true,
+    textRequired: false,
+    allowTextOnly: false,
+    allowDiagramOnly: true,
+  });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+};
+
+const createDataFlowSchema = (sectionId: string, docType: DocumentType) => {
+  const schema = createMermaidWithTextSchema('graph', {
+    diagramRequired: true,
+    textRequired: false,
+    allowTextOnly: false,
+    allowDiagramOnly: true,
+  });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+};
+
+const createControlFlowSchema = (sectionId: string, docType: DocumentType) => {
+  const schema = createMermaidWithTextSchema('sequenceDiagram', {
+    diagramRequired: true,
+    textRequired: false,
+    allowTextOnly: false,
+    allowDiagramOnly: true,
+  });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+};
+
+const createIntegrationPointsSchema = (sectionId: string, docType: DocumentType) => {
+  const schema = z.object({
+    upstream: z.array(integrationPointSchema).min(1).optional(),
+    downstream: z.array(integrationPointSchema).min(1).optional(),
+  });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+};
+
+const createExposedAPISchema = (docType: DocumentType) => {
+  const schema = z.string().min(1); // OpenAPI/Swagger content or markdown table
+  return createSectionSchemaWithApplicability('4.2.6', docType, schema, highLevelDesignContent);
+};
+
+// --- Architecture Section Schemas ---
+
+const createCurrentArchitectureSchema = (docType: DocumentType) => {
+  // Define the internal shape with optional subsections to allow for the refine logic.
+  const internalShape = z
+    .object({
+      text: z.array(z.string()).optional(),
+      dataModels: createDataModelsSchema('4.1.1', docType),
+      components: createComponentsSchema('4.1.2', docType),
+      dataFlow: createDataFlowSchema('4.1.3', docType),
+      controlFlow: createControlFlowSchema('4.1.4', docType),
+      integrationPoints: createIntegrationPointsSchema('4.1.5', docType),
+    })
+    .partial()
+    .strict()
+    .refine(
+      (data) => {
+        const hasText = Array.isArray(data.text) && data.text.length > 0;
+        const hasSubsections =
+          data.dataModels || data.components || data.dataFlow || data.controlFlow || data.integrationPoints;
+        return hasText || hasSubsections;
+      },
+      {
+        message:
+          'If Current Architecture is present, it must contain either a text description or at least one subsection (Data Models, Components, etc.).',
+      }
+    );
+
+  // The wrapper function will now correctly apply 'optional' to this entire block for plans.
+  return createSectionSchemaWithApplicability('4.1', docType, internalShape, highLevelDesignContent);
+};
+
+const createTargetArchitectureSchema = (docType: DocumentType) => {
+  // Define the two valid shapes for the content
+  const textOnlySchema = z
+    .object({
+      text: z.array(z.string()).min(1),
+    })
+    .strict();
+
+  const subsectionsSchema = z
+    .object({
+      dataModels: createDataModelsSchema('4.2.1', docType),
+      components: createComponentsSchema('4.2.2', docType),
+      dataFlow: createDataFlowSchema('4.2.3', docType),
+      controlFlow: createControlFlowSchema('4.2.4', docType),
+      integrationPoints: createIntegrationPointsSchema('4.2.5', docType),
+      exposedAPI: createExposedAPISchema(docType),
+    })
+    .strict();
+
+  // The content must match one of these two shapes, or both
+  const internalShape = z.union([textOnlySchema, subsectionsSchema, textOnlySchema.merge(subsectionsSchema)]);
+
+  return createSectionSchemaWithApplicability('4.2', docType, internalShape, highLevelDesignContent);
+};
+
+const createTechStackDeploymentSchema = (docType: DocumentType) => {
+  const schema = z.array(techStackItemSchema).min(1);
+  return createSectionSchemaWithApplicability('4.3', docType, schema, highLevelDesignContent);
+};
+
+const createNonFunctionalRequirementsSchema = (docType: DocumentType) => {
+  const schema = z.object({
+    performance: z.array(nonFunctionalRequirementSchema).min(1).optional(),
+    security: z.array(nonFunctionalRequirementSchema).min(1).optional(),
+    reliability: z.array(nonFunctionalRequirementSchema).min(1).optional(),
+    permissionModel: z.array(permissionRoleSchema).min(1).optional(),
+  });
+  return createSectionSchemaWithApplicability('4.4', docType, schema, highLevelDesignContent);
+};
+
+// --- Section Factory Map ---
+const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+  '4.0': createGuidingPrinciplesSchema,
+  '4.1': createCurrentArchitectureSchema,
+  '4.2': createTargetArchitectureSchema,
+  '4.3': createTechStackDeploymentSchema,
+  '4.4': createNonFunctionalRequirementsSchema,
+};
+
+// --- Family-Level Factory Function ---
+
+/**
+ * Creates a fully composed Zod schema for the High-Level Design family
+ * by iterating through the JSON definition and using a factory map.
+ *
+ * @param docType - The document type ('plan' or 'task').
+ * @returns A Zod schema for the High-Level Design family.
+ */
+export const createHighLevelDesignSchema = (docType: DocumentType) => {
+  const familyShape: Record<string, z.ZodTypeAny> = {};
+
+  for (const section of highLevelDesignContent.sections) {
+    // Only process top-level sections (IDs like "4.0", "4.1", etc.)
+    // Skip nested sections (IDs like "4.2.1", "4.2.2", etc.)
+    if (section.id.match(/\.\d+\.\d+$/)) {
+      continue;
+    }
+
+    const applicability = getApplicability(section.applicability, docType);
+    if (applicability === 'omitted') {
+      continue;
+    }
+
+    const factory = sectionFactories[section.id];
+    if (!factory) {
+      // This can happen for container sections like '4.1.5 Integration Points' which don't have a direct factory
+      // but their children do. The logic inside the main section factories handles the composition.
+      // We only need to process the top-level sections here.
+      if (section.id.match(/^4\.\d+$/)) {
+        throw new Error(
+          `Schema mismatch: No factory found for section ID "${section.id}" (${section.name}). This indicates a mismatch between the schema definition and JSON files.`
+        );
+      }
+      continue;
+    }
+
+    const schema = factory(docType);
+
+    // The factory for omitted sections returns z.never(), so we check for that
+    if (schema instanceof z.ZodNever) {
+      continue;
+    }
+
+    const sectionName = camelCase(section.name);
+    familyShape[sectionName] = schema; // The factory already handles optionality
+  }
+
+  return z.object(familyShape).strict();
+};
+
+// --- Convenience Functions for Backward Compatibility ---
+
+/**
+ * Creates a task-specific High-Level Design schema
+ * @returns A Zod schema for task High-Level Design
+ */
+export const getHighLevelDesignTaskSchema = () => createHighLevelDesignSchema('task');
+
+/**
+ * Creates a plan-specific High-Level Design schema
+ * @returns A Zod schema for plan High-Level Design
+ */
+export const getHighLevelDesignPlanSchema = () => createHighLevelDesignSchema('plan');
+
+// Export the factory and inferred type
+export type HighLevelDesignFamily = z.infer<ReturnType<typeof createHighLevelDesignSchema>>;
+
+// --- Individual Schema Exports for Specific Use Cases ---
+export {
+  guidingPrinciplesSchema,
+  integrationPointSchema,
+  techStackItemSchema,
+  nonFunctionalRequirementSchema,
+  permissionRoleSchema,
+};
+
+// Export individual architectural component factories
+export {
+  createCurrentArchitectureSchema,
+  createTargetArchitectureSchema,
+  createDataModelsSchema,
+  createComponentsSchema,
+  createDataFlowSchema,
+  createControlFlowSchema,
+  createIntegrationPointsSchema,
+  createExposedAPISchema,
+};
+
+// --- Type Exports ---
+export type GuidingPrinciples = z.infer<typeof guidingPrinciplesSchema>;
+export type IntegrationPoint = z.infer<typeof integrationPointSchema>;
+export type TechStackItem = z.infer<typeof techStackItemSchema>;
+export type NonFunctionalRequirement = z.infer<typeof nonFunctionalRequirementSchema>;
+export type PermissionRole = z.infer<typeof permissionRoleSchema>;
