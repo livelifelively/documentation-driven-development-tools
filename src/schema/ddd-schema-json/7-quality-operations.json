@@ -15,40 +15,101 @@
       "name": "Testing Strategy / Requirements",
       "headingLevel": 3,
       "description": "The overall strategy for testing. This section contains the technical Acceptance Criteria, mapping specific test cases back to the business-facing Definition of Done.",
-      "contentFormat": "Markdown table.",
       "applicability": {
         "plan": "required",
         "task": "required"
       },
-      "notes": "Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation.",
+      "notes": "Plan: Overall testing approach and strategy. Task: Specific tests and requirements for implementation."
+    },
+    {
+      "id": "7.1.1",
+      "name": "Unit & Integration Tests",
+      "headingLevel": 4,
+      "description": "Unit tests for isolated logic and integration tests for component interactions.",
+      "contentFormat": "Markdown table with test scenarios.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Unit and integration testing strategy. Task: Specific unit and integration test requirements.",
       "examples": [
         {
           "context": "Default",
           "content": [
             {
               "type": "table",
-              "headers": ["AC ID", "DoD Link", "Scenario", "Test Type", "Test File"],
+              "headers": ["ID", "Scenario", "Test Type", "Tools / Runner", "Notes"],
               "rows": [
                 [
-                  "AC-1",
-                  "DoD-2",
-                  "Unit test for `metaGovernanceSchema` (valid and invalid Status)",
+                  "TEST-01",
+                  "`parseDocument` emits `parsing.failed` for an invalid file",
                   "Unit",
-                  "`1-meta-governance.schema.test.ts`"
+                  "Vitest",
+                  "Ensure the event is emitted with appropriate error context."
                 ],
                 [
-                  "AC-2",
-                  "DoD-3",
-                  "Unit test for `businessScopeSchema` (valid and invalid AC table)",
+                  "TEST-02",
+                  "`lintDocument` emits `validation.failed` for an invalid file",
                   "Unit",
-                  "`2-business-scope.schema.test.ts`"
+                  "Vitest",
+                  "Ensure the event is emitted with a non-empty `LintingError[]` array."
                 ],
                 [
-                  "AC-3",
-                  "DoD-4",
-                  "Integration test with a fully valid mock `task.md`",
-                  "Integration",
-                  "`integration.test.ts`"
+                  "TEST-03",
+                  "Schema validation works correctly for both task and plan types",
+                  "Unit",
+                  "Vitest",
+                  "Test that SchemaProvider integration works for both document types."
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.1.2",
+      "name": "End-to-End (E2E) Testing Strategy",
+      "headingLevel": 4,
+      "description": "Comprehensive E2E tests that validate the entire workflow and integration with various consumers.",
+      "contentFormat": "Markdown table with E2E test scenarios.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: E2E testing strategy and approach. Task: Specific E2E test requirements and scenarios.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Scenario", "Test Type", "Tools / Runner", "Notes"],
+              "rows": [
+                [
+                  "E2E-01",
+                  "Event emission works correctly for valid task files with comprehensive context",
+                  "E2E",
+                  "Vitest",
+                  "Create a `test-fixtures/valid.task.md` that adheres perfectly to the schema."
+                ],
+                [
+                  "E2E-02",
+                  "Event emission works correctly for invalid task files with proper error context",
+                  "E2E",
+                  "Vitest",
+                  "Create `test-fixtures/invalid-missing-field.task.md` and assert error context."
+                ],
+                [
+                  "E2E-03",
+                  "Event consumer integration works correctly with multiple listeners",
+                  "E2E",
+                  "Vitest",
+                  "Test that multiple event consumers can subscribe to and receive events."
                 ]
               ],
               "rendering": {
@@ -77,28 +138,39 @@
           "content": [
             {
               "type": "table",
-              "headers": ["Setting Name", "Plan Dependency", "Source", "Override Method", "Notes"],
+              "headers": ["ID", "Setting Name", "Source", "Default", "Override Method", "Notes"],
               "rows": [
                 [
-                  "`analyzerApiEndpoint`",
-                  "`p1-analyzer`",
-                  "`ddd.config.json`",
-                  "`DDD_ANALYZER_API_ENDPOINT` (Environment Var)",
-                  "(Required) The URL of the external service for status reporting."
+                  "CONFIG-01",
+                  "`schemaProvider`",
+                  "SchemaProvider injection",
+                  "`'native'`",
+                  "Constructor parameter",
+                  "Determines which schema provider to use ('native' or 'config')"
                 ],
                 [
-                  "`logLevel`",
-                  "(All)",
-                  "`ddd.config.json`",
-                  "`DDD_LOG_LEVEL` (Environment Variable)",
-                  "`info` (default), `debug`, `warn`, `error`. Controls logging verbosity."
+                  "CONFIG-02",
+                  "`eventEmitter`",
+                  "EventEmitter injection",
+                  "Required",
+                  "Constructor parameter",
+                  "Event emitter instance for publishing events"
                 ],
                 [
+                  "CONFIG-03",
                   "`NODE_ENV`",
-                  "(All)",
                   "Environment Variable",
-                  "Not overrideable",
-                  "`development` or `production`. Determines the operational mode."
+                  "`'development'`",
+                  "`NODE_ENV` env var",
+                  "`'development'`, `'staging'`, or `'production'`"
+                ],
+                [
+                  "CONFIG-04",
+                  "`DDD_LOG_LEVEL`",
+                  "Environment Variable",
+                  "`'info'`",
+                  "`DDD_LOG_LEVEL` env var",
+                  "Controls logging verbosity for event consumers"
                 ]
               ],
               "rendering": {
@@ -115,38 +187,115 @@
       "name": "Alerting & Response",
       "headingLevel": 3,
       "description": "How to respond to alerts and operational logs, especially errors, and how they are integrated with alerting systems.",
-      "contentFormat": "Markdown list or table.",
       "applicability": {
         "plan": "required",
         "task": "required"
       },
-      "notes": "Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses.",
+      "notes": "Plan: Alerting strategy and response protocols. Task: Implementation-specific alerts and responses."
+    },
+    {
+      "id": "7.3.1",
+      "name": "Event-Based Alerting",
+      "headingLevel": 4,
+      "description": "Alert conditions and their corresponding event types for event-driven systems.",
+      "contentFormat": "Markdown table with alert conditions.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Event-based alerting strategy. Task: Implementation-specific alert conditions.",
       "examples": [
         {
           "context": "Default",
           "content": [
             {
               "type": "table",
-              "headers": ["Error Condition", "Relevant Plans", "Response Plan", "Status"],
+              "headers": ["ID", "Alert Condition", "Event Type", "Consumer Response", "Notes"],
               "rows": [
                 [
-                  "**Internal Script Failure**",
-                  "All",
-                  "Abort the `git commit` with a non-zero exit code. Print the error stack trace directly to the console.",
-                  "💡 Not Started"
+                  "ALERT-01",
+                  "Document parsing fails",
+                  "`parsing.failed`",
+                  "Consumer logs error and may block further processing",
+                  "Critical error that prevents document processing"
                 ],
                 [
-                  "**External API Non-2xx Response**",
-                  "`p1-analyzer`",
-                  "Abort the `git commit` with a non-zero exit code. Log the API's error response to the console.",
-                  "💡 Not Started"
+                  "ALERT-02",
+                  "Document validation fails",
+                  "`validation.failed`",
+                  "Consumer displays validation errors to user",
+                  "Non-critical, allows user to fix validation issues"
                 ],
                 [
-                  "**CI/CD Pipeline Failure**",
-                  "All",
-                  "Fail the corresponding pipeline step. The tool's non-zero exit code will be surfaced in the CI/CD interface.",
-                  "💡 Not Started"
+                  "ALERT-03",
+                  "Schema provider unavailable",
+                  "`parsing.failed`",
+                  "Consumer logs error and may fallback to basic parsing",
+                  "System configuration issue requiring immediate attention"
                 ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.3.2",
+      "name": "Consumer Response Strategies",
+      "headingLevel": 4,
+      "description": "Different response strategies implemented by various event consumers.",
+      "contentFormat": "Markdown list with consumer strategies.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Consumer response strategy. Task: Implementation-specific consumer responses.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**CLI Tools**: Display errors to console and exit with appropriate error codes",
+                "**Git Hooks**: Block commits and display validation errors to user",
+                "**Reporting Systems**: Log events for analysis and alert on critical failures",
+                "**Integration Systems**: Implement retry logic and graceful degradation"
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7.3.3",
+      "name": "Error Recovery",
+      "headingLevel": 4,
+      "description": "Multi-level error recovery strategies for event-driven systems.",
+      "contentFormat": "Markdown list with recovery levels.",
+      "applicability": {
+        "plan": "required",
+        "task": "required"
+      },
+      "notes": "Plan: Error recovery strategy. Task: Implementation-specific recovery mechanisms.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Parser Level**: Emit appropriate events for all error conditions",
+                "**Consumer Level**: Implement retry logic, fallback mechanisms, and user feedback",
+                "**System Level**: Monitor event emission patterns for system health"
               ],
               "rendering": {
                 "renderAsCodeBlockForHuman": false,
