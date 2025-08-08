@@ -24,21 +24,75 @@
       "id": "5.1.1",
       "name": "Error Handling",
       "headingLevel": 4,
+      "description": "Current error handling analysis and existing error scenarios.",
+      "contentFormat": "Markdown table with error scenarios.",
       "applicability": {
         "plan": "required",
         "task": "omitted"
       },
-      "notes": "Plan: Current error handling analysis. Task: Not applicable."
+      "notes": "Plan: Current error handling analysis. Task: Not applicable.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "table",
+              "headers": ["ID", "Error Type", "Trigger", "Action", "User Feedback"],
+              "rows": [
+                [
+                  "ERROR-01",
+                  "**File System Error**",
+                  "Cannot read a required file or directory.",
+                  "Abort with exit code 1.",
+                  "`ERROR: Cannot access [path]. Please check permissions.`"
+                ],
+                [
+                  "ERROR-02",
+                  "**Schema Validation Error**",
+                  "A document violates the canonical schema.",
+                  "Abort with exit code 1.",
+                  "`ERROR: Schema validation failed in [file]: [validation_details].`"
+                ]
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "5.1.2",
       "name": "Logging & Monitoring",
       "headingLevel": 4,
+      "description": "Current observability analysis and existing logging/monitoring setup.",
+      "contentFormat": "Markdown list or table with current observability.",
       "applicability": {
         "plan": "required",
         "task": "omitted"
       },
-      "notes": "Plan: Current observability analysis. Task: Not applicable."
+      "notes": "Plan: Current observability analysis. Task: Not applicable.",
+      "examples": [
+        {
+          "context": "Default",
+          "content": [
+            {
+              "type": "list",
+              "items": [
+                "**Current Logging**: Console output for errors and warnings",
+                "**Current Monitoring**: No formal monitoring in place",
+                "**Current Metrics**: No metrics collection implemented"
+              ],
+              "rendering": {
+                "renderAsCodeBlockForHuman": false,
+                "renderAsCodeBlockForMachine": true
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "5.2",
@@ -67,21 +121,24 @@
           "content": [
             {
               "type": "table",
-              "headers": ["Error Type", "Trigger", "Action", "User Feedback"],
+              "headers": ["ID", "Error Type", "Trigger", "Action", "User Feedback"],
               "rows": [
                 [
+                  "ERROR-01",
                   "**File System Error**",
                   "Cannot read a required file or directory.",
                   "Abort with exit code 1.",
                   "`ERROR: Cannot access [path]. Please check permissions.`"
                 ],
                 [
+                  "ERROR-02",
                   "**Schema Validation Error**",
                   "A document violates the canonical schema.",
                   "Abort with exit code 1.",
                   "`ERROR: Schema validation failed in [file]: [validation_details].`"
                 ],
                 [
+                  "ERROR-03",
                   "**API/Network Error**",
                   "External API is unreachable or returns > 299.",
                   "Abort with exit code 1.",
