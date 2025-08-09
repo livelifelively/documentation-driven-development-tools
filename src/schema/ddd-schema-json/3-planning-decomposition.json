@@ -136,8 +136,8 @@
       "id": "3.4",
       "name": "Decomposition Graph",
       "headingLevel": 3,
-      "description": "A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation.",
-      "contentFormat": "Mermaid `graph` diagram.",
+      "description": "A Mermaid diagram that visually represents the dependencies and sequencing of the child Plans/Tasks listed in the `3.1 Roadmap`. This graph shows the relationship between child Plans and Tasks, clarifying the critical path and helping developers understand the required order of implementation. Optional explanatory text may precede the diagram to provide context.",
+      "contentFormat": "Optional explanatory text followed by Mermaid `graph` diagram.",
       "applicability": {
         "plan": "required",
         "task": "omitted"
@@ -146,6 +146,10 @@
         {
           "context": "Plan",
           "content": [
+            {
+              "type": "text",
+              "content": "This diagram shows the decomposition of our authentication system, with the backend plan as the foundation and UI tasks building upon it."
+            },
             {
               "type": "mermaid",
               "diagramType": "graph",

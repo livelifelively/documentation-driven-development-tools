@@ -68,7 +68,7 @@
       "name": "Logging & Monitoring",
       "headingLevel": 4,
       "description": "Current observability analysis and existing logging/monitoring setup.",
-      "contentFormat": "Markdown list or table with current observability.",
+      "contentFormat": "Markdown table with current observability.",
       "applicability": {
         "plan": "required",
         "task": "omitted"
@@ -79,11 +79,12 @@
           "context": "Default",
           "content": [
             {
-              "type": "list",
-              "items": [
-                "**Current Logging**: Console output for errors and warnings",
-                "**Current Monitoring**: No formal monitoring in place",
-                "**Current Metrics**: No metrics collection implemented"
+              "type": "table",
+              "headers": ["Component", "Strategy", "Notes"],
+              "rows": [
+                ["Current Logging", "Console output for errors and warnings", ""],
+                ["Current Monitoring", "No formal monitoring in place", ""],
+                ["Current Metrics", "No metrics collection implemented", ""]
               ],
               "rendering": {
                 "renderAsCodeBlockForHuman": false,
@@ -159,7 +160,7 @@
       "name": "Logging & Monitoring",
       "headingLevel": 4,
       "description": "The strategy for system observability.",
-      "contentFormat": "Markdown list or table.",
+      "contentFormat": "Markdown table.",
       "applicability": {
         "plan": "required",
         "task": "required"
@@ -170,11 +171,12 @@
           "context": "Default",
           "content": [
             {
-              "type": "list",
-              "items": [
-                "**Metrics**: Prometheus endpoint `/metrics` will be exposed.",
-                "**Logs**: Structured JSON logs sent to stdout for collection by Fluentd.",
-                "**Tracing**: OpenTelemetry SDK will be used for distributed tracing."
+              "type": "table",
+              "headers": ["Component", "Strategy", "Notes"],
+              "rows": [
+                ["Metrics", "Prometheus endpoint `/metrics` will be exposed.", ""],
+                ["Logs", "Structured JSON logs sent to stdout for collection by Fluentd.", ""],
+                ["Tracing", "OpenTelemetry SDK will be used for distributed tracing.", ""]
               ],
               "rendering": {
                 "renderAsCodeBlockForHuman": false,

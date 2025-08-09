@@ -1,18 +1,18 @@
 import { loadJsonFromModuleDir } from './utils/file-utils.js';
 
-function loadJsonFile(filename: string) {
+export function loadDDDSchemaJsonFile(filename: string) {
   return loadJsonFromModuleDir(import.meta.url, `./schema/ddd-schema-json/${filename}`);
 }
 
-const family1 = loadJsonFile('1-meta.json');
-const family2 = loadJsonFile('2-business-scope.json');
-const family3 = loadJsonFile('3-planning-decomposition.json');
-const family4 = loadJsonFile('4-high-level-design.json');
-const family5 = loadJsonFile('5-maintenance-monitoring.json');
-const family6 = loadJsonFile('6-implementation-guidance.json');
-const family7 = loadJsonFile('7-quality-operations.json');
-const family8 = loadJsonFile('8-reference.json');
-const contextExamples = loadJsonFile('context-examples.json');
+const family1 = loadDDDSchemaJsonFile('1-meta.json');
+const family2 = loadDDDSchemaJsonFile('2-business-scope.json');
+const family3 = loadDDDSchemaJsonFile('3-planning-decomposition.json');
+const family4 = loadDDDSchemaJsonFile('4-high-level-design.json');
+const family5 = loadDDDSchemaJsonFile('5-maintenance-monitoring.json');
+const family6 = loadDDDSchemaJsonFile('6-implementation-guidance.json');
+const family7 = loadDDDSchemaJsonFile('7-quality-operations.json');
+const family8 = loadDDDSchemaJsonFile('8-reference.json');
+const contextExamples = loadDDDSchemaJsonFile('context-examples.json');
 
 import { TODO_PLACEHOLDER_TEXT } from './config.js';
 import {
