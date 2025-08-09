@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import { camelCase } from 'lodash-es';
+import { DocumentType, createSectionSchemaWithApplicability, getApplicability } from './shared.schema.js';
+import { loadDDDSchemaJsonFile } from '../../index.js';
+
+const referenceContent = loadDDDSchemaJsonFile('8-reference.json');
 
 // Glossary item schema
 const GlossaryItemSchema = z.object({
@@ -28,16 +33,31 @@ const AppendicesGlossarySchema = z
     }
   );
 
-// Reference family schema - optional family for supplementary information
-export const ReferenceFamilySchema = z.object({
-  appendicesGlossary: AppendicesGlossarySchema.optional(),
-});
+// Functions-only API; no constant family export
 
-// Export individual schemas for specific use cases
-export { AppendicesGlossarySchema, GlossaryItemSchema, AppendixItemSchema };
+// JSON-driven section factory
+const createAppendicesGlossarySection = (docType: DocumentType) =>
+  createSectionSchemaWithApplicability('8.1', docType, AppendicesGlossarySchema, referenceContent);
 
-// Export types
-export type ReferenceFamily = z.infer<typeof ReferenceFamilySchema>;
-export type AppendicesGlossary = z.infer<typeof AppendicesGlossarySchema>;
-export type GlossaryItem = z.infer<typeof GlossaryItemSchema>;
-export type AppendixItem = z.infer<typeof AppendixItemSchema>;
+// Family-level factory following established pattern
+export const createReferenceSchema = (docType: DocumentType) => {
+  const shape: Record<string, z.ZodTypeAny> = {};
+
+  for (const section of referenceContent.sections) {
+    const applicability = getApplicability(section.applicability, docType);
+    if (applicability === 'omitted') continue;
+
+    if (section.id !== '8.1') {
+      throw new Error(`Schema mismatch: No factory found for section ID "${section.id}" (${section.name}).`);
+    }
+
+    const base = createAppendicesGlossarySection(docType);
+    const key = camelCase(section.name); // "Appendices/Glossary" -> "appendicesGlossary"
+    shape[key] = applicability === 'optional' ? base.optional() : base;
+  }
+
+  return z.object(shape).strict();
+};
+
+export const getReferencePlanSchema = () => createReferenceSchema('plan');
+export const getReferenceTaskSchema = () => createReferenceSchema('task');

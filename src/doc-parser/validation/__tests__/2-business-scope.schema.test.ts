@@ -3,30 +3,6 @@ import {
   createBusinessScopeSchema,
   getBusinessScopeTaskSchema,
   getBusinessScopePlanSchema,
-  OverviewPlanSchema,
-  BusinessContextPlanSchema,
-  UserJourneyPlanSchema,
-  UserPersonasPlanSchema,
-  CoreBusinessRulesPlanSchema,
-  UserStoriesPlanSchema,
-  SuccessCriteriaPlanSchema,
-  DefinitionOfDonePlanSchema,
-  InScopePlanSchema,
-  OutOfScopePlanSchema,
-  BusinessProcessPlanSchema,
-  BusinessScopeFamilyPlanSchema,
-  OverviewTaskSchema,
-  BusinessContextTaskSchema,
-  UserJourneyTaskSchema,
-  UserPersonasTaskSchema,
-  CoreBusinessRulesTaskSchema,
-  UserStoriesTaskSchema,
-  SuccessCriteriaTaskSchema,
-  DefinitionOfDoneTaskSchema,
-  InScopeTaskSchema,
-  OutOfScopeTaskSchema,
-  BusinessProcessTaskSchema,
-  BusinessScopeFamilyTaskSchema,
 } from '../2-business-scope.schema';
 
 describe('Business & Scope Schema Validation', () => {
@@ -250,6 +226,7 @@ describe('Business & Scope Schema Validation', () => {
 
   describe('Individual Section Tests', () => {
     describe('Plan-Specific Section Tests', () => {
+      const planShape = createBusinessScopeSchema('plan').shape as any;
       describe('Overview Schema (Plan)', () => {
         it('should validate a complete overview', () => {
           const overviewSchema = createBusinessScopeSchema('plan').shape.overview;
@@ -297,7 +274,7 @@ describe('Business & Scope Schema Validation', () => {
       });
 
       describe('Business Context Schema (Plan)', () => {
-        const businessContextSchema = createBusinessScopeSchema('plan').shape.businessContext;
+        const businessContextSchema = planShape.businessContext;
         it('should validate a business context', () => {
           const validBusinessContext =
             'Currently, pipeline failures are opaque, requiring developers to manually inspect logs, which slows down resolution time.';
@@ -323,7 +300,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = UserJourneyPlanSchema.safeParse(validUserJourneys);
+          const result = planShape.userJourneys.safeParse(validUserJourneys);
           expect(result.success).toBe(true);
         });
 
@@ -335,7 +312,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = UserJourneyPlanSchema.safeParse(invalidUserJourneys);
+          const result = planShape.userJourneys.safeParse(invalidUserJourneys);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('name');
@@ -351,7 +328,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = UserJourneyPlanSchema.safeParse(invalidUserJourneys);
+          const result = planShape.userJourneys.safeParse(invalidUserJourneys);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('description');
@@ -372,7 +349,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = UserPersonasPlanSchema.safeParse(validUserPersonas);
+          const result = planShape.userPersonas.safeParse(validUserPersonas);
           expect(result.success).toBe(true);
         });
 
@@ -384,7 +361,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = UserPersonasPlanSchema.safeParse(invalidUserPersonas);
+          const result = planShape.userPersonas.safeParse(invalidUserPersonas);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('goal');
@@ -400,21 +377,21 @@ describe('Business & Scope Schema Validation', () => {
             'Performance must meet SLA requirements',
           ];
 
-          const result = CoreBusinessRulesPlanSchema.safeParse(validBusinessRules);
+          const result = planShape.coreBusinessRules.safeParse(validBusinessRules);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty business rules array', () => {
           const invalidBusinessRules: string[] = [];
 
-          const result = CoreBusinessRulesPlanSchema.safeParse(invalidBusinessRules);
+          const result = planShape.coreBusinessRules.safeParse(invalidBusinessRules);
           expect(result.success).toBe(false);
         });
 
         it('should reject business rules with empty strings', () => {
           const invalidBusinessRules = ['Valid rule', '', 'Another valid rule'];
 
-          const result = CoreBusinessRulesPlanSchema.safeParse(invalidBusinessRules);
+          const result = planShape.coreBusinessRules.safeParse(invalidBusinessRules);
           expect(result.success).toBe(false);
         });
       });
@@ -426,14 +403,14 @@ describe('Business & Scope Schema Validation', () => {
             'As a system administrator, I want to monitor system performance so that I can proactively resolve issues',
           ];
 
-          const result = UserStoriesPlanSchema.safeParse(validUserStories);
+          const result = planShape.userStories.safeParse(validUserStories);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty user stories array', () => {
           const invalidUserStories: string[] = [];
 
-          const result = UserStoriesPlanSchema.safeParse(invalidUserStories);
+          const result = planShape.userStories.safeParse(invalidUserStories);
           expect(result.success).toBe(false);
         });
       });
@@ -446,14 +423,14 @@ describe('Business & Scope Schema Validation', () => {
             'User satisfaction score above 4.5/5',
           ];
 
-          const result = SuccessCriteriaPlanSchema.safeParse(validSuccessCriteria);
+          const result = planShape.successCriteria.safeParse(validSuccessCriteria);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty success criteria array', () => {
           const invalidSuccessCriteria: string[] = [];
 
-          const result = SuccessCriteriaPlanSchema.safeParse(invalidSuccessCriteria);
+          const result = planShape.successCriteria.safeParse(invalidSuccessCriteria);
           expect(result.success).toBe(false);
         });
       });
@@ -466,14 +443,14 @@ describe('Business & Scope Schema Validation', () => {
             'Performance metrics collection',
           ];
 
-          const result = InScopePlanSchema.safeParse(validInScope);
+          const result = planShape.inScope.safeParse(validInScope);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty in scope array', () => {
           const invalidInScope: string[] = [];
 
-          const result = InScopePlanSchema.safeParse(invalidInScope);
+          const result = planShape.inScope.safeParse(invalidInScope);
           expect(result.success).toBe(false);
         });
       });
@@ -482,14 +459,14 @@ describe('Business & Scope Schema Validation', () => {
         it('should validate out of scope items', () => {
           const validOutOfScope = ['UI redesign', 'Database migration', 'Third-party integrations'];
 
-          const result = OutOfScopePlanSchema.safeParse(validOutOfScope);
+          const result = planShape.outOfScope.safeParse(validOutOfScope);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty out of scope array', () => {
           const invalidOutOfScope: string[] = [];
 
-          const result = OutOfScopePlanSchema.safeParse(invalidOutOfScope);
+          const result = planShape.outOfScope.safeParse(invalidOutOfScope);
           expect(result.success).toBe(false);
         });
       });
@@ -511,7 +488,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = BusinessProcessPlanSchema.safeParse(validBusinessProcesses);
+          const result = planShape.coreBusinessProcesses.safeParse(validBusinessProcesses);
           expect(result.success).toBe(true);
         });
 
@@ -524,7 +501,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = BusinessProcessPlanSchema.safeParse(invalidBusinessProcesses);
+          const result = planShape.coreBusinessProcesses.safeParse(invalidBusinessProcesses);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('name');
@@ -541,7 +518,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = BusinessProcessPlanSchema.safeParse(invalidBusinessProcesses);
+          const result = planShape.coreBusinessProcesses.safeParse(invalidBusinessProcesses);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('workflow');
@@ -551,6 +528,7 @@ describe('Business & Scope Schema Validation', () => {
     });
 
     describe('Task-Specific Section Tests', () => {
+      const taskShape = createBusinessScopeSchema('task').shape as any;
       describe('Overview Schema (Task)', () => {
         it('should validate a complete overview for task', () => {
           const overviewSchema = createBusinessScopeSchema('task').shape.overview;
@@ -605,21 +583,21 @@ describe('Business & Scope Schema Validation', () => {
             'Documentation must be updated with schema changes',
           ];
 
-          const result = CoreBusinessRulesTaskSchema.safeParse(validBusinessRules);
+          const result = taskShape.coreBusinessRules.safeParse(validBusinessRules);
           expect(result.success).toBe(true);
         });
 
         it('should reject empty business rules array for task', () => {
           const invalidBusinessRules: string[] = [];
 
-          const result = CoreBusinessRulesTaskSchema.safeParse(invalidBusinessRules);
+          const result = taskShape.coreBusinessRules.safeParse(invalidBusinessRules);
           expect(result.success).toBe(false);
         });
 
         it('should reject business rules with empty strings for task', () => {
           const invalidBusinessRules = ['Valid rule', '', 'Another valid rule'];
 
-          const result = CoreBusinessRulesTaskSchema.safeParse(invalidBusinessRules);
+          const result = taskShape.coreBusinessRules.safeParse(invalidBusinessRules);
           expect(result.success).toBe(false);
         });
       });
@@ -641,7 +619,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = DefinitionOfDoneTaskSchema.safeParse(validDefinitionOfDone);
+          const result = taskShape.definitionOfDone.safeParse(validDefinitionOfDone);
           expect(result.success).toBe(true);
         });
 
@@ -652,7 +630,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = DefinitionOfDoneTaskSchema.safeParse(invalidDefinitionOfDone);
+          const result = taskShape.definitionOfDone.safeParse(invalidDefinitionOfDone);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('id');
@@ -667,7 +645,7 @@ describe('Business & Scope Schema Validation', () => {
             },
           ];
 
-          const result = DefinitionOfDoneTaskSchema.safeParse(invalidDefinitionOfDone);
+          const result = taskShape.definitionOfDone.safeParse(invalidDefinitionOfDone);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('criterion');
@@ -678,16 +656,26 @@ describe('Business & Scope Schema Validation', () => {
       describe('In Scope Schema (Task)', () => {
         it('should be omitted for tasks', () => {
           // In Scope is omitted for tasks according to the JSON schema
-          const result = InScopeTaskSchema.safeParse(['some data']);
-          expect(result.success).toBe(false);
+          const taskShape = createBusinessScopeSchema('task').shape as Record<string, unknown>;
+          expect(taskShape.inScope).toBeUndefined();
+          const familyResult = createBusinessScopeSchema('task').safeParse({
+            overview: { coreFunction: 'x', keyCapability: 'y', businessValue: 'z' },
+            inScope: ['x'],
+          });
+          expect(familyResult.success).toBe(false);
         });
       });
 
       describe('Out of Scope Schema (Task)', () => {
         it('should be omitted for tasks', () => {
           // Out of Scope is omitted for tasks according to the JSON schema
-          const result = OutOfScopeTaskSchema.safeParse(['some data']);
-          expect(result.success).toBe(false);
+          const taskShape = createBusinessScopeSchema('task').shape as Record<string, unknown>;
+          expect(taskShape.outOfScope).toBeUndefined();
+          const familyResult = createBusinessScopeSchema('task').safeParse({
+            overview: { coreFunction: 'x', keyCapability: 'y', businessValue: 'z' },
+            outOfScope: ['x'],
+          });
+          expect(familyResult.success).toBe(false);
         });
       });
     });
@@ -755,7 +743,7 @@ describe('Business & Scope Schema Validation', () => {
           ],
         };
 
-        const result = BusinessScopeFamilyPlanSchema.safeParse(validPlanBusinessScope);
+        const result = createBusinessScopeSchema('plan').safeParse(validPlanBusinessScope);
         expect(result.success).toBe(true);
       });
 
@@ -790,7 +778,7 @@ describe('Business & Scope Schema Validation', () => {
           ],
         };
 
-        const result = BusinessScopeFamilyTaskSchema.safeParse(validTaskBusinessScope);
+        const result = createBusinessScopeSchema('task').safeParse(validTaskBusinessScope);
         expect(result.success).toBe(true);
       });
 
@@ -800,7 +788,7 @@ describe('Business & Scope Schema Validation', () => {
           userStories: ['Some user story'],
         };
 
-        const result = BusinessScopeFamilyPlanSchema.safeParse(invalidBusinessScope);
+        const result = createBusinessScopeSchema('plan').safeParse(invalidBusinessScope);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('overview');
@@ -816,7 +804,7 @@ describe('Business & Scope Schema Validation', () => {
           },
         };
 
-        const result = BusinessScopeFamilyPlanSchema.safeParse(invalidBusinessScope);
+        const result = createBusinessScopeSchema('plan').safeParse(invalidBusinessScope);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('coreFunction');

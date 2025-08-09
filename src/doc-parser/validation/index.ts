@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { createMetaGovernanceSchema } from './1-meta-governance.schema.js';
-import { BusinessScopeFamilySchema } from './2-business-scope.schema.js';
-import { PlanningDecompositionFamilySchema } from './3-planning-decomposition.schema.js';
-import { HighLevelDesignFamilySchema } from './4-high-level-design.schema.js';
-import { MaintenanceMonitoringFamilySchema } from './5-maintenance-monitoring.schema.js';
-import { ImplementationGuidanceFamilySchema } from './6-implementation-guidance.schema.js';
-import { QualityOperationsFamilySchema } from './7-quality-operations.schema.js';
-import { ReferenceFamilySchema } from './8-reference.schema.js';
+import { createBusinessScopeSchema } from './2-business-scope.schema.js';
+import { createPlanningDecompositionSchema } from './3-planning-decomposition.schema.js';
+import { createHighLevelDesignSchema } from './4-high-level-design.schema.js';
+import { createMaintenanceMonitoringSchema } from './5-maintenance-monitoring.schema.js';
+import { createImplementationGuidanceSchema } from './6-implementation-guidance.schema.js';
+import { createQualityOperationsSchema } from './7-quality-operations.schema.js';
+import { createReferenceSchema } from './8-reference.schema.js';
 
 // Export shared schemas
 export * from './shared.schema.js';
@@ -19,39 +19,46 @@ export {
 } from './1-meta-governance.schema.js';
 
 // Export all family-level schemas
-export { BusinessScopeFamilySchema } from './2-business-scope.schema.js';
-export { PlanningDecompositionFamilySchema } from './3-planning-decomposition.schema.js';
-export { HighLevelDesignFamilySchema } from './4-high-level-design.schema.js';
-export { MaintenanceMonitoringFamilySchema } from './5-maintenance-monitoring.schema.js';
-export { ImplementationGuidanceFamilySchema } from './6-implementation-guidance.schema.js';
-export { QualityOperationsFamilySchema } from './7-quality-operations.schema.js';
-export { ReferenceFamilySchema } from './8-reference.schema.js';
+// Export factories for families (preferred API)
+export { createBusinessScopeSchema } from './2-business-scope.schema.js';
+export { createPlanningDecompositionSchema } from './3-planning-decomposition.schema.js';
+export { createHighLevelDesignSchema } from './4-high-level-design.schema.js';
+export { createMaintenanceMonitoringSchema } from './5-maintenance-monitoring.schema.js';
+export { createImplementationGuidanceSchema } from './6-implementation-guidance.schema.js';
+export {
+  createQualityOperationsSchema,
+  getQualityOperationsPlanSchema,
+  getQualityOperationsTaskSchema,
+} from './7-quality-operations.schema.js';
+export { createReferenceSchema } from './8-reference.schema.js';
+
+// No static schema constants; functions only per project conventions
 
 // Combined schemas for end-to-end validation
 // Note: These are now async and need to be awaited
 export async function createTaskSchema() {
   return z.object({
-    metaGovernance: await createMetaGovernanceSchema('task'),
-    businessScope: BusinessScopeFamilySchema,
-    planningDecomposition: PlanningDecompositionFamilySchema,
-    highLevelDesign: HighLevelDesignFamilySchema.optional(),
-    maintenanceMonitoring: MaintenanceMonitoringFamilySchema.optional(),
-    implementationGuidance: ImplementationGuidanceFamilySchema.optional(),
-    qualityOperations: QualityOperationsFamilySchema,
-    reference: ReferenceFamilySchema.optional(),
+    metaGovernance: createMetaGovernanceSchema('task'),
+    businessScope: createBusinessScopeSchema('task'),
+    planningDecomposition: createPlanningDecompositionSchema('task'),
+    highLevelDesign: createHighLevelDesignSchema('task').optional(),
+    maintenanceMonitoring: createMaintenanceMonitoringSchema('task').optional(),
+    implementationGuidance: createImplementationGuidanceSchema('task').optional(),
+    qualityOperations: createQualityOperationsSchema('task'),
+    reference: createReferenceSchema('task').optional(),
   });
 }
 
 export async function createPlanSchema() {
   return z.object({
-    metaGovernance: await createMetaGovernanceSchema('plan'),
-    businessScope: BusinessScopeFamilySchema,
-    planningDecomposition: PlanningDecompositionFamilySchema,
-    highLevelDesign: HighLevelDesignFamilySchema.optional(),
-    maintenanceMonitoring: MaintenanceMonitoringFamilySchema.optional(),
-    implementationGuidance: ImplementationGuidanceFamilySchema.optional(),
-    qualityOperations: QualityOperationsFamilySchema,
-    reference: ReferenceFamilySchema.optional(),
+    metaGovernance: createMetaGovernanceSchema('plan'),
+    businessScope: createBusinessScopeSchema('plan'),
+    planningDecomposition: createPlanningDecompositionSchema('plan'),
+    highLevelDesign: createHighLevelDesignSchema('plan').optional(),
+    maintenanceMonitoring: createMaintenanceMonitoringSchema('plan').optional(),
+    implementationGuidance: createImplementationGuidanceSchema('plan').optional(),
+    qualityOperations: createQualityOperationsSchema('plan'),
+    reference: createReferenceSchema('plan').optional(),
   });
 }
 
@@ -73,16 +80,4 @@ export async function getPlanSchema() {
   return _planSchema;
 }
 
-// Export types for consumers
-export type { MetaGovernanceFamily } from './1-meta-governance.schema.js';
-export type { BusinessScopeFamily } from './2-business-scope.schema.js';
-export type { PlanningDecompositionFamily } from './3-planning-decomposition.schema.js';
-export type { HighLevelDesignFamily } from './4-high-level-design.schema.js';
-export type { MaintenanceMonitoringFamily } from './5-maintenance-monitoring.schema.js';
-export type { ImplementationGuidanceFamily } from './6-implementation-guidance.schema.js';
-export type { QualityOperationsFamily } from './7-quality-operations.schema.js';
-export type { ReferenceFamily } from './8-reference.schema.js';
-
-// Export combined types (these will be async in the future)
-export type Task = z.infer<Awaited<ReturnType<typeof createTaskSchema>>>;
-export type Plan = z.infer<Awaited<ReturnType<typeof createPlanSchema>>>;
+// No type exports for now per minimal API guideline

@@ -1,35 +1,34 @@
 import { describe, it, expect } from 'vitest';
-import {
-  MaintenanceMonitoringFamilySchema,
-  ErrorHandlingRowSchema,
-  ErrorHandlingTableSchema,
-  LoggingMonitoringSchema,
-  CurrentMaintenanceMonitoringSchema,
-  TargetMaintenanceMonitoringSchema,
-} from '../5-maintenance-monitoring.schema.js';
+import { createMaintenanceMonitoringSchema } from '../5-maintenance-monitoring.schema.js';
 
 describe('Maintenance & Monitoring Schema Validation', () => {
   describe('Error Handling Row Schema', () => {
     it('should validate a complete error handling row', () => {
       const validErrorRow = {
+        id: 'ERROR-01',
         errorType: 'File System Error',
         trigger: 'Cannot read a required file or directory.',
         action: 'Abort with exit code 1.',
         userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
       };
 
-      const result = ErrorHandlingRowSchema.safeParse(validErrorRow);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling.element;
+      const result = section.safeParse(validErrorRow);
       expect(result.success).toBe(true);
     });
 
     it('should reject error handling row with missing error type', () => {
       const invalidErrorRow = {
+        id: 'ERROR-01',
         trigger: 'Cannot read a required file or directory.',
         action: 'Abort with exit code 1.',
         userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
       };
 
-      const result = ErrorHandlingRowSchema.safeParse(invalidErrorRow);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling.element;
+      const result = section.safeParse(invalidErrorRow as any);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('errorType');
@@ -38,13 +37,16 @@ describe('Maintenance & Monitoring Schema Validation', () => {
 
     it('should reject error handling row with empty strings', () => {
       const invalidErrorRow = {
+        id: 'ERROR-01',
         errorType: '',
         trigger: 'Cannot read a required file or directory.',
         action: 'Abort with exit code 1.',
         userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
       };
 
-      const result = ErrorHandlingRowSchema.safeParse(invalidErrorRow);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling.element;
+      const result = section.safeParse(invalidErrorRow as any);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('errorType');
@@ -56,12 +58,14 @@ describe('Maintenance & Monitoring Schema Validation', () => {
     it('should validate a complete error handling table', () => {
       const validErrorTable = [
         {
+          id: 'ERROR-01',
           errorType: 'File System Error',
           trigger: 'Cannot read a required file or directory.',
           action: 'Abort with exit code 1.',
           userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
         },
         {
+          id: 'ERROR-02',
           errorType: 'Schema Validation Error',
           trigger: 'A document violates the canonical schema.',
           action: 'Abort with exit code 1.',
@@ -69,12 +73,16 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         },
       ];
 
-      const result = ErrorHandlingTableSchema.safeParse(validErrorTable);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling;
+      const result = section.safeParse(validErrorTable);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty error handling table', () => {
-      const result = ErrorHandlingTableSchema.safeParse([]);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling;
+      const result = section.safeParse([]);
       expect(result.success).toBe(false);
     });
 
@@ -94,20 +102,24 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         },
       ];
 
-      const result = ErrorHandlingTableSchema.safeParse(invalidErrorTable);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .errorHandling;
+      const result = section.safeParse(invalidErrorTable as any);
       expect(result.success).toBe(false);
     });
   });
 
   describe('Logging & Monitoring Schema', () => {
-    it('should validate logging monitoring as list', () => {
-      const validLoggingList = [
-        'Metrics: Prometheus endpoint /metrics will be exposed.',
-        'Logs: Structured JSON logs sent to stdout for collection by Fluentd.',
-        'Tracing: OpenTelemetry SDK will be used for distributed tracing.',
+    it('should validate logging monitoring as table', () => {
+      const validLoggingTable = [
+        { component: 'Metrics', strategy: 'Prometheus endpoint /metrics will be exposed.' },
+        { component: 'Logs', strategy: 'Structured JSON logs sent to stdout for collection by Fluentd.' },
+        { component: 'Tracing', strategy: 'OpenTelemetry SDK will be used for distributed tracing.' },
       ];
 
-      const result = LoggingMonitoringSchema.safeParse(validLoggingList);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .loggingMonitoring;
+      const result = section.safeParse(validLoggingTable);
       expect(result.success).toBe(true);
     });
 
@@ -123,12 +135,16 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         },
       ];
 
-      const result = LoggingMonitoringSchema.safeParse(validLoggingTable);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .loggingMonitoring;
+      const result = section.safeParse(validLoggingTable);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty logging monitoring list', () => {
-      const result = LoggingMonitoringSchema.safeParse([]);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .loggingMonitoring;
+      const result = section.safeParse([]);
       expect(result.success).toBe(false);
     });
 
@@ -139,7 +155,9 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         'Tracing: OpenTelemetry SDK will be used for distributed tracing.',
       ];
 
-      const result = LoggingMonitoringSchema.safeParse(invalidLoggingList);
+      const section = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring.shape
+        .loggingMonitoring;
+      const result = section.safeParse(invalidLoggingList as any);
       expect(result.success).toBe(false);
     });
   });
@@ -147,35 +165,65 @@ describe('Maintenance & Monitoring Schema Validation', () => {
   describe('Current Maintenance Monitoring Schema', () => {
     it('should validate current maintenance monitoring with all fields', () => {
       const validCurrentMonitoring = {
-        errorHandling: 'Current error handling uses basic try-catch blocks.',
-        loggingMonitoring: 'Current logging uses console.log statements.',
+        errorHandling: [
+          {
+            id: 'ERROR-01',
+            errorType: 'File System Error',
+            trigger: 'Cannot read a required file or directory.',
+            action: 'Abort with exit code 1.',
+            userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
+          },
+        ],
+        loggingMonitoring: [
+          { component: 'Current Logging', strategy: 'Console output for errors and warnings', notes: '' },
+          { component: 'Current Monitoring', strategy: 'No formal monitoring in place', notes: '' },
+          { component: 'Current Metrics', strategy: 'No metrics collection implemented', notes: '' },
+        ],
       };
 
-      const result = CurrentMaintenanceMonitoringSchema.safeParse(validCurrentMonitoring);
+      const current = (createMaintenanceMonitoringSchema('plan').shape as any).currentMaintenanceAndMonitoring;
+      const result = current.safeParse(validCurrentMonitoring);
       expect(result.success).toBe(true);
     });
 
-    it('should validate current maintenance monitoring with optional fields', () => {
-      const validCurrentMonitoring = {
-        errorHandling: 'Current error handling uses basic try-catch blocks.',
+    it('should reject current maintenance monitoring when any required field is missing', () => {
+      const invalidCurrentMonitoring = {
+        errorHandling: [
+          {
+            errorType: 'File System Error',
+            trigger: 'Cannot read a required file or directory.',
+            action: 'Abort with exit code 1.',
+            userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
+          },
+        ],
       };
 
-      const result = CurrentMaintenanceMonitoringSchema.safeParse(validCurrentMonitoring);
-      expect(result.success).toBe(true);
+      const current = (createMaintenanceMonitoringSchema('plan').shape as any).currentMaintenanceAndMonitoring;
+      const result = current.safeParse(invalidCurrentMonitoring as any);
+      expect(result.success).toBe(false);
     });
 
     it('should validate empty current maintenance monitoring', () => {
-      const result = CurrentMaintenanceMonitoringSchema.safeParse({});
-      expect(result.success).toBe(true);
+      const current = (createMaintenanceMonitoringSchema('plan').shape as any).currentMaintenanceAndMonitoring;
+      const result = current.safeParse({});
+      expect(result.success).toBe(false);
     });
 
     it('should reject current maintenance monitoring with empty strings', () => {
       const invalidCurrentMonitoring = {
-        errorHandling: '',
-        loggingMonitoring: 'Current logging uses console.log statements.',
+        errorHandling: [
+          {
+            errorType: '',
+            trigger: 'Cannot read a required file or directory.',
+            action: 'Abort with exit code 1.',
+            userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
+          },
+        ],
+        loggingMonitoring: ['Current Logging: Console output for errors and warnings', ''],
       };
 
-      const result = CurrentMaintenanceMonitoringSchema.safeParse(invalidCurrentMonitoring);
+      const current = (createMaintenanceMonitoringSchema('plan').shape as any).currentMaintenanceAndMonitoring;
+      const result = current.safeParse(invalidCurrentMonitoring as any);
       expect(result.success).toBe(false);
     });
   });
@@ -185,6 +233,7 @@ describe('Maintenance & Monitoring Schema Validation', () => {
       const validTargetMonitoring = {
         errorHandling: [
           {
+            id: 'ERROR-01',
             errorType: 'File System Error',
             trigger: 'Cannot read a required file or directory.',
             action: 'Abort with exit code 1.',
@@ -192,12 +241,17 @@ describe('Maintenance & Monitoring Schema Validation', () => {
           },
         ],
         loggingMonitoring: [
-          'Metrics: Prometheus endpoint /metrics will be exposed.',
-          'Logs: Structured JSON logs sent to stdout for collection by Fluentd.',
+          { component: 'Metrics', strategy: 'Prometheus endpoint /metrics will be exposed.', notes: 'N/A' },
+          {
+            component: 'Logs',
+            strategy: 'Structured JSON logs sent to stdout for collection by Fluentd.',
+            notes: 'N/A',
+          },
         ],
       };
 
-      const result = TargetMaintenanceMonitoringSchema.safeParse(validTargetMonitoring);
+      const target = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring;
+      const result = target.safeParse(validTargetMonitoring);
       expect(result.success).toBe(true);
     });
 
@@ -209,7 +263,8 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         ],
       };
 
-      const result = TargetMaintenanceMonitoringSchema.safeParse(invalidTargetMonitoring);
+      const target = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring;
+      const result = target.safeParse(invalidTargetMonitoring as any);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('errorHandling');
@@ -220,6 +275,7 @@ describe('Maintenance & Monitoring Schema Validation', () => {
       const invalidTargetMonitoring = {
         errorHandling: [
           {
+            id: 'ERROR-01',
             errorType: 'File System Error',
             trigger: 'Cannot read a required file or directory.',
             action: 'Abort with exit code 1.',
@@ -228,7 +284,8 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         ],
       };
 
-      const result = TargetMaintenanceMonitoringSchema.safeParse(invalidTargetMonitoring);
+      const target = (createMaintenanceMonitoringSchema('plan').shape as any).targetMaintenanceAndMonitoring;
+      const result = target.safeParse(invalidTargetMonitoring as any);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('loggingMonitoring');
@@ -239,13 +296,10 @@ describe('Maintenance & Monitoring Schema Validation', () => {
   describe('Maintenance Monitoring Schema (Complete Family)', () => {
     it('should validate a complete maintenance monitoring for a Plan', () => {
       const validPlanMaintenanceMonitoring = {
-        current: {
-          errorHandling: 'Current error handling uses basic try-catch blocks.',
-          loggingMonitoring: 'Current logging uses console.log statements.',
-        },
-        target: {
+        currentMaintenanceAndMonitoring: {
           errorHandling: [
             {
+              id: 'ERROR-01',
               errorType: 'File System Error',
               trigger: 'Cannot read a required file or directory.',
               action: 'Abort with exit code 1.',
@@ -253,47 +307,82 @@ describe('Maintenance & Monitoring Schema Validation', () => {
             },
           ],
           loggingMonitoring: [
-            'Metrics: Prometheus endpoint /metrics will be exposed.',
-            'Logs: Structured JSON logs sent to stdout for collection by Fluentd.',
+            { component: 'Current Logging', strategy: 'Console output for errors and warnings', notes: 'N/A' },
+            { component: 'Current Monitoring', strategy: 'No formal monitoring in place', notes: 'N/A' },
+          ],
+        },
+        targetMaintenanceAndMonitoring: {
+          errorHandling: [
+            {
+              id: 'ERROR-01',
+              errorType: 'File System Error',
+              trigger: 'Cannot read a required file or directory.',
+              action: 'Abort with exit code 1.',
+              userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
+            },
+          ],
+          loggingMonitoring: [
+            { component: 'Metrics', strategy: 'Prometheus endpoint /metrics will be exposed.', notes: 'N/A' },
+            {
+              component: 'Logs',
+              strategy: 'Structured JSON logs sent to stdout for collection by Fluentd.',
+              notes: 'N/A',
+            },
           ],
         },
       };
 
-      const result = MaintenanceMonitoringFamilySchema.safeParse(validPlanMaintenanceMonitoring);
+      const family = createMaintenanceMonitoringSchema('plan');
+      const result = family.safeParse(validPlanMaintenanceMonitoring);
       expect(result.success).toBe(true);
     });
 
     it('should validate a complete maintenance monitoring for a Task', () => {
       const validTaskMaintenanceMonitoring = {
-        target: {
+        targetMaintenanceAndMonitoring: {
           errorHandling: [
             {
+              id: 'ERROR-01',
               errorType: 'Schema Validation Error',
               trigger: 'A document violates the canonical schema.',
               action: 'Abort with exit code 1.',
               userFeedback: 'ERROR: Schema validation failed in [file]: [validation_details].',
             },
           ],
-          loggingMonitoring: ['Tracing: OpenTelemetry SDK will be used for distributed tracing.'],
+          loggingMonitoring: [
+            { component: 'Tracing', strategy: 'OpenTelemetry SDK will be used for distributed tracing.', notes: '' },
+          ],
         },
       };
 
-      const result = MaintenanceMonitoringFamilySchema.safeParse(validTaskMaintenanceMonitoring);
+      const family = createMaintenanceMonitoringSchema('task');
+      const result = family.safeParse(validTaskMaintenanceMonitoring);
       expect(result.success).toBe(true);
     });
 
     it('should reject maintenance monitoring with missing target', () => {
       const invalidMaintenanceMonitoring = {
-        current: {
-          errorHandling: 'Current error handling uses basic try-catch blocks.',
-          loggingMonitoring: 'Current logging uses console.log statements.',
+        currentMaintenanceAndMonitoring: {
+          errorHandling: [
+            {
+              id: 'ERROR-01',
+              errorType: 'File System Error',
+              trigger: 'Cannot read a required file or directory.',
+              action: 'Abort with exit code 1.',
+              userFeedback: 'ERROR: Cannot access [path]. Please check permissions.',
+            },
+          ],
+          loggingMonitoring: [
+            { component: 'Current Logging', strategy: 'Console output for errors and warnings', notes: 'N/A' },
+          ],
         },
       };
 
-      const result = MaintenanceMonitoringFamilySchema.safeParse(invalidMaintenanceMonitoring);
+      const family = createMaintenanceMonitoringSchema('plan');
+      const result = family.safeParse(invalidMaintenanceMonitoring as any);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('target');
+        expect(result.error.issues[0].path).toContain('targetMaintenanceAndMonitoring');
       }
     });
 
@@ -305,7 +394,8 @@ describe('Maintenance & Monitoring Schema Validation', () => {
         },
       };
 
-      const result = MaintenanceMonitoringFamilySchema.safeParse(invalidMaintenanceMonitoring);
+      const family = createMaintenanceMonitoringSchema('plan');
+      const result = family.safeParse(invalidMaintenanceMonitoring as any);
       expect(result.success).toBe(false);
     });
   });

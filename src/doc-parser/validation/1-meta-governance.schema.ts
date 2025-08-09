@@ -112,6 +112,3 @@ export const getMetaGovernanceTaskSchema = () => createMetaGovernanceSchema('tas
  * @returns A Zod schema for plan Meta & Governance
  */
 export const getMetaGovernancePlanSchema = () => createMetaGovernanceSchema('plan');
-
-// Export the factory and inferred type
-export type MetaGovernanceFamily = z.infer<ReturnType<typeof createMetaGovernanceSchema>>;

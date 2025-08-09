@@ -3,20 +3,6 @@ import {
   createPlanningDecompositionSchema,
   getPlanningDecompositionTaskSchema,
   getPlanningDecompositionPlanSchema,
-  RoadmapPlanSchema,
-  BacklogPlanSchema,
-  DependenciesPlanSchema,
-  DecompositionGraphPlanSchema,
-  PlanningDecompositionFamilyPlanSchema,
-  RoadmapTaskSchema,
-  BacklogTaskSchema,
-  DependenciesTaskSchema,
-  DecompositionGraphTaskSchema,
-  PlanningDecompositionFamilyTaskSchema,
-  RoadmapItemSchema,
-  BacklogItemSchema,
-  DependencySchema,
-  DecompositionGraphSchema,
 } from '../3-planning-decomposition.schema.js';
 import { z } from 'zod';
 
@@ -254,7 +240,8 @@ subgraph Plan: User Authentication
             },
           ];
 
-          const result = RoadmapPlanSchema.safeParse(validRoadmap);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.roadmapInFocusItems.safeParse(validRoadmap);
           expect(result.success).toBe(true);
         });
 
@@ -267,7 +254,8 @@ subgraph Plan: User Authentication
             },
           ];
 
-          const result = RoadmapPlanSchema.safeParse(invalidRoadmap);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.roadmapInFocusItems.safeParse(invalidRoadmap);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('childPlanTask');
@@ -277,7 +265,8 @@ subgraph Plan: User Authentication
         it('should reject empty roadmap array', () => {
           const invalidRoadmap: any[] = [];
 
-          const result = RoadmapPlanSchema.safeParse(invalidRoadmap);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.roadmapInFocusItems.safeParse(invalidRoadmap);
           expect(result.success).toBe(false);
         });
       });
@@ -295,7 +284,8 @@ subgraph Plan: User Authentication
             },
           ];
 
-          const result = BacklogPlanSchema.safeParse(validBacklog);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.backlogIcebox.safeParse(validBacklog);
           expect(result.success).toBe(true);
         });
 
@@ -306,7 +296,8 @@ subgraph Plan: User Authentication
             },
           ];
 
-          const result = BacklogPlanSchema.safeParse(invalidBacklog);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.backlogIcebox.safeParse(invalidBacklog);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('name');
@@ -316,7 +307,8 @@ subgraph Plan: User Authentication
         it('should reject empty backlog array', () => {
           const invalidBacklog: any[] = [];
 
-          const result = BacklogPlanSchema.safeParse(invalidBacklog);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.backlogIcebox.safeParse(invalidBacklog);
           expect(result.success).toBe(false);
         });
       });
@@ -338,7 +330,8 @@ subgraph Plan: User Authentication
     T3 --> T4`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(validDecompositionGraph);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(validDecompositionGraph);
           expect(result.success).toBe(true);
         });
 
@@ -350,7 +343,8 @@ B --> C
 C --> D`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(validDecompositionGraphWithDirection);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(validDecompositionGraphWithDirection);
           expect(result.success).toBe(true);
 
           // Verify the transformed output has the correct structure
@@ -371,7 +365,8 @@ A --> B
 B --> C`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(validDecompositionGraphWithLRDirection);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(validDecompositionGraphWithLRDirection);
           expect(result.success).toBe(true);
 
           if (result.success) {
@@ -394,7 +389,8 @@ A --> B
 B --> C`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(validDecompositionGraphWithText);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(validDecompositionGraphWithText);
           expect(result.success).toBe(true);
         });
 
@@ -410,7 +406,8 @@ A --> B
 B --> C`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(validDecompositionGraphWithMultipleText);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(validDecompositionGraphWithMultipleText);
           expect(result.success).toBe(true);
         });
 
@@ -419,7 +416,8 @@ B --> C`,
             text: ['The decomposition graph will be added during the planning phase.'],
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(invalidDecompositionGraphWithOnlyText);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(invalidDecompositionGraphWithOnlyText);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.message).toContain('expected string, received undefined');
@@ -433,7 +431,8 @@ B --> C`,
     ORDER ||--|{ ORDER_ITEM : contains`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(invalidDecompositionGraph);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(invalidDecompositionGraph);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.message).toContain('Diagram must be a valid Mermaid graph');
@@ -446,14 +445,15 @@ B --> C`,
 A --> B`,
           };
 
-          const result = DecompositionGraphPlanSchema.safeParse(invalidDecompositionGraph);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(invalidDecompositionGraph);
           expect(result.success).toBe(true); // Should still be valid, just no direction detected
         });
 
         it('should reject empty decomposition graph', () => {
           const invalidDecompositionGraph = {};
-
-          const result = DecompositionGraphPlanSchema.safeParse(invalidDecompositionGraph);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.decompositionGraph.safeParse(invalidDecompositionGraph);
           expect(result.success).toBe(false);
         });
       });
@@ -481,7 +481,8 @@ A --> B`,
             },
           ];
 
-          const result = DependenciesPlanSchema.safeParse(validDependencies);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.dependencies.safeParse(validDependencies);
           expect(result.success).toBe(true);
         });
 
@@ -496,7 +497,8 @@ A --> B`,
             },
           ];
 
-          const result = DependenciesPlanSchema.safeParse(invalidDependencies);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.dependencies.safeParse(invalidDependencies);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('id');
@@ -515,7 +517,8 @@ A --> B`,
             },
           ];
 
-          const result = DependenciesPlanSchema.safeParse(invalidDependencies);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.dependencies.safeParse(invalidDependencies);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('type');
@@ -525,7 +528,8 @@ A --> B`,
         it('should reject empty dependencies array', () => {
           const invalidDependencies: any[] = [];
 
-          const result = DependenciesPlanSchema.safeParse(invalidDependencies);
+          const planShape = createPlanningDecompositionSchema('plan').shape as any;
+          const result = planShape.dependencies.safeParse(invalidDependencies);
           expect(result.success).toBe(false);
         });
       });
@@ -543,7 +547,8 @@ A --> B`,
             },
           ];
 
-          const result = DependenciesTaskSchema.safeParse(validDependencies);
+          const taskShape = createPlanningDecompositionSchema('task').shape as any;
+          const result = taskShape.dependencies.safeParse(validDependencies);
           expect(result.success).toBe(true);
         });
 
@@ -557,7 +562,8 @@ A --> B`,
             },
           ];
 
-          const result = DependenciesTaskSchema.safeParse(invalidDependencies);
+          const taskShape = createPlanningDecompositionSchema('task').shape as any;
+          const result = taskShape.dependencies.safeParse(invalidDependencies);
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(result.error.issues[0].path).toContain('type');
@@ -749,7 +755,9 @@ subgraph Plan: User Authentication
           summary: 'Core backend services and APIs.',
         };
 
-        const result = RoadmapItemSchema.safeParse(validRoadmapItem);
+        const result = createPlanningDecompositionSchema('plan').shape.roadmapInFocusItems.safeParse([
+          validRoadmapItem,
+        ]);
         expect(result.success).toBe(true);
       });
 
@@ -763,7 +771,9 @@ subgraph Plan: User Authentication
           summary: 'Configure production database.',
         };
 
-        const result = RoadmapItemSchema.safeParse(validRoadmapItem);
+        const result = createPlanningDecompositionSchema('plan').shape.roadmapInFocusItems.safeParse([
+          validRoadmapItem,
+        ]);
         expect(result.success).toBe(true);
       });
 
@@ -776,7 +786,9 @@ subgraph Plan: User Authentication
           summary: 'Core backend services and APIs.',
         };
 
-        const result = RoadmapItemSchema.safeParse(invalidRoadmapItem);
+        const result = createPlanningDecompositionSchema('plan').shape.roadmapInFocusItems.safeParse([
+          invalidRoadmapItem,
+        ]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('id');
@@ -793,7 +805,9 @@ subgraph Plan: User Authentication
           summary: 'Core backend services and APIs.',
         };
 
-        const result = RoadmapItemSchema.safeParse(invalidRoadmapItem);
+        const result = createPlanningDecompositionSchema('plan').shape.roadmapInFocusItems.safeParse([
+          invalidRoadmapItem,
+        ]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('priority');
@@ -810,7 +824,9 @@ subgraph Plan: User Authentication
           summary: 'Core backend services and APIs.',
         };
 
-        const result = RoadmapItemSchema.safeParse(invalidRoadmapItem);
+        const result = createPlanningDecompositionSchema('plan').shape.roadmapInFocusItems.safeParse([
+          invalidRoadmapItem,
+        ]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('priorityDrivers');
@@ -825,7 +841,7 @@ subgraph Plan: User Authentication
           reason: 'Deferred to Q4 due to dependency on new analytics service.',
         };
 
-        const result = BacklogItemSchema.safeParse(validBacklogItem);
+        const result = createPlanningDecompositionSchema('plan').shape.backlogIcebox.safeParse([validBacklogItem]);
         expect(result.success).toBe(true);
       });
 
@@ -834,7 +850,7 @@ subgraph Plan: User Authentication
           reason: 'Deferred to Q4 due to dependency on new analytics service.',
         };
 
-        const result = BacklogItemSchema.safeParse(invalidBacklogItem);
+        const result = createPlanningDecompositionSchema('plan').shape.backlogIcebox.safeParse([invalidBacklogItem]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('name');
@@ -847,7 +863,7 @@ subgraph Plan: User Authentication
           reason: '',
         };
 
-        const result = BacklogItemSchema.safeParse(invalidBacklogItem);
+        const result = createPlanningDecompositionSchema('plan').shape.backlogIcebox.safeParse([invalidBacklogItem]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('reason');
@@ -866,7 +882,7 @@ subgraph Plan: User Authentication
           notes: 'Awaiting release from Platform team.',
         };
 
-        const result = DependencySchema.safeParse(validDependency);
+        const result = createPlanningDecompositionSchema('plan').shape.dependencies.safeParse([validDependency]);
         expect(result.success).toBe(true);
       });
 
@@ -880,7 +896,9 @@ subgraph Plan: User Authentication
           notes: 'User schema is now finalized.',
         };
 
-        const result = DependencySchema.safeParse(validInternalDependency);
+        const result = createPlanningDecompositionSchema('plan').shape.dependencies.safeParse([
+          validInternalDependency,
+        ]);
         expect(result.success).toBe(true);
       });
 
@@ -893,7 +911,7 @@ subgraph Plan: User Authentication
           notes: 'Awaiting release from Platform team.',
         };
 
-        const result = DependencySchema.safeParse(invalidDependency);
+        const result = createPlanningDecompositionSchema('plan').shape.dependencies.safeParse([invalidDependency]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('id');
@@ -910,7 +928,7 @@ subgraph Plan: User Authentication
           notes: 'Awaiting release from Platform team.',
         };
 
-        const result = DependencySchema.safeParse(invalidDependency);
+        const result = createPlanningDecompositionSchema('plan').shape.dependencies.safeParse([invalidDependency]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('type');
@@ -927,7 +945,7 @@ subgraph Plan: User Authentication
           notes: 'Awaiting release from Platform team.',
         };
 
-        const result = DependencySchema.safeParse(invalidDependency);
+        const result = createPlanningDecompositionSchema('plan').shape.dependencies.safeParse([invalidDependency]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('status');
@@ -944,7 +962,8 @@ subgraph Plan: User Authentication
           notes: 'Awaiting release from Platform team.',
         };
 
-        const result = DependencySchema.safeParse(invalidDependency);
+        const planShape = createPlanningDecompositionSchema('plan').shape as any;
+        const result = planShape.dependencies.safeParse([invalidDependency]);
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0].path).toContain('affectedPlansTasks');
@@ -954,29 +973,8 @@ subgraph Plan: User Authentication
 
     describe('Decomposition Graph Schema', () => {
       it('should validate a decomposition graph', () => {
-        const validDecompositionGraph = `graph
-subgraph Plan: User Authentication
-        P1["Plan: Backend Auth"]
-        T1["Task: Create UI form"]
-        T2["Task: Implement validation"]
-        T3["Task: Add API endpoint"]
-        T4["Task: Write integration tests"]
-    end
-    P1 --> T1
-    T1 --> T2
-    T2 --> T3
-    T3 --> T4`;
-
-        const result = DecompositionGraphSchema.safeParse(validDecompositionGraph);
-        expect(result.success).toBe(true);
-
-        // Verify the enhanced schema returns structured output
-        if (result.success) {
-          expect(result.data).toEqual({
-            type: 'mermaid',
-            diagramType: 'graph',
-            direction: undefined, // No direction specified
-            content: `graph
+        const validDecompositionGraph = {
+          diagram: `graph
 subgraph Plan: User Authentication
         P1["Plan: Backend Auth"]
         T1["Task: Create UI form"]
@@ -988,32 +986,30 @@ subgraph Plan: User Authentication
     T1 --> T2
     T2 --> T3
     T3 --> T4`,
-          });
-        }
+        };
+
+        const planShape = createPlanningDecompositionSchema('plan').shape as any;
+        const result = planShape.decompositionGraph.safeParse(validDecompositionGraph);
+        expect(result.success).toBe(true);
       });
 
       it('should validate a decomposition graph with direction', () => {
-        const validDecompositionGraphWithDirection = `graph TD
+        const validDecompositionGraphWithDirection = {
+          diagram: `graph TD
 A --> B
-B --> C`;
+B --> C`,
+        };
 
-        const result = DecompositionGraphSchema.safeParse(validDecompositionGraphWithDirection);
+        const planShape = createPlanningDecompositionSchema('plan').shape as any;
+        const result = planShape.decompositionGraph.safeParse(validDecompositionGraphWithDirection);
         expect(result.success).toBe(true);
-
-        if (result.success) {
-          expect(result.data).toEqual({
-            type: 'mermaid',
-            diagramType: 'graph',
-            direction: 'TD',
-            content: 'A --> B\nB --> C',
-          });
-        }
       });
 
       it('should reject empty decomposition graph', () => {
-        const invalidDecompositionGraph = '';
+        const invalidDecompositionGraph = { diagram: '' };
 
-        const result = DecompositionGraphSchema.safeParse(invalidDecompositionGraph);
+        const planShape = createPlanningDecompositionSchema('plan').shape as any;
+        const result = planShape.decompositionGraph.safeParse(invalidDecompositionGraph);
         expect(result.success).toBe(false);
       });
     });

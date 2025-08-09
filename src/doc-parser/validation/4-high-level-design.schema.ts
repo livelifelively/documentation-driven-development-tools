@@ -250,33 +250,4 @@ export const getHighLevelDesignTaskSchema = () => createHighLevelDesignSchema('t
  */
 export const getHighLevelDesignPlanSchema = () => createHighLevelDesignSchema('plan');
 
-// Export the factory and inferred type
-export type HighLevelDesignFamily = z.infer<ReturnType<typeof createHighLevelDesignSchema>>;
-
-// --- Individual Schema Exports for Specific Use Cases ---
-export {
-  guidingPrinciplesSchema,
-  integrationPointSchema,
-  techStackItemSchema,
-  nonFunctionalRequirementSchema,
-  permissionRoleSchema,
-};
-
-// Export individual architectural component factories
-export {
-  createCurrentArchitectureSchema,
-  createTargetArchitectureSchema,
-  createDataModelsSchema,
-  createComponentsSchema,
-  createDataFlowSchema,
-  createControlFlowSchema,
-  createIntegrationPointsSchema,
-  createExposedAPISchema,
-};
-
-// --- Type Exports ---
-export type GuidingPrinciples = z.infer<typeof guidingPrinciplesSchema>;
-export type IntegrationPoint = z.infer<typeof integrationPointSchema>;
-export type TechStackItem = z.infer<typeof techStackItemSchema>;
-export type NonFunctionalRequirement = z.infer<typeof nonFunctionalRequirementSchema>;
-export type PermissionRole = z.infer<typeof permissionRoleSchema>;
+// Functions-only API; no constant or type exports

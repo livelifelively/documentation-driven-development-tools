@@ -95,8 +95,11 @@ describe('Meta & Governance Schema Validation', () => {
 
   describe('Individual Section Tests', () => {
     describe('Plan-Specific Section Tests', () => {
+      // Use a single shape variable for brevity
+      const planShape = createMetaGovernanceSchema('plan').shape as any;
+
       describe('Status Schema (Plan)', () => {
-        const planStatusSchema = createMetaGovernanceSchema('plan').shape.status;
+        const planStatusSchema = planShape.status;
 
         it('should validate a valid plan status object', () => {
           const validPlanStatus = {
@@ -134,7 +137,7 @@ describe('Meta & Governance Schema Validation', () => {
       });
 
       describe('Priority Drivers Schema (Plan)', () => {
-        const planPriorityDriversSchema = createMetaGovernanceSchema('plan').shape.priorityDrivers;
+        const planPriorityDriversSchema = planShape.priorityDrivers;
 
         it('should validate valid priority drivers for plan', () => {
           const validPriorityDrivers = [
@@ -169,8 +172,10 @@ describe('Meta & Governance Schema Validation', () => {
     });
 
     describe('Task-Specific Section Tests', () => {
+      const taskShape = createMetaGovernanceSchema('task').shape as any;
+
       describe('Status Schema (Task)', () => {
-        const taskStatusSchema = createMetaGovernanceSchema('task').shape.status;
+        const taskStatusSchema = taskShape.status;
 
         it('should validate a complete task status', () => {
           const validTaskStatus = {
@@ -278,7 +283,7 @@ describe('Meta & Governance Schema Validation', () => {
       });
 
       describe('Priority Drivers Schema (Task)', () => {
-        const taskPriorityDriversSchema = createMetaGovernanceSchema('task').shape.priorityDrivers;
+        const taskPriorityDriversSchema = taskShape.priorityDrivers;
 
         it('should validate valid priority drivers for task', () => {
           const validPriorityDrivers = [

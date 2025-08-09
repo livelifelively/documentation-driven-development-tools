@@ -1,11 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ImplementationGuidanceFamilySchema,
-  ImplementationPlanSchema,
-  ImplementationLogStepsSchema,
-  InitialSituationSchema,
-  FilesChangeLogSchema,
-  PromptsSchema,
+  createImplementationGuidanceSchema,
+  getImplementationGuidancePlanSchema,
+  getImplementationGuidanceTaskSchema,
 } from '../6-implementation-guidance.schema';
 
 describe('Implementation Guidance Schema Validation', () => {
@@ -18,12 +15,14 @@ describe('Implementation Guidance Schema Validation', () => {
         'Phase 4: Create integration tests and documentation',
       ];
 
-      const result = ImplementationPlanSchema.safeParse(validImplementationPlan);
+      const planShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = planShape.implementationPlan.safeParse(validImplementationPlan);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty implementation plan', () => {
-      const result = ImplementationPlanSchema.safeParse([]);
+      const planShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = planShape.implementationPlan.safeParse([]);
       expect(result.success).toBe(false);
     });
 
@@ -34,7 +33,8 @@ describe('Implementation Guidance Schema Validation', () => {
         'Phase 3: Add comprehensive test coverage',
       ];
 
-      const result = ImplementationPlanSchema.safeParse(invalidImplementationPlan);
+      const planShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = planShape.implementationPlan.safeParse(invalidImplementationPlan);
       expect(result.success).toBe(false);
     });
   });
@@ -48,12 +48,14 @@ describe('Implementation Guidance Schema Validation', () => {
         '[ ] Write unit tests for transports.',
       ];
 
-      const result = ImplementationLogStepsSchema.safeParse(validImplementationLog);
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.implementationLogSteps.safeParse(validImplementationLog);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty implementation log', () => {
-      const result = ImplementationLogStepsSchema.safeParse([]);
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.implementationLogSteps.safeParse([]);
       expect(result.success).toBe(false);
     });
 
@@ -64,7 +66,8 @@ describe('Implementation Guidance Schema Validation', () => {
         '[ ] Write unit tests for transports.',
       ];
 
-      const result = ImplementationLogStepsSchema.safeParse(invalidImplementationLog);
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.implementationLogSteps.safeParse(invalidImplementationLog);
       expect(result.success).toBe(false);
     });
   });
@@ -74,17 +77,20 @@ describe('Implementation Guidance Schema Validation', () => {
       const validInitialSituation =
         'The project currently has no validation system in place. All documentation is manually reviewed, which is error-prone and time-consuming. We need to implement an automated validation system using Zod schemas.';
 
-      const result = InitialSituationSchema.safeParse(validInitialSituation);
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.initialSituation.safeParse(validInitialSituation);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty initial situation', () => {
-      const result = InitialSituationSchema.safeParse('');
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.initialSituation.safeParse('');
       expect(result.success).toBe(false);
     });
 
     it('should reject initial situation with only whitespace', () => {
-      const result = InitialSituationSchema.safeParse('   ');
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.initialSituation.safeParse('   ');
       expect(result.success).toBe(false);
     });
   });
@@ -103,17 +109,20 @@ Deleted:
 - None
       `.trim();
 
-      const result = FilesChangeLogSchema.safeParse(validFilesChangeLog);
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.filesChangeLog.safeParse(validFilesChangeLog);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty files change log', () => {
-      const result = FilesChangeLogSchema.safeParse('');
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.filesChangeLog.safeParse('');
       expect(result.success).toBe(false);
     });
 
     it('should reject files change log with only whitespace', () => {
-      const result = FilesChangeLogSchema.safeParse('   ');
+      const taskShape = createImplementationGuidanceSchema('task').shape as any;
+      const result = taskShape.filesChangeLog.safeParse('   ');
       expect(result.success).toBe(false);
     });
   });
@@ -133,7 +142,8 @@ Deleted:
         },
       ];
 
-      const result = PromptsSchema.safeParse(validPrompts);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse(validPrompts);
       expect(result.success).toBe(true);
     });
 
@@ -145,12 +155,14 @@ Deleted:
         },
       ];
 
-      const result = PromptsSchema.safeParse(validPrompts);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse(validPrompts);
       expect(result.success).toBe(true);
     });
 
     it('should reject empty prompts collection', () => {
-      const result = PromptsSchema.safeParse([]);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse([]);
       expect(result.success).toBe(false);
     });
 
@@ -162,7 +174,8 @@ Deleted:
         },
       ];
 
-      const result = PromptsSchema.safeParse(invalidPrompts);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse(invalidPrompts);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('description');
@@ -177,7 +190,8 @@ Deleted:
         },
       ];
 
-      const result = PromptsSchema.safeParse(invalidPrompts);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse(invalidPrompts);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('code');
@@ -193,7 +207,8 @@ Deleted:
         },
       ];
 
-      const result = PromptsSchema.safeParse(invalidPrompts);
+      const anyShape = createImplementationGuidanceSchema('plan').shape as any;
+      const result = anyShape.promptsLlmReuse.safeParse(invalidPrompts);
       expect(result.success).toBe(false);
     });
   });
@@ -207,7 +222,7 @@ Deleted:
           'Phase 3: Add comprehensive test coverage',
           'Phase 4: Create integration tests and documentation',
         ],
-        prompts: [
+        promptsLlmReuse: [
           {
             description: 'Generate a Zod schema for validation:',
             code: 'interface ValidationRule { field: string; type: string; required: boolean; }',
@@ -216,7 +231,8 @@ Deleted:
         ],
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(validPlanImplementationGuidance);
+      const family = createImplementationGuidanceSchema('plan');
+      const result = family.safeParse(validPlanImplementationGuidance);
       expect(result.success).toBe(true);
     });
 
@@ -238,7 +254,7 @@ Created:
 Modified:
 - src/doc-parser/validation/index.ts (added exports)
         `.trim(),
-        prompts: [
+        promptsLlmReuse: [
           {
             description: 'Generate a Vitest test for this function:',
             code: 'export const add = (a: number, b: number): number => a + b;',
@@ -247,15 +263,17 @@ Modified:
         ],
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(validTaskImplementationGuidance);
+      const family = createImplementationGuidanceSchema('task');
+      const result = family.safeParse(validTaskImplementationGuidance);
       expect(result.success).toBe(true);
     });
 
     it('should validate empty implementation guidance (all optional fields)', () => {
       const emptyImplementationGuidance = {};
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(emptyImplementationGuidance);
-      expect(result.success).toBe(true);
+      const family = createImplementationGuidanceSchema('plan');
+      const result = family.safeParse(emptyImplementationGuidance);
+      expect(result.success).toBe(false);
     });
 
     it('should reject implementation guidance with invalid implementation plan', () => {
@@ -270,7 +288,8 @@ Modified:
         ],
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(invalidImplementationGuidance);
+      const family = createImplementationGuidanceSchema('plan');
+      const result = family.safeParse(invalidImplementationGuidance);
       expect(result.success).toBe(false);
     });
 
@@ -283,7 +302,8 @@ Modified:
         ],
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(invalidImplementationGuidance);
+      const family = createImplementationGuidanceSchema('task');
+      const result = family.safeParse(invalidImplementationGuidance);
       expect(result.success).toBe(false);
     });
 
@@ -293,7 +313,8 @@ Modified:
         filesChangeLog: 'Created: src/doc-parser/validation/1-meta-governance.schema.ts',
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(invalidImplementationGuidance);
+      const family = createImplementationGuidanceSchema('task');
+      const result = family.safeParse(invalidImplementationGuidance);
       expect(result.success).toBe(false);
     });
 
@@ -303,7 +324,8 @@ Modified:
         filesChangeLog: '', // Invalid empty string
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(invalidImplementationGuidance);
+      const family = createImplementationGuidanceSchema('plan');
+      const result = family.safeParse(invalidImplementationGuidance);
       expect(result.success).toBe(false);
     });
 
@@ -318,8 +340,64 @@ Modified:
         ],
       };
 
-      const result = ImplementationGuidanceFamilySchema.safeParse(invalidImplementationGuidance);
+      const family = createImplementationGuidanceSchema('plan');
+      const result = family.safeParse(invalidImplementationGuidance);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('Family factory (docType-specific schemas)', () => {
+    it('plan schema: requires implementationPlan, allows promptsLlmReuse, disallows task-only fields', () => {
+      const planSchema = getImplementationGuidancePlanSchema();
+
+      const validPlan = {
+        implementationPlan: ['Phase 1: Setup', 'Phase 2: Execution'],
+        promptsLlmReuse: [{ description: 'Generate tests', code: 'describe(...)' }],
+      };
+      expect(planSchema.safeParse(validPlan).success).toBe(true);
+
+      // Missing required implementationPlan
+      const invalidPlanMissing = { promptsLlmReuse: [{ description: 'x', code: 'y' }] };
+      expect(planSchema.safeParse(invalidPlanMissing).success).toBe(false);
+
+      // Disallow task-only fields (strict object)
+      const invalidPlanWithTaskFields = {
+        implementationPlan: ['Phase 1'],
+        implementationLogSteps: ['[x] step'],
+        initialSituation: 'state',
+        filesChangeLog: 'Created: x',
+      } as unknown as Record<string, unknown>;
+      expect(planSchema.safeParse(invalidPlanWithTaskFields).success).toBe(false);
+    });
+
+    it('task schema: requires implementationLogSteps, initialSituation, filesChangeLog; allows promptsLlmReuse and optional implementationPlan', () => {
+      const taskSchema = getImplementationGuidanceTaskSchema();
+
+      const validTask = {
+        implementationLogSteps: ['[x] Create file', '[ ] Add tests'],
+        initialSituation: 'No system exists',
+        filesChangeLog: 'Created: a.ts',
+        promptsLlmReuse: [{ description: 'Refactor', code: 'apply refactor' }],
+        implementationPlan: ['Optional high-level steps'],
+      };
+      expect(taskSchema.safeParse(validTask).success).toBe(true);
+
+      // Missing a required task field
+      const invalidTaskMissing = {
+        implementationLogSteps: ['[x] step'],
+        initialSituation: 'state',
+        // filesChangeLog missing
+      } as unknown as Record<string, unknown>;
+      expect(taskSchema.safeParse(invalidTaskMissing).success).toBe(false);
+
+      // Unknown keys should fail (strict)
+      const invalidTaskUnknown = {
+        implementationLogSteps: ['[x] step'],
+        initialSituation: 'state',
+        filesChangeLog: 'Created: x',
+        unknownKey: true,
+      } as unknown as Record<string, unknown>;
+      expect(taskSchema.safeParse(invalidTaskUnknown).success).toBe(false);
     });
   });
 });

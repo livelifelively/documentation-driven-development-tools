@@ -1,15 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
-  QualityOperationsFamilySchema,
-  TestingStrategySchema,
-  ConfigurationSchema,
-  AlertingResponseSchema,
-  DeploymentStepsSchema,
-  LocalTestCommandsSchema,
+  createQualityOperationsSchema,
+  getQualityOperationsPlanSchema,
+  getQualityOperationsTaskSchema,
 } from '../7-quality-operations.schema.js';
 
 describe('Quality & Operations Schema Validation', () => {
-  describe('Testing Strategy Schema', () => {
+  describe('Testing Strategy Schema (unitIntegrationTests)', () => {
     it('should validate a complete testing strategy table', () => {
       const validTestingStrategy = [
         {
@@ -28,39 +25,53 @@ describe('Quality & Operations Schema Validation', () => {
         },
       ];
 
-      const result = TestingStrategySchema.safeParse(validTestingStrategy);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const validRows = [
+        { id: 'TEST-01', scenario: 'Unit test for parser', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' },
+        {
+          id: 'TEST-02',
+          scenario: 'Integration test for generator',
+          testType: 'Integration',
+          toolsRunner: 'Vitest',
+          notes: 'N',
+        },
+      ];
+      const result = anyShape.unitIntegrationTests.safeParse(validRows);
       expect(result.success).toBe(true);
     });
 
     it('should reject testing strategy with missing AC ID', () => {
-      const invalidTestingStrategy = [
+      const invalidRows = [
         {
-          dodLink: 'DoD-2',
-          scenario: 'Unit test for metaGovernanceSchema',
+          // id missing
+          scenario: 'Unit test for parser',
           testType: 'Unit',
-          testFile: '1-meta-governance.schema.test.ts',
+          toolsRunner: 'Vitest',
+          notes: 'N',
         },
       ];
 
-      const result = TestingStrategySchema.safeParse(invalidTestingStrategy);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.unitIntegrationTests.safeParse(invalidRows);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('acId');
+        expect(result.error.issues[0].path).toContain('id');
       }
     });
 
     it('should reject testing strategy with invalid test type', () => {
-      const invalidTestingStrategy = [
+      const invalidRows = [
         {
-          acId: 'AC-1',
-          dodLink: 'DoD-2',
-          scenario: 'Unit test for metaGovernanceSchema',
+          id: 'TEST-01',
+          scenario: 'Unit test for parser',
           testType: 'InvalidType',
-          testFile: '1-meta-governance.schema.test.ts',
+          toolsRunner: 'Vitest',
+          notes: 'N',
         },
       ];
 
-      const result = TestingStrategySchema.safeParse(invalidTestingStrategy);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.unitIntegrationTests.safeParse(invalidRows);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('testType');
@@ -68,17 +79,18 @@ describe('Quality & Operations Schema Validation', () => {
     });
 
     it('should reject testing strategy with empty scenario', () => {
-      const invalidTestingStrategy = [
+      const invalidRows = [
         {
-          acId: 'AC-1',
-          dodLink: 'DoD-2',
+          id: 'TEST-01',
           scenario: '',
           testType: 'Unit',
-          testFile: '1-meta-governance.schema.test.ts',
+          toolsRunner: 'Vitest',
+          notes: 'N',
         },
       ];
 
-      const result = TestingStrategySchema.safeParse(invalidTestingStrategy);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.unitIntegrationTests.safeParse(invalidRows);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('scenario');
@@ -90,36 +102,42 @@ describe('Quality & Operations Schema Validation', () => {
     it('should validate a complete configuration table', () => {
       const validConfiguration = [
         {
-          settingName: 'analyzerApiEndpoint',
-          planDependency: 'p1-analyzer',
-          source: 'ddd.config.json',
-          overrideMethod: 'DDD_ANALYZER_API_ENDPOINT (Environment Var)',
-          notes: '(Required) The URL of the external service for status reporting.',
+          id: 'CONFIG-01',
+          settingName: 'schemaProvider',
+          source: 'Injection',
+          default: 'native',
+          overrideMethod: 'ctor',
+          notes: 'N',
         },
         {
+          id: 'CONFIG-02',
           settingName: 'logLevel',
-          planDependency: '(All)',
           source: 'ddd.config.json',
-          overrideMethod: 'DDD_LOG_LEVEL (Environment Variable)',
-          notes: 'info (default), debug, warn, error. Controls logging verbosity.',
+          default: 'info',
+          overrideMethod: 'env',
+          notes: 'Controls logging verbosity.',
         },
       ];
 
-      const result = ConfigurationSchema.safeParse(validConfiguration);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.configuration.safeParse(validConfiguration);
       expect(result.success).toBe(true);
     });
 
     it('should reject configuration with missing setting name', () => {
       const invalidConfiguration = [
         {
-          planDependency: 'p1-analyzer',
-          source: 'ddd.config.json',
-          overrideMethod: 'DDD_ANALYZER_API_ENDPOINT (Environment Var)',
-          notes: '(Required) The URL of the external service for status reporting.',
+          id: 'CONFIG-01',
+          // settingName missing
+          source: 'Injection',
+          default: 'native',
+          overrideMethod: 'ctor',
+          notes: 'N',
         },
       ];
 
-      const result = ConfigurationSchema.safeParse(invalidConfiguration);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.configuration.safeParse(invalidConfiguration);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('settingName');
@@ -129,15 +147,17 @@ describe('Quality & Operations Schema Validation', () => {
     it('should reject configuration with empty source', () => {
       const invalidConfiguration = [
         {
-          settingName: 'analyzerApiEndpoint',
-          planDependency: 'p1-analyzer',
+          id: 'CONFIG-01',
+          settingName: 'schemaProvider',
           source: '',
-          overrideMethod: 'DDD_ANALYZER_API_ENDPOINT (Environment Var)',
-          notes: '(Required) The URL of the external service for status reporting.',
+          default: 'native',
+          overrideMethod: 'ctor',
+          notes: 'N',
         },
       ];
 
-      const result = ConfigurationSchema.safeParse(invalidConfiguration);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.configuration.safeParse(invalidConfiguration);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('source');
@@ -145,75 +165,84 @@ describe('Quality & Operations Schema Validation', () => {
     });
   });
 
-  describe('Alerting & Response Schema', () => {
+  describe('Event-Based Alerting Schema', () => {
     it('should validate a complete alerting and response table', () => {
-      const validAlertingResponse = [
+      const validEventAlerts = [
         {
-          errorCondition: 'Internal Script Failure',
-          relevantPlans: 'All',
-          responsePlan:
-            'Abort the git commit with a non-zero exit code. Print the error stack trace directly to the console.',
-          status: 'Not Started',
+          id: 'ALERT-01',
+          alertCondition: 'Parsing fails',
+          eventType: 'parsing.failed',
+          consumerResponse: 'Log',
+          notes: 'N',
         },
         {
-          errorCondition: 'External API Non-2xx Response',
-          relevantPlans: 'p1-analyzer',
-          responsePlan: "Abort the git commit with a non-zero exit code. Log the API's error response to the console.",
-          status: 'Not Started',
+          id: 'ALERT-02',
+          alertCondition: 'Validation fails',
+          eventType: 'validation.failed',
+          consumerResponse: 'Display error',
+          notes: 'N',
         },
       ];
 
-      const result = AlertingResponseSchema.safeParse(validAlertingResponse);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.eventBasedAlerting.safeParse(validEventAlerts);
       expect(result.success).toBe(true);
     });
 
     it('should reject alerting response with missing error condition', () => {
-      const invalidAlertingResponse = [
+      const invalidEventAlerts = [
         {
-          relevantPlans: 'All',
-          responsePlan: 'Abort the git commit with a non-zero exit code.',
-          status: 'Not Started',
+          id: 'ALERT-01',
+          // alertCondition missing
+          eventType: 'parsing.failed',
+          consumerResponse: 'Log',
+          notes: 'N',
         },
       ];
 
-      const result = AlertingResponseSchema.safeParse(invalidAlertingResponse);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.eventBasedAlerting.safeParse(invalidEventAlerts);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('errorCondition');
+        expect(result.error.issues[0].path).toContain('alertCondition');
       }
     });
 
-    it('should reject alerting response with invalid status', () => {
-      const invalidAlertingResponse = [
+    it('should reject event-based alerting with invalid eventType', () => {
+      const invalidEventAlerts = [
         {
-          errorCondition: 'Internal Script Failure',
-          relevantPlans: 'All',
-          responsePlan: 'Abort the git commit with a non-zero exit code.',
-          status: 'Invalid Status',
+          id: 'ALERT-01',
+          alertCondition: 'Parsing fails',
+          eventType: 123 as unknown as string,
+          consumerResponse: 'Log',
+          notes: 'N',
         },
       ];
 
-      const result = AlertingResponseSchema.safeParse(invalidAlertingResponse);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.eventBasedAlerting.safeParse(invalidEventAlerts);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('status');
+        expect(result.error.issues[0].path).toContain('eventType');
       }
     });
 
-    it('should reject alerting response with empty response plan', () => {
-      const invalidAlertingResponse = [
+    it('should reject event-based alerting with empty consumerResponse', () => {
+      const invalidEventAlerts = [
         {
-          errorCondition: 'Internal Script Failure',
-          relevantPlans: 'All',
-          responsePlan: '',
-          status: 'Not Started',
+          id: 'ALERT-01',
+          alertCondition: 'Parsing fails',
+          eventType: 'parsing.failed',
+          consumerResponse: '',
+          notes: 'N',
         },
       ];
 
-      const result = AlertingResponseSchema.safeParse(invalidAlertingResponse);
+      const anyShape = createQualityOperationsSchema('plan').shape as any;
+      const result = anyShape.eventBasedAlerting.safeParse(invalidEventAlerts);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('responsePlan');
+        expect(result.error.issues[0].path).toContain('consumerResponse');
       }
     });
   });
@@ -226,7 +255,8 @@ describe('Quality & Operations Schema Validation', () => {
         'Promote the build to production.',
       ];
 
-      const result = DeploymentStepsSchema.safeParse(validDeploymentSteps);
+      const planShape = createQualityOperationsSchema('plan').shape as any;
+      const result = planShape.deploymentSteps.safeParse(validDeploymentSteps);
       expect(result.success).toBe(true);
     });
 
@@ -237,7 +267,8 @@ describe('Quality & Operations Schema Validation', () => {
         'Promote the build to production.',
       ];
 
-      const result = DeploymentStepsSchema.safeParse(invalidDeploymentSteps);
+      const planShape = createQualityOperationsSchema('plan').shape as any;
+      const result = planShape.deploymentSteps.safeParse(invalidDeploymentSteps);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain(1);
@@ -251,7 +282,8 @@ describe('Quality & Operations Schema Validation', () => {
         'Promote the build to production.',
       ];
 
-      const result = DeploymentStepsSchema.safeParse(invalidDeploymentSteps);
+      const planShape = createQualityOperationsSchema('plan').shape as any;
+      const result = planShape.deploymentSteps.safeParse(invalidDeploymentSteps);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain(1);
@@ -267,7 +299,8 @@ describe('Quality & Operations Schema Validation', () => {
         'npm run test:integration',
       ];
 
-      const result = LocalTestCommandsSchema.safeParse(validLocalTestCommands);
+      const taskShape = createQualityOperationsSchema('task').shape as any;
+      const result = taskShape.localTestCommands.safeParse(validLocalTestCommands);
       expect(result.success).toBe(true);
     });
 
@@ -278,7 +311,8 @@ describe('Quality & Operations Schema Validation', () => {
         'npm run test:integration',
       ];
 
-      const result = LocalTestCommandsSchema.safeParse(invalidLocalTestCommands);
+      const taskShape = createQualityOperationsSchema('task').shape as any;
+      const result = taskShape.localTestCommands.safeParse(invalidLocalTestCommands);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain(1);
@@ -292,7 +326,8 @@ describe('Quality & Operations Schema Validation', () => {
         'npm run test:integration',
       ];
 
-      const result = LocalTestCommandsSchema.safeParse(invalidLocalTestCommands);
+      const taskShape = createQualityOperationsSchema('task').shape as any;
+      const result = taskShape.localTestCommands.safeParse(invalidLocalTestCommands);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain(1);
@@ -301,105 +336,154 @@ describe('Quality & Operations Schema Validation', () => {
   });
 
   describe('Quality Operations Schema (Main Schema)', () => {
-    it('should validate a complete quality operations object', () => {
-      const validQualityOperations = {
-        testingStrategy: [
-          {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
-          },
+    it('should validate a complete quality operations object (plan)', () => {
+      const plan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
         ],
         configuration: [
           {
-            settingName: 'analyzerApiEndpoint',
-            planDependency: 'p1-analyzer',
-            source: 'ddd.config.json',
-            overrideMethod: 'DDD_ANALYZER_API_ENDPOINT (Environment Var)',
-            notes: '(Required) The URL of the external service for status reporting.',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
-        alertingResponse: [
+        alertingResponse: {},
+        eventBasedAlerting: [
           {
-            errorCondition: 'Internal Script Failure',
-            relevantPlans: 'All',
-            responsePlan: 'Abort the git commit with a non-zero exit code.',
-            status: 'Not Started',
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
           },
         ],
-        deploymentSteps: [
-          'Run database migrations: yarn db:migrate',
-          'Update environment variables in Vercel dashboard.',
-        ],
-        localTestCommands: ['npm test -- --coverage src/doc-parser/validation/', 'npm run test:unit'],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
       };
 
-      const result = QualityOperationsFamilySchema.safeParse(validQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(plan);
       expect(result.success).toBe(true);
     });
 
-    it('should validate quality operations with only required fields', () => {
-      const minimalQualityOperations = {
-        testingStrategy: [
+    it('should validate plan with minimal valid content per applicability', () => {
+      const minimalPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
           {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
       };
 
-      const result = QualityOperationsFamilySchema.safeParse(minimalQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(minimalPlan);
       expect(result.success).toBe(true);
     });
 
     it('should reject quality operations with invalid testing strategy', () => {
-      const invalidQualityOperations = {
-        testingStrategy: [
+      const invalidPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: '', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
           {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: '',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
-      };
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
+      } as unknown as Record<string, unknown>;
 
-      const result = QualityOperationsFamilySchema.safeParse(invalidQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(invalidPlan);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('testingStrategy');
+        expect(result.error.issues[0].path).toContain('unitIntegrationTests');
       }
     });
 
     it('should reject quality operations with invalid configuration', () => {
-      const invalidQualityOperations = {
-        testingStrategy: [
-          {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
-          },
+      const invalidPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
         ],
         configuration: [
           {
+            id: 'CONFIG-01',
             settingName: '',
-            planDependency: 'p1-analyzer',
-            source: 'ddd.config.json',
-            overrideMethod: 'DDD_ANALYZER_API_ENDPOINT (Environment Var)',
-            notes: '(Required) The URL of the external service for status reporting.',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
-      };
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
+      } as unknown as Record<string, unknown>;
 
-      const result = QualityOperationsFamilySchema.safeParse(invalidQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(invalidPlan);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('configuration');
@@ -407,48 +491,79 @@ describe('Quality & Operations Schema Validation', () => {
     });
 
     it('should reject quality operations with invalid alerting response', () => {
-      const invalidQualityOperations = {
-        testingStrategy: [
+      const invalidPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
           {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
-        alertingResponse: [
+        alertingResponse: {},
+        eventBasedAlerting: [
           {
-            errorCondition: 'Internal Script Failure',
-            relevantPlans: 'All',
-            responsePlan: '',
-            status: 'Not Started',
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: '',
+            notes: 'N',
           },
         ],
-      };
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
+      } as unknown as Record<string, unknown>;
 
-      const result = QualityOperationsFamilySchema.safeParse(invalidQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(invalidPlan);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].path).toContain('alertingResponse');
+        expect(result.error.issues[0].path).toContain('eventBasedAlerting');
       }
     });
 
     it('should reject quality operations with invalid deployment steps', () => {
-      const invalidQualityOperations = {
-        testingStrategy: [
+      const invalidPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
           {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
         deploymentSteps: ['Run database migrations: yarn db:migrate', '', 'Promote the build to production.'],
-      };
+      } as unknown as Record<string, unknown>;
 
-      const result = QualityOperationsFamilySchema.safeParse(invalidQualityOperations);
+      const family = createQualityOperationsSchema('plan');
+      const result = family.safeParse(invalidPlan);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('deploymentSteps');
@@ -456,24 +571,139 @@ describe('Quality & Operations Schema Validation', () => {
     });
 
     it('should reject quality operations with invalid local test commands', () => {
-      const invalidQualityOperations = {
-        testingStrategy: [
+      const invalidTask = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
           {
-            acId: 'AC-1',
-            dodLink: 'DoD-2',
-            scenario: 'Unit test for metaGovernanceSchema',
-            testType: 'Unit',
-            testFile: '1-meta-governance.schema.test.ts',
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
           },
         ],
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
         localTestCommands: ['npm test -- --coverage src/doc-parser/validation/', '', 'npm run test:integration'],
-      };
+      } as unknown as Record<string, unknown>;
 
-      const result = QualityOperationsFamilySchema.safeParse(invalidQualityOperations);
+      const family = createQualityOperationsSchema('task');
+      const result = family.safeParse(invalidTask);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('localTestCommands');
       }
+    });
+  });
+
+  describe('Family factory (docType-specific schemas)', () => {
+    it('plan schema: requires plan-only sections and omits task-only sections', () => {
+      const planSchema = getQualityOperationsPlanSchema();
+
+      const validPlan = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
+          {
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
+          },
+        ],
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        deploymentSteps: ['Deploy step 1'],
+      };
+      const planResult = planSchema.safeParse(validPlan);
+      if (!planResult.success) {
+        // eslint-disable-next-line no-console
+        console.log('Plan schema parse error:', planResult.error.flatten());
+      }
+      expect(planResult.success).toBe(true);
+
+      const invalidPlanWithTask = {
+        ...validPlan,
+        localTestCommands: ['npm test'],
+      } as unknown as Record<string, unknown>;
+      expect(planSchema.safeParse(invalidPlanWithTask).success).toBe(false);
+    });
+
+    it('task schema: requires task-only sections and omits plan-only sections', () => {
+      const taskSchema = getQualityOperationsTaskSchema();
+
+      const validTask = {
+        testingStrategyRequirements: {},
+        unitIntegrationTests: [{ id: 'TEST-01', scenario: 'X', testType: 'Unit', toolsRunner: 'Vitest', notes: 'N' }],
+        endToEndE2ETestingStrategy: [
+          { id: 'E2E-01', scenario: 'Y', testType: 'E2E', toolsRunner: 'Vitest', notes: 'N' },
+        ],
+        configuration: [
+          {
+            id: 'CONFIG-01',
+            settingName: 'schemaProvider',
+            source: 'Injection',
+            default: 'native',
+            overrideMethod: 'ctor',
+            notes: 'N',
+          },
+        ],
+        alertingResponse: {},
+        eventBasedAlerting: [
+          {
+            id: 'ALERT-01',
+            alertCondition: 'Parsing fails',
+            eventType: 'parsing.failed',
+            consumerResponse: 'Log',
+            notes: 'N',
+          },
+        ],
+        consumerResponseStrategies: ['CLI Tools: display errors'],
+        errorRecovery: ['Parser Level: emit events'],
+        localTestCommands: ['npm test'],
+      };
+      const taskResult = taskSchema.safeParse(validTask);
+      if (!taskResult.success) {
+        // eslint-disable-next-line no-console
+        console.log('Task schema parse error:', taskResult.error.flatten());
+      }
+      expect(taskResult.success).toBe(true);
+
+      const invalidTaskWithPlan = {
+        ...validTask,
+        deploymentSteps: ['Deploy step 1'],
+      } as unknown as Record<string, unknown>;
+      expect(taskSchema.safeParse(invalidTaskWithPlan).success).toBe(false);
     });
   });
 });

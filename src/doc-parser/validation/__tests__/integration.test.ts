@@ -1,15 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
-  BusinessScopeFamilySchema,
-  PlanningDecompositionFamilySchema,
-  HighLevelDesignFamilySchema,
-  MaintenanceMonitoringFamilySchema,
-  ImplementationGuidanceFamilySchema,
-  QualityOperationsFamilySchema,
-  ReferenceFamilySchema,
+  createBusinessScopeSchema,
+  createPlanningDecompositionSchema,
+  createReferenceSchema,
   getTaskSchema,
   getPlanSchema,
   getMetaGovernanceTaskSchema,
+  getQualityOperationsTaskSchema,
 } from '../index';
 
 describe('Integration Tests', () => {
@@ -23,7 +20,7 @@ describe('Integration Tests', () => {
             priority: 'High',
             progress: 0,
             planningEstimate: 5,
-            estVariance: 0,
+            estVariancePts: 0,
             created: '2025-08-03 06:13',
             lastUpdated: '2025-08-03 21:35',
           },
@@ -83,50 +80,42 @@ describe('Integration Tests', () => {
           ],
         },
         qualityOperations: {
-          testingStrategy: [
+          testingStrategyRequirements: {},
+          unitIntegrationTests: [
             {
-              acId: 'AC-1',
-              dodLink: 'DoD-2',
-              scenario: 'Unit test for metaGovernanceSchema (valid and invalid Status)',
+              id: 'TEST-01',
+              scenario: 'Meta schema status validation',
               testType: 'Unit',
-              testFile: '__tests__/1-meta-governance.schema.test.ts',
-            },
-            {
-              acId: 'AC-2',
-              dodLink: 'DoD-3',
-              scenario: 'Unit test for businessScopeSchema (valid and invalid DoD table)',
-              testType: 'Unit',
-              testFile: '__tests__/2-business-scope.schema.test.ts',
-            },
-            {
-              acId: 'AC-3',
-              dodLink: 'DoD-3',
-              scenario: 'Unit test for planningDecompositionSchema (valid/invalid Dep table)',
-              testType: 'Unit',
-              testFile: '__tests__/3-planning-decomposition.schema.test.ts',
-            },
-            {
-              acId: 'AC-4',
-              dodLink: 'DoD-4',
-              scenario: 'Integration test with a fully valid mock task object',
-              testType: 'Integration',
-              testFile: '__tests__/integration.test.ts',
-            },
-            {
-              acId: 'AC-5',
-              dodLink: 'DoD-4',
-              scenario: 'Integration test with a mock task object containing multiple errors',
-              testType: 'Integration',
-              testFile: '__tests__/integration.test.ts',
-            },
-            {
-              acId: 'AC-6',
-              dodLink: 'DoD-1, 5',
-              scenario: 'Test that all family schemas are exported from the main index',
-              testType: 'Unit',
-              testFile: '__tests__/index.test.ts',
+              toolsRunner: 'Vitest',
+              notes: 'OK',
             },
           ],
+          endToEndE2ETestingStrategy: [
+            { id: 'E2E-01', scenario: 'Valid task end-to-end', testType: 'E2E', toolsRunner: 'Vitest', notes: 'OK' },
+          ],
+          configuration: [
+            {
+              id: 'CONFIG-01',
+              settingName: 'schemaProvider',
+              source: 'Injection',
+              default: 'native',
+              overrideMethod: 'ctor',
+              notes: 'OK',
+            },
+          ],
+          alertingResponse: {},
+          eventBasedAlerting: [
+            {
+              id: 'ALERT-01',
+              alertCondition: 'Parsing fails',
+              eventType: 'parsing.failed',
+              consumerResponse: 'Log',
+              notes: 'Critical',
+            },
+          ],
+          consumerResponseStrategies: ['CLI Tools: display errors'],
+          errorRecovery: ['Parser Level: emit events'],
+          localTestCommands: ['npm test'],
         },
         reference: {
           appendicesGlossary: {
@@ -154,18 +143,20 @@ describe('Integration Tests', () => {
       const metaGovernanceResult = metaGovernanceSchema.safeParse(validTaskObject.metaGovernance);
       expect(metaGovernanceResult.success).toBe(true);
 
-      const businessScopeResult = BusinessScopeFamilySchema.safeParse(validTaskObject.businessScope);
+      const businessScopeSchema = createBusinessScopeSchema('task');
+      const businessScopeResult = businessScopeSchema.safeParse(validTaskObject.businessScope);
       expect(businessScopeResult.success).toBe(true);
 
-      const planningDecompositionResult = PlanningDecompositionFamilySchema.safeParse(
-        validTaskObject.planningDecomposition
-      );
+      const planningDecompositionSchema = createPlanningDecompositionSchema('task');
+      const planningDecompositionResult = planningDecompositionSchema.safeParse(validTaskObject.planningDecomposition);
       expect(planningDecompositionResult.success).toBe(true);
 
-      const qualityOperationsResult = QualityOperationsFamilySchema.safeParse(validTaskObject.qualityOperations);
+      const qoSchema = getQualityOperationsTaskSchema();
+      const qualityOperationsResult = qoSchema.safeParse(validTaskObject.qualityOperations);
       expect(qualityOperationsResult.success).toBe(true);
 
-      const referenceResult = ReferenceFamilySchema.safeParse(validTaskObject.reference);
+      const referenceSchema = createReferenceSchema('task');
+      const referenceResult = referenceSchema.safeParse(validTaskObject.reference);
       expect(referenceResult.success).toBe(true);
 
       // Test the combined TaskSchema for end-to-end validation
@@ -177,9 +168,152 @@ describe('Integration Tests', () => {
 
   describe('Invalid Task Object', () => {
     it('should reject a task object with multiple structural errors', async () => {
-      // Test that the async factory functions work
+      const invalidTaskObject = {
+        metaGovernance: {
+          status: {
+            currentState: 'Invalid State', // Invalid enum
+            priority: 'Low',
+            progress: 150, // Out of range
+            planningEstimate: 5,
+            estVariancePts: 0,
+            created: '2025-08-03 06:13',
+            lastUpdated: '2025-08-03 21:35',
+          },
+          priorityDrivers: [], // Empty array
+        },
+        businessScope: {
+          overview: {
+            coreFunction: '', // Empty string
+            keyCapability: 'Validate parsed content structure of markdown sections',
+            businessValue: 'Enable automated validation of documentation content',
+          },
+        },
+        // Missing required families like planningDecomposition, qualityOperations
+      };
+
       const taskSchema = await getTaskSchema();
-      expect(taskSchema).toBeDefined();
+      const result = taskSchema.safeParse(invalidTaskObject);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const issues = result.error.issues;
+        // Check for a few expected errors to confirm validation is working
+        expect(issues.some((issue) => issue.path.includes('currentState'))).toBe(true);
+        expect(issues.some((issue) => issue.path.includes('progress'))).toBe(true);
+        expect(issues.some((issue) => issue.path.includes('priorityDrivers'))).toBe(true);
+        expect(issues.some((issue) => issue.path.includes('coreFunction'))).toBe(true);
+        expect(issues.some((issue) => issue.path.includes('planningDecomposition'))).toBe(true);
+        expect(issues.some((issue) => issue.path.includes('qualityOperations'))).toBe(true);
+      }
+    });
+  });
+
+  describe('Valid Plan Object', () => {
+    it('should validate a fully valid plan object', async () => {
+      const validPlanObject = {
+        metaGovernance: {
+          status: {
+            created: '2025-08-03 06:08',
+            lastUpdated: '2025-08-03 06:08',
+          },
+          priorityDrivers: ['TEC-Prod_Stability_Blocker', 'TEC-Dev_Productivity_Enhancement'],
+        },
+        businessScope: {
+          overview: {
+            coreFunction: 'Provides a validation engine for documentation content',
+            keyCapability: 'Introduces a second tier of validation on final markdown documents',
+            businessValue: 'Enforces runtime correctness and consistency of all documentation',
+          },
+          businessContext: 'Our current system lacks an enforcement mechanism.',
+          coreBusinessRules: ['Focus on Content Rules', 'Zod as the Rule Definition Language'],
+          userJourneys: [
+            { name: 'Author writes doc', description: 'Author drafts doc in repo', diagram: 'graph TD A-->B' },
+          ],
+          userPersonas: [{ persona: 'Developer', goal: 'Ship correct docs' }],
+          userStories: ['As a developer, I want validation so that docs are consistent.'],
+          successCriteria: ['A comprehensive library of Zod schemas is created.'],
+          inScope: ['Defining and maintaining a comprehensive library of Zod schemas'],
+          outOfScope: ['The implementation of any tool that consumes these schemas'],
+          coreBusinessProcesses: [
+            {
+              name: 'Validation CI',
+              participants: 'Repo, CI',
+              goal: 'Validate docs on PR',
+              workflow: ['checkout', 'validate', 'report'],
+            },
+          ],
+        },
+        planningDecomposition: {
+          roadmapInFocusItems: [
+            {
+              id: 'T32',
+              childPlanTask: '[Define Section Content Schemas](./p1-p6.t32-define-section-content-schemas.task.md)',
+              priority: 'High',
+              priorityDrivers: ['TEC-Prod_Stability_Blocker'],
+              status: 'Not Started',
+              dependsOn: 'T28',
+              summary: 'Create the Zod schemas that define the expected content for each section.',
+            },
+          ],
+          dependencies: [
+            {
+              id: 'D-1',
+              dependencyOn: '[Canonical Schema Interfaces](./p1.t28-define-schema-types.task.md)',
+              type: 'Internal',
+              status: 'In Progress',
+              affectedPlansTasks: ['T32'],
+              notes: 'The base types for the schema definition itself are a prerequisite for creating content schemas.',
+            },
+          ],
+          backlogIcebox: [{ name: 'Reporting Plan', reason: 'Deferred to Q4 due to dependency on analytics service' }],
+          decompositionGraph: {
+            diagram:
+              'graph TD\nsubgraph "P6: Doc Content Validator"\n T32["T32: Define Section Content Schemas"]\n T33["T33: Statically Generate Composed Schemas"]\nend\n\nT32 --> T33',
+          },
+        },
+        qualityOperations: {
+          testingStrategyRequirements: {},
+          unitIntegrationTests: [
+            {
+              id: 'SC-3',
+              scenario: 'A schema successfully parses a valid, compliant content object.',
+              testType: 'Unit',
+              toolsRunner: 'Vitest',
+              notes: 'For each schema, provide a "golden path" test case with a perfect example of the content.',
+            },
+          ],
+          endToEndE2ETestingStrategy: [
+            { id: 'E2E-01', scenario: 'End-to-end happy path', testType: 'E2E', toolsRunner: 'Vitest', notes: 'OK' },
+          ],
+          configuration: [
+            {
+              id: 'CONFIG-01',
+              settingName: 'schemaProvider',
+              source: 'Injection',
+              default: 'native',
+              overrideMethod: 'ctor',
+              notes: 'OK',
+            },
+          ],
+          alertingResponse: {},
+          eventBasedAlerting: [
+            {
+              id: 'ALERT-01',
+              alertCondition: 'Parsing fails',
+              eventType: 'parsing.failed',
+              consumerResponse: 'Log',
+              notes: 'N',
+            },
+          ],
+          consumerResponseStrategies: ['CLI Tools: display errors'],
+          errorRecovery: ['Parser Level: emit events'],
+          deploymentSteps: ['Deployment of this library is handled as part of the parent `ddd-tools` npm package.'],
+        },
+      };
+
+      const planSchema = await getPlanSchema();
+      const result = planSchema.safeParse(validPlanObject);
+      expect(result.success).toBe(true);
     });
   });
 });

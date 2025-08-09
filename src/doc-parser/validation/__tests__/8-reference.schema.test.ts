@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ReferenceFamilySchema, AppendicesGlossarySchema } from '../8-reference.schema.js';
+import { createReferenceSchema, getReferencePlanSchema, getReferenceTaskSchema } from '../8-reference.schema.js';
 
 describe('Reference Schema Validation', () => {
   describe('Appendices/Glossary Schema', () => {
@@ -27,7 +27,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(validAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(validAppendicesGlossary);
       expect(result.success).toBe(true);
     });
 
@@ -41,7 +42,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(validAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(validAppendicesGlossary);
       expect(result.success).toBe(true);
     });
 
@@ -55,7 +57,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(validAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(validAppendicesGlossary);
       expect(result.success).toBe(true);
     });
 
@@ -69,7 +72,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('term');
@@ -86,7 +90,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('definition');
@@ -102,7 +107,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('term');
@@ -118,7 +124,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('definition');
@@ -135,7 +142,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('title');
@@ -152,7 +160,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('content');
@@ -168,7 +177,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('title');
@@ -184,7 +194,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('content');
@@ -201,7 +212,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('term');
@@ -218,7 +230,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('definition');
@@ -235,7 +248,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('title');
@@ -252,7 +266,8 @@ describe('Reference Schema Validation', () => {
         ],
       };
 
-      const result = AppendicesGlossarySchema.safeParse(invalidAppendicesGlossary);
+      const shape = createReferenceSchema('plan').shape as any;
+      const result = shape.appendicesGlossary.safeParse(invalidAppendicesGlossary);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('content');
@@ -287,7 +302,8 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(validReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(validReference);
       expect(result.success).toBe(true);
     });
 
@@ -303,7 +319,8 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(validReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(validReference);
       expect(result.success).toBe(true);
     });
 
@@ -319,14 +336,16 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(validReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(validReference);
       expect(result.success).toBe(true);
     });
 
     it('should validate empty reference object', () => {
       const validReference = {};
 
-      const result = ReferenceFamilySchema.safeParse(validReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(validReference);
       expect(result.success).toBe(true);
     });
 
@@ -342,7 +361,8 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(invalidReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(invalidReference);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('appendicesGlossary');
@@ -361,7 +381,8 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(invalidReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(invalidReference);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('appendicesGlossary');
@@ -380,11 +401,48 @@ describe('Reference Schema Validation', () => {
         },
       };
 
-      const result = ReferenceFamilySchema.safeParse(invalidReference);
+      const family = createReferenceSchema('plan');
+      const result = family.safeParse(invalidReference);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].path).toContain('appendicesGlossary');
       }
+    });
+  });
+
+  describe('Family factory (docType-specific schemas)', () => {
+    it('plan schema: optional appendicesGlossary accepted; strict object', () => {
+      const planSchema = getReferencePlanSchema();
+
+      const validPlan = {
+        appendicesGlossary: {
+          glossary: [{ term: 'PII', definition: 'Personally Identifiable Information.' }],
+        },
+      };
+      expect(planSchema.safeParse(validPlan).success).toBe(true);
+
+      const emptyPlan = {};
+      expect(planSchema.safeParse(emptyPlan).success).toBe(true);
+
+      const invalidPlanUnknown = { unknown: true } as unknown as Record<string, unknown>;
+      expect(planSchema.safeParse(invalidPlanUnknown).success).toBe(false);
+    });
+
+    it('task schema: optional appendicesGlossary accepted; strict object', () => {
+      const taskSchema = getReferenceTaskSchema();
+
+      const validTask = {
+        appendicesGlossary: {
+          appendices: [{ title: 'API Reference', content: 'Docs' }],
+        },
+      };
+      expect(taskSchema.safeParse(validTask).success).toBe(true);
+
+      const emptyTask = {};
+      expect(taskSchema.safeParse(emptyTask).success).toBe(true);
+
+      const invalidTaskUnknown = { unknown: true } as unknown as Record<string, unknown>;
+      expect(taskSchema.safeParse(invalidTaskUnknown).success).toBe(false);
     });
   });
 });

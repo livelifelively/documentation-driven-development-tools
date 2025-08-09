@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   PriorityLevel,
   StatusKey,
+  PriorityDriver,
   DependencyStatus,
   DependencyType,
   DocumentType,
@@ -21,7 +22,7 @@ const roadmapItemSchema = z.object({
   id: z.string().min(1), // e.g., "P1", "T1"
   childPlanTask: z.string().min(1), // e.g., "[Backend Plan](p1-backend.plan.md)"
   priority: PriorityLevel,
-  priorityDrivers: z.array(z.string().min(1)).min(1), // e.g., ["CBP-Break_Block_Revenue_Legal"]
+  priorityDrivers: z.array(PriorityDriver).min(1), // e.g., ["CBP-Break_Block_Revenue_Legal"]
   status: StatusKey,
   dependsOn: z.string().optional(), // e.g., "—", "P1", "T1"
   summary: z.string().min(1),
@@ -126,40 +127,4 @@ export const getPlanningDecompositionTaskSchema = () => createPlanningDecomposit
  */
 export const getPlanningDecompositionPlanSchema = () => createPlanningDecompositionSchema('plan');
 
-// Export the factory and inferred type
-export type PlanningDecompositionFamily = z.infer<ReturnType<typeof createPlanningDecompositionSchema>>;
-
-// --- Static Schema Exports for Backward Compatibility ---
-// These are used by tests that expect static schemas
-
-// --- Plan-Specific Schema Exports ---
-
-export const PlanningDecompositionFamilyPlanSchema = createPlanningDecompositionSchema('plan');
-
-// Individual section schemas for testing
-export const RoadmapPlanSchema = createRoadmapSchema('plan');
-export const BacklogPlanSchema = createBacklogSchema('plan');
-export const DependenciesPlanSchema = createDependenciesSchema('plan');
-export const DecompositionGraphPlanSchema = createDecompositionGraphSchema('plan');
-
-// --- Task-Specific Schema Exports ---
-
-export const PlanningDecompositionFamilyTaskSchema = createPlanningDecompositionSchema('task');
-export const RoadmapTaskSchema = createRoadmapSchema('task');
-export const BacklogTaskSchema = createBacklogSchema('task');
-export const DependenciesTaskSchema = createDependenciesSchema('task');
-export const DecompositionGraphTaskSchema = createDecompositionGraphSchema('task');
-
-// --- Individual Schema Exports for Specific Use Cases ---
-export {
-  roadmapItemSchema as RoadmapItemSchema,
-  backlogItemSchema as BacklogItemSchema,
-  dependencySchema as DependencySchema,
-  decompositionGraphSchema as DecompositionGraphSchema,
-};
-
-// --- Type Exports ---
-export type RoadmapItem = z.infer<typeof roadmapItemSchema>;
-export type BacklogItem = z.infer<typeof backlogItemSchema>;
-export type Dependency = z.infer<typeof dependencySchema>;
-export type DecompositionGraph = z.infer<typeof decompositionGraphSchema>;
+// Functions-only API; no constant or type exports

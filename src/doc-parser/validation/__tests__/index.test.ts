@@ -1,28 +1,28 @@
 import { describe, it, expect } from 'vitest';
 import {
-  BusinessScopeFamilySchema,
-  PlanningDecompositionFamilySchema,
-  HighLevelDesignFamilySchema,
-  MaintenanceMonitoringFamilySchema,
-  ImplementationGuidanceFamilySchema,
-  QualityOperationsFamilySchema,
-  ReferenceFamilySchema,
+  createBusinessScopeSchema,
+  createPlanningDecompositionSchema,
+  createHighLevelDesignSchema,
+  createMaintenanceMonitoringSchema,
   getTaskSchema,
   getPlanSchema,
   getMetaGovernanceTaskSchema,
   getMetaGovernancePlanSchema,
+  createImplementationGuidanceSchema,
+  createQualityOperationsSchema,
+  createReferenceSchema,
 } from '../index';
 
 describe('Validation Schema Index', () => {
   describe('Schema Exports', () => {
     it('should export all family schemas', () => {
-      expect(BusinessScopeFamilySchema).toBeDefined();
-      expect(PlanningDecompositionFamilySchema).toBeDefined();
-      expect(HighLevelDesignFamilySchema).toBeDefined();
-      expect(MaintenanceMonitoringFamilySchema).toBeDefined();
-      expect(ImplementationGuidanceFamilySchema).toBeDefined();
-      expect(QualityOperationsFamilySchema).toBeDefined();
-      expect(ReferenceFamilySchema).toBeDefined();
+      expect(createBusinessScopeSchema).toBeDefined();
+      expect(createPlanningDecompositionSchema).toBeDefined();
+      expect(createHighLevelDesignSchema).toBeDefined();
+      expect(createMaintenanceMonitoringSchema).toBeDefined();
+      expect(createImplementationGuidanceSchema).toBeDefined();
+      expect(createQualityOperationsSchema).toBeDefined();
+      expect(createReferenceSchema).toBeDefined();
     });
 
     it('should export all family types', () => {
