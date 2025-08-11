@@ -3,7 +3,7 @@ import {
   createBusinessScopeSchema,
   getBusinessScopeTaskSchema,
   getBusinessScopePlanSchema,
-} from '../2-business-scope.schema';
+} from '../../2-business-scope.schema.js';
 
 describe('Business & Scope Schema Validation', () => {
   describe('Factory Function Tests', () => {

@@ -7,22 +7,28 @@ const businessScopeContent = loadDDDSchemaJsonFile('2-business-scope.json');
 
 // --- Section-Level Factory Functions ---
 
-const createOverviewSchema = (docType: DocumentType) => {
+const createOverviewSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const overviewSchema = z.object({
     coreFunction: z.string().min(1),
     keyCapability: z.string().min(1),
     businessValue: z.string().min(1),
   });
 
-  return createSectionSchemaWithApplicability('2.1', docType, overviewSchema, businessScopeContent);
+  const schema = createSectionSchemaWithApplicability(sectionId, docType, overviewSchema, businessScopeContent, byId);
+  return schema;
 };
 
-const createBusinessContextSchema = (docType: DocumentType) => {
-  const schema = z.string().min(1);
-  return createSectionSchemaWithApplicability('2.2', docType, schema, businessScopeContent);
+const createBusinessContextSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = z
+    .string()
+    .min(1)
+    .refine((val) => val.trim().length > 0, {
+      message: 'Business context cannot be empty or whitespace-only',
+    });
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createUserJourneysSchema = (docType: DocumentType) => {
+const createUserJourneysSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const userJourneySchema = z.object({
     name: z.string().min(1),
     description: z.string().min(1),
@@ -30,61 +36,77 @@ const createUserJourneysSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(userJourneySchema).min(1);
-  return createSectionSchemaWithApplicability('2.2.1', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createUserPersonasSchema = (docType: DocumentType) => {
+const createUserPersonasSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const userPersonaSchema = z.object({
     persona: z.string().min(1),
     goal: z.string().min(1),
   });
 
   const schema = z.array(userPersonaSchema).min(1);
-  return createSectionSchemaWithApplicability('2.2.2', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createCoreBusinessRulesSchema = (docType: DocumentType) => {
+const createCoreBusinessRulesSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('2.2.3', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createUserStoriesSchema = (docType: DocumentType) => {
+const createUserStoriesSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('2.2.4', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createSuccessCriteriaSchema = (docType: DocumentType) => {
+const createSuccessCriteriaSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('2.3', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createDefinitionOfDoneSchema = (docType: DocumentType) => {
+const createDefinitionOfDoneSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   const definitionOfDoneItemSchema = z.object({
     id: z.string().min(1), // e.g., "DoD-1"
     criterion: z.string().min(1),
   });
 
   const schema = z.array(definitionOfDoneItemSchema).min(1);
-  return createSectionSchemaWithApplicability('2.4', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createBoundariesAndScopeSchema = (docType: DocumentType) => {
+const createBoundariesAndScopeSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   // This is a container section, so we'll return a placeholder schema
   const schema = z.object({}).optional();
-  return createSectionSchemaWithApplicability('2.5', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createInScopeSchema = (docType: DocumentType) => {
+const createInScopeSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('2.5.1', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createOutOfScopeSchema = (docType: DocumentType) => {
+const createOutOfScopeSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(z.string().min(1)).min(1);
-  return createSectionSchemaWithApplicability('2.5.2', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
-const createCoreBusinessProcessesSchema = (docType: DocumentType) => {
+const createCoreBusinessProcessesSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   const businessProcessSchema = z.object({
     name: z.string().min(1),
     participants: z.string().min(1),
@@ -93,11 +115,14 @@ const createCoreBusinessProcessesSchema = (docType: DocumentType) => {
   });
 
   const schema = z.array(businessProcessSchema).min(1);
-  return createSectionSchemaWithApplicability('2.6', docType, schema, businessScopeContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, businessScopeContent, byId);
 };
 
 // --- Section Factory Map ---
-const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+const sectionFactories: Record<
+  string,
+  (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny
+> = {
   '2.1': createOverviewSchema,
   '2.2': createBusinessContextSchema,
   '2.2.1': createUserJourneysSchema,
@@ -116,12 +141,13 @@ const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> 
 
 /**
  * Creates a fully composed Zod schema for the Business & Scope family
- * by iterating through the JSON definition and using a factory map.
+ * with byId registration for individual section access.
  *
  * @param docType - The document type ('plan' or 'task').
- * @returns A Zod schema for the Business & Scope family.
+ * @returns A Zod schema for the Business & Scope family with byId index.
  */
 export const createBusinessScopeSchema = (docType: DocumentType) => {
+  const byId: Record<string, z.ZodTypeAny> = {};
   const familyShape: Record<string, z.ZodTypeAny> = {};
 
   for (const section of businessScopeContent.sections) {
@@ -142,12 +168,17 @@ export const createBusinessScopeSchema = (docType: DocumentType) => {
       );
     }
 
-    const schema = factory(docType);
+    const schema = factory(section.id, docType, byId);
     const sectionName = camelCase(section.name);
     familyShape[sectionName] = applicability === 'optional' ? schema.optional() : schema;
   }
 
-  return z.object(familyShape).strict();
+  const schema = z.object(familyShape).strict();
+
+  // Add byId index to the schema
+  (schema as any).__byId = byId;
+
+  return schema;
 };
 
 // --- Convenience Functions for Backward Compatibility ---
