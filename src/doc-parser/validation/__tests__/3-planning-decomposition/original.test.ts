@@ -3,7 +3,7 @@ import {
   createPlanningDecompositionSchema,
   getPlanningDecompositionTaskSchema,
   getPlanningDecompositionPlanSchema,
-} from '../3-planning-decomposition.schema.js';
+} from '../../3-planning-decomposition.schema.js';
 import { z } from 'zod';
 
 describe('Planning & Decomposition Schema Validation', () => {

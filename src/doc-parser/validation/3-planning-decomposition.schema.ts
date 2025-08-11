@@ -43,33 +43,40 @@ const dependencySchema = z.object({
 
 // --- Section-Level Factory Functions ---
 
-const createRoadmapSchema = (docType: DocumentType) => {
+const createRoadmapSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(roadmapItemSchema).min(1);
-  return createSectionSchemaWithApplicability('3.1', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, planningDecompositionContent, byId);
 };
 
-const createBacklogSchema = (docType: DocumentType) => {
+const createBacklogSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(backlogItemSchema).min(1);
-  return createSectionSchemaWithApplicability('3.2', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, planningDecompositionContent, byId);
 };
 
-const createDependenciesSchema = (docType: DocumentType) => {
+const createDependenciesSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(dependencySchema).min(1);
-  return createSectionSchemaWithApplicability('3.3', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, planningDecompositionContent, byId);
 };
 
-const createDecompositionGraphSchema = (docType: DocumentType) => {
+const createDecompositionGraphSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   const schema = createMermaidWithTextSchema('graph', {
     diagramRequired: true,
     textRequired: false,
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability('3.4', docType, schema, planningDecompositionContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, planningDecompositionContent, byId);
 };
 
 // --- Section Factory Map ---
-const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+const sectionFactories: Record<
+  string,
+  (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny
+> = {
   '3.1': createRoadmapSchema,
   '3.2': createBacklogSchema,
   '3.3': createDependenciesSchema,
@@ -86,6 +93,7 @@ const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> 
  * @returns A Zod schema for the Planning & Decomposition family.
  */
 export const createPlanningDecompositionSchema = (docType: DocumentType) => {
+  const byId: Record<string, z.ZodTypeAny> = {};
   const familyShape: Record<string, z.ZodTypeAny> = {};
 
   for (const section of planningDecompositionContent.sections) {
@@ -101,12 +109,17 @@ export const createPlanningDecompositionSchema = (docType: DocumentType) => {
       );
     }
 
-    const schema = factory(docType);
+    const schema = factory(section.id, docType, byId); // Updated call
     const sectionName = camelCase(section.name);
     familyShape[sectionName] = applicability === 'optional' ? schema.optional() : schema;
   }
 
-  return z.object(familyShape).strict();
+  const schema = z.object(familyShape).strict();
+
+  // Add byId index to the schema
+  (schema as any).__byId = byId;
+
+  return schema;
 };
 
 // --- Convenience Functions for Backward Compatibility ---
