@@ -3,7 +3,7 @@ import {
   createHighLevelDesignSchema,
   getHighLevelDesignTaskSchema,
   getHighLevelDesignPlanSchema,
-} from '../4-high-level-design.schema.js';
+} from '../../4-high-level-design.schema.js';
 import { z } from 'zod';
 
 describe('High-Level Design Schema Validation', () => {
@@ -20,7 +20,9 @@ describe('High-Level Design Schema Validation', () => {
     };
 
     describe('for docType: "plan"', () => {
-      const schema = (createHighLevelDesignSchema('plan').shape as any).currentArchitecture;
+      const family = createHighLevelDesignSchema('plan') as any;
+      const schema = (family.shape as any).currentArchitecture;
+      const byId = family.__byId as Record<string, z.ZodTypeAny>;
 
       it('should be an optional schema', () => {
         expect(schema.isOptional()).toBe(true);
@@ -29,6 +31,8 @@ describe('High-Level Design Schema Validation', () => {
       it('should validate a structure with only subsections', () => {
         const result = schema.safeParse(validSubsections);
         expect(result.success, 'Validation should succeed with full subsections').toBe(true);
+        // Also validate via id→schema index using the same family
+        expect(byId['4.1'].safeParse(validSubsections).success).toBe(true);
       });
 
       it('should validate a structure with only a text description', () => {
@@ -46,12 +50,14 @@ describe('High-Level Design Schema Validation', () => {
       it('should invalidate an empty object', () => {
         const result = schema.safeParse({});
         expect(result.success, 'Validation should fail for an empty object').toBe(false);
+        expect(byId['4.1'].safeParse({}).success).toBe(false);
       });
 
       it('should invalidate data with extra properties due to .strict() in the union components', () => {
         const invalidData = { ...validSubsections, extraProperty: 'should not be here' };
         const result = schema.safeParse(invalidData);
         expect(result.success, 'Validation should fail due to extra properties').toBe(false);
+        expect(byId['4.1'].safeParse(invalidData).success).toBe(false);
       });
     });
 
@@ -81,7 +87,9 @@ describe('High-Level Design Schema Validation', () => {
     };
 
     describe('for docType: "plan"', () => {
-      const schema = (createHighLevelDesignSchema('plan').shape as any).targetArchitecture;
+      const family = createHighLevelDesignSchema('plan') as any;
+      const schema = (family.shape as any).targetArchitecture;
+      const byId = family.__byId as Record<string, z.ZodTypeAny>;
 
       it('should be a required schema', () => {
         expect(schema.isOptional()).toBe(false);
@@ -90,6 +98,8 @@ describe('High-Level Design Schema Validation', () => {
       it('should validate a structure with only subsections', () => {
         const result = schema.safeParse(validSubsections);
         expect(result.success).toBe(true);
+        // Also validate via id→schema index using the same family
+        expect(byId['4.2'].safeParse(validSubsections).success).toBe(true);
       });
 
       it('should validate a structure with only a text description', () => {
@@ -107,6 +117,7 @@ describe('High-Level Design Schema Validation', () => {
       it('should invalidate an empty object', () => {
         const result = schema.safeParse({});
         expect(result.success).toBe(false);
+        expect(byId['4.2'].safeParse({}).success).toBe(false);
       });
     });
 
@@ -379,6 +390,7 @@ describe('High-Level Design Schema Validation', () => {
     describe('Plan-Specific Section Tests', () => {
       describe('Guiding Principles Schema (Plan)', () => {
         const guidingPrinciplesSchema = (planSchema.shape as any).guidingPrinciples;
+        const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
 
         it('should validate a complete guiding principles array', () => {
           const validGuidingPrinciples = [
@@ -389,6 +401,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = guidingPrinciplesSchema.safeParse(validGuidingPrinciples);
           expect(result.success).toBe(true);
+          expect(byId['4.0'].safeParse(validGuidingPrinciples).success).toBe(true);
         });
 
         it('should reject guiding principles array with empty strings', () => {
@@ -400,6 +413,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
           expect(result.success).toBe(false);
+          expect(byId['4.0'].safeParse(invalidGuidingPrinciples).success).toBe(false);
         });
 
         it('should reject empty guiding principles array', () => {
@@ -407,11 +421,13 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = guidingPrinciplesSchema.safeParse(invalidGuidingPrinciples);
           expect(result.success).toBe(false);
+          expect(byId['4.0'].safeParse(invalidGuidingPrinciples).success).toBe(false);
         });
       });
 
       describe('Current Architecture Schema (Plan)', () => {
         const currentArchitectureSchema = (planSchema.shape as any).currentArchitecture;
+        const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
 
         it('should validate a complete current architecture', () => {
           const validCurrentArchitecture = {
@@ -437,6 +453,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = currentArchitectureSchema.safeParse(validCurrentArchitecture);
           expect(result.success).toBe(true);
+          expect(byId['4.1'].safeParse(validCurrentArchitecture).success).toBe(true);
         });
 
         it('should validate current architecture with only some sections', () => {
@@ -447,6 +464,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = currentArchitectureSchema.safeParse(validCurrentArchitecture);
           expect(result.success).toBe(true);
+          expect(byId['4.1'].safeParse(validCurrentArchitecture).success).toBe(true);
         });
 
         it('should reject current architecture with invalid diagram type', () => {
@@ -457,6 +475,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = currentArchitectureSchema.safeParse(invalidCurrentArchitecture);
           expect(result.success).toBe(false);
+          expect(byId['4.1'].safeParse(invalidCurrentArchitecture).success).toBe(false);
         });
       });
     });
@@ -470,6 +489,8 @@ describe('High-Level Design Schema Validation', () => {
       const nfrTaskSchema = (taskSchema.shape as any).nonFunctionalRequirements;
 
       describe('Target Architecture Schema (Plan)', () => {
+        const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
         it('should validate a complete target architecture for plan', () => {
           const validTargetArchitecture = {
             dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
@@ -495,6 +516,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = targetArchitecturePlanSchema.safeParse(validTargetArchitecture);
           expect(result.success).toBe(true);
+          expect(byId['4.2'].safeParse(validTargetArchitecture).success).toBe(true);
         });
 
         it('should invalidate target architecture with only some sections', () => {
@@ -505,6 +527,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = targetArchitecturePlanSchema.safeParse(invalidTargetArchitecture);
           expect(result.success).toBe(false);
+          expect(byId['4.2'].safeParse(invalidTargetArchitecture).success).toBe(false);
         });
 
         it('should reject target architecture with invalid diagram type', () => {
@@ -515,10 +538,13 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = targetArchitecturePlanSchema.safeParse(invalidTargetArchitecture);
           expect(result.success).toBe(false);
+          expect(byId['4.2'].safeParse(invalidTargetArchitecture).success).toBe(false);
         });
       });
 
       describe('Target Architecture Schema (Task)', () => {
+        const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
         it('should validate a complete target architecture for task', () => {
           const validTargetArchitecture = {
             dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
@@ -534,6 +560,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = targetArchitectureTaskSchema.safeParse(validTargetArchitecture);
           expect(result.success).toBe(true);
+          expect(byIdTask['4.2'].safeParse(validTargetArchitecture).success).toBe(true);
         });
 
         it('should invalidate target architecture with only some sections for task', () => {
@@ -544,10 +571,12 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = targetArchitectureTaskSchema.safeParse(invalidTargetArchitecture);
           expect(result.success).toBe(false);
+          expect(byIdTask['4.2'].safeParse(invalidTargetArchitecture).success).toBe(false);
         });
       });
 
       describe('Tech Stack & Deployment Schema (Plan)', () => {
+        const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
         it('should validate a complete tech stack deployment array', () => {
           const validTechStackDeployment = [
             { category: 'Language', technology: 'TypeScript' },
@@ -558,6 +587,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = techStackPlanSchema.safeParse(validTechStackDeployment);
           expect(result.success).toBe(true);
+          expect(byId['4.3'].safeParse(validTechStackDeployment).success).toBe(true);
         });
 
         it('should reject tech stack deployment array with missing category', () => {
@@ -568,6 +598,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = techStackPlanSchema.safeParse(invalidTechStackDeployment);
           expect(result.success).toBe(false);
+          expect(byId['4.3'].safeParse(invalidTechStackDeployment).success).toBe(false);
         });
 
         it('should reject empty tech stack deployment array', () => {
@@ -575,10 +606,12 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = techStackPlanSchema.safeParse(invalidTechStackDeployment);
           expect(result.success).toBe(false);
+          expect(byId['4.3'].safeParse(invalidTechStackDeployment).success).toBe(false);
         });
       });
 
       describe('Tech Stack & Deployment Schema (Task)', () => {
+        const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
         it('should validate a complete tech stack deployment array for task', () => {
           const validTechStackDeployment = [
             { category: 'Language', technology: 'TypeScript' },
@@ -588,6 +621,8 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = techStackTaskSchema.safeParse(validTechStackDeployment);
           expect(result.success).toBe(true);
+
+          expect(byIdTask['4.3'].safeParse(validTechStackDeployment).success).toBe(true);
         });
 
         it('should reject tech stack deployment array with missing technology', () => {
@@ -598,10 +633,12 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = techStackTaskSchema.safeParse(invalidTechStackDeployment);
           expect(result.success).toBe(false);
+          expect(byIdTask['4.3'].safeParse(invalidTechStackDeployment).success).toBe(false);
         });
       });
 
       describe('Non-Functional Requirements Schema (Plan)', () => {
+        const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
         it('should validate a complete non-functional requirements object', () => {
           const validNonFunctionalRequirements = {
             performance: [
@@ -652,6 +689,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = nfrPlanSchema.safeParse(validNonFunctionalRequirements);
           expect(result.success).toBe(true);
+          expect(byId['4.4'].safeParse(validNonFunctionalRequirements).success).toBe(true);
         });
 
         it('should validate non-functional requirements with only some sections', () => {
@@ -664,6 +702,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = nfrPlanSchema.safeParse(validNonFunctionalRequirements);
           expect(result.success).toBe(true);
+          expect(byId['4.4'].safeParse(validNonFunctionalRequirements).success).toBe(true);
         });
 
         it('should reject non-functional requirements with invalid priority', () => {
@@ -675,10 +714,12 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = nfrPlanSchema.safeParse(invalidNonFunctionalRequirements);
           expect(result.success).toBe(false);
+          expect(byId['4.4'].safeParse(invalidNonFunctionalRequirements).success).toBe(false);
         });
       });
 
       describe('Non-Functional Requirements Schema (Task)', () => {
+        const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
         it('should validate a complete non-functional requirements object for task', () => {
           const validNonFunctionalRequirements = {
             performance: [
@@ -697,6 +738,7 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = nfrTaskSchema.safeParse(validNonFunctionalRequirements);
           expect(result.success).toBe(true);
+          expect(byIdTask['4.4'].safeParse(validNonFunctionalRequirements).success).toBe(true);
         });
 
         it('should reject non-functional requirements with missing required fields', () => {
@@ -708,6 +750,505 @@ describe('High-Level Design Schema Validation', () => {
 
           const result = nfrTaskSchema.safeParse(invalidNonFunctionalRequirements);
           expect(result.success).toBe(false);
+          expect(byIdTask['4.4'].safeParse(invalidNonFunctionalRequirements).success).toBe(false);
+        });
+      });
+
+      describe('Target Architecture Subsection Tests', () => {
+        describe('Data Models Schema (4.2.1)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const targetArchPlanSchema = (planSchema.shape as any).targetArchitecture;
+          const targetArchTaskSchema = (taskSchema.shape as any).targetArchitecture;
+
+          it('should validate data models for plan', () => {
+            const validData = { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' };
+            expect(byId['4.2.1'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+              dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+              integrationPoints: {
+                upstream: [{ trigger: 'User action', inputData: 'Receives userId' }],
+                downstream: [{ trigger: 'Process complete', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+            };
+            expect(targetArchPlanSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid data models for plan', () => {
+            const invalidData = { diagram: 'classDiagram A' }; // Wrong diagram type
+            expect(byId['4.2.1'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { dataModels: { diagram: 'classDiagram A' } }; // Wrong diagram type
+            expect(targetArchPlanSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+
+          it('should validate data models for task', () => {
+            const validData = { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' };
+            expect(byIdTask['4.2.1'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+              dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId' }],
+                downstream: [{ trigger: 'Task completion event', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+            };
+            expect(targetArchTaskSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid data models for task', () => {
+            const invalidData = { diagram: 'graph TD A-->B' }; // Wrong diagram type
+            expect(byIdTask['4.2.1'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { dataModels: { diagram: 'graph TD A-->B' } }; // Wrong diagram type
+            expect(targetArchTaskSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+        });
+
+        describe('Components Schema (4.2.2)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const targetArchPlanSchema = (planSchema.shape as any).targetArchitecture;
+          const targetArchTaskSchema = (taskSchema.shape as any).targetArchitecture;
+
+          it('should validate components for plan', () => {
+            const validData = { diagram: 'classDiagram\ndirection LR\nclass UserService' };
+            expect(byId['4.2.2'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+              dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+              integrationPoints: {
+                upstream: [{ trigger: 'User action', inputData: 'Receives userId' }],
+                downstream: [{ trigger: 'Process complete', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+            };
+            expect(targetArchPlanSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid components for plan', () => {
+            const invalidData = { diagram: 'erDiagram A' }; // Wrong diagram type
+            expect(byId['4.2.2'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { components: { diagram: 'erDiagram A' } }; // Wrong diagram type
+            expect(targetArchPlanSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+
+          it('should validate components for task', () => {
+            const validData = { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' };
+            expect(byIdTask['4.2.2'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+              dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId' }],
+                downstream: [{ trigger: 'Task completion event', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+            };
+            expect(targetArchTaskSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid components for task', () => {
+            const invalidData = { diagram: 'graph TD A-->B' }; // Wrong diagram type
+            expect(byIdTask['4.2.2'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { components: { diagram: 'graph TD A-->B' } }; // Wrong diagram type
+            expect(targetArchTaskSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+        });
+
+        describe('Data Flow Schema (4.2.3)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const targetArchPlanSchema = (planSchema.shape as any).targetArchitecture;
+          const targetArchTaskSchema = (taskSchema.shape as any).targetArchitecture;
+
+          it('should validate data flow for plan', () => {
+            const validData = { diagram: 'graph TD\nA --> B\nB --> C' };
+            expect(byId['4.2.3'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+              dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+              integrationPoints: {
+                upstream: [{ trigger: 'User action', inputData: 'Receives userId' }],
+                downstream: [{ trigger: 'Process complete', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+            };
+            expect(targetArchPlanSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid data flow for plan', () => {
+            const invalidData = { diagram: 'erDiagram A' }; // Wrong diagram type
+            expect(byId['4.2.3'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { dataFlow: { diagram: 'erDiagram A' } }; // Wrong diagram type
+            expect(targetArchPlanSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+
+          it('should validate data flow for task', () => {
+            const validData = { diagram: 'graph TD\nInput --> Process --> Output' };
+            expect(byIdTask['4.2.3'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+              dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId' }],
+                downstream: [{ trigger: 'Task completion event', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+            };
+            expect(targetArchTaskSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid data flow for task', () => {
+            const invalidData = { diagram: 'classDiagram A' }; // Wrong diagram type
+            expect(byIdTask['4.2.3'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { dataFlow: { diagram: 'classDiagram A' } }; // Wrong diagram type
+            expect(targetArchTaskSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+        });
+
+        describe('Control Flow Schema (4.2.4)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const targetArchPlanSchema = (planSchema.shape as any).targetArchitecture;
+          const targetArchTaskSchema = (taskSchema.shape as any).targetArchitecture;
+
+          it('should validate control flow for plan', () => {
+            const validData = { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' };
+            expect(byId['4.2.4'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+              dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+              integrationPoints: {
+                upstream: [{ trigger: 'User action', inputData: 'Receives userId' }],
+                downstream: [{ trigger: 'Process complete', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+            };
+            expect(targetArchPlanSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid control flow for plan', () => {
+            const invalidData = { diagram: 'erDiagram A' }; // Wrong diagram type
+            expect(byId['4.2.4'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { controlFlow: { diagram: 'erDiagram A' } }; // Wrong diagram type
+            expect(targetArchPlanSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+
+          it('should validate control flow for task', () => {
+            const validData = { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' };
+            expect(byIdTask['4.2.4'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+              dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId' }],
+                downstream: [{ trigger: 'Task completion event', inputData: 'Emits result' }],
+              },
+              exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+            };
+            expect(targetArchTaskSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid control flow for task', () => {
+            const invalidData = { diagram: 'graph TD A-->B' }; // Wrong diagram type
+            expect(byIdTask['4.2.4'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = { controlFlow: { diagram: 'graph TD A-->B' } }; // Wrong diagram type
+            expect(targetArchTaskSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+        });
+
+        describe('Integration Points Schema (4.2.5)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const targetArchPlanSchema = (planSchema.shape as any).targetArchitecture;
+          const targetArchTaskSchema = (taskSchema.shape as any).targetArchitecture;
+
+          it('should validate integration points for plan', () => {
+            const validData = {
+              upstream: [
+                {
+                  trigger: 'User action via UI button click',
+                  inputData: 'Receives documentId and userId from the client',
+                },
+              ],
+              downstream: [
+                {
+                  trigger: 'Emits a DOCUMENT_PROCESSED event',
+                  inputData: 'The event payload includes documentId and status',
+                },
+              ],
+            };
+            expect(byId['4.2.5'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nUSER ||--o{ ORDER : places' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass UserService' },
+              dataFlow: { diagram: 'graph TD\nA --> B\nB --> C' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant User\nparticipant API' },
+              integrationPoints: {
+                upstream: [
+                  {
+                    trigger: 'User action via UI button click',
+                    inputData: 'Receives documentId and userId from the client',
+                  },
+                ],
+                downstream: [
+                  {
+                    trigger: 'Emits a DOCUMENT_PROCESSED event',
+                    inputData: 'The event payload includes documentId and status',
+                  },
+                ],
+              },
+              exposedAPI: 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID',
+            };
+            expect(targetArchPlanSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid integration points for plan', () => {
+            const invalidData = {
+              upstream: [{ trigger: '', inputData: 'Receives documentId and userId from the client' }], // Empty trigger
+            };
+            expect(byId['4.2.5'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = {
+              integrationPoints: {
+                upstream: [{ trigger: '', inputData: 'Receives documentId and userId from the client' }], // Empty trigger
+              },
+            };
+            expect(targetArchPlanSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+
+          it('should validate integration points for task', () => {
+            const validData = {
+              upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+              downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+            };
+            expect(byIdTask['4.2.5'].safeParse(validData).success).toBe(true);
+
+            const validComposedData = {
+              dataModels: { diagram: 'erDiagram\nTASK ||--o{ SUBTASK : contains' },
+              components: { diagram: 'classDiagram\ndirection LR\nclass TaskProcessor' },
+              dataFlow: { diagram: 'graph TD\nInput --> Process --> Output' },
+              controlFlow: { diagram: 'sequenceDiagram\nparticipant Task\nparticipant Processor' },
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: 'Receives taskId and parameters' }],
+                downstream: [{ trigger: 'Task completion event', inputData: 'Emits result and status' }],
+              },
+              exposedAPI: 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task',
+            };
+            expect(targetArchTaskSchema.safeParse(validComposedData).success).toBe(true);
+          });
+
+          it('should reject invalid integration points for task', () => {
+            const invalidData = {
+              upstream: [{ trigger: 'Task creation event', inputData: '' }], // Empty inputData
+            };
+            expect(byIdTask['4.2.5'].safeParse(invalidData).success).toBe(false);
+
+            const invalidComposedData = {
+              integrationPoints: {
+                upstream: [{ trigger: 'Task creation event', inputData: '' }], // Empty inputData
+              },
+            };
+            expect(targetArchTaskSchema.safeParse(invalidComposedData).success).toBe(false);
+          });
+        });
+      });
+
+      describe('Deep Nested Section Tests', () => {
+        describe('Exposed API Schema (4.2.6)', () => {
+          const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+          const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+          it('should validate exposed API via byId for plan', () => {
+            const validData = 'paths:\n  /users/{userId}:\n    get:\n      summary: Get user by ID';
+            expect(byId['4.2.6'].safeParse(validData).success).toBe(true);
+          });
+
+          it('should reject invalid exposed API via byId for plan', () => {
+            const invalidData = ''; // Empty string
+            expect(byId['4.2.6'].safeParse(invalidData).success).toBe(false);
+          });
+
+          it('should validate exposed API via byId for task', () => {
+            const validData = 'paths:\n  /tasks/{taskId}:\n    post:\n      summary: Process task';
+            expect(byIdTask['4.2.6'].safeParse(validData).success).toBe(true);
+          });
+
+          it('should reject invalid exposed API via byId for task', () => {
+            const invalidData = ''; // Empty string
+            expect(byIdTask['4.2.6'].safeParse(invalidData).success).toBe(false);
+          });
+        });
+
+        describe('Integration Points Subsections', () => {
+          describe('Upstream Integrations (4.1.5.1)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate upstream integrations via byId', () => {
+              const validData = [{ trigger: 'User action', inputData: 'Receives userId' }];
+              expect(byId['4.1.5.1'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should reject invalid upstream integrations via byId', () => {
+              const invalidData = [{ trigger: '', inputData: 'Receives userId' }]; // Empty trigger
+              expect(byId['4.1.5.1'].safeParse(invalidData).success).toBe(false);
+            });
+          });
+
+          describe('Downstream Integrations (4.1.5.2)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate downstream integrations via byId', () => {
+              const validData = [{ trigger: 'Process complete', inputData: 'Emits result' }];
+              expect(byId['4.1.5.2'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should reject invalid downstream integrations via byId', () => {
+              const invalidData = [{ trigger: 'Process complete', inputData: '' }]; // Empty inputData
+              expect(byId['4.1.5.2'].safeParse(invalidData).success).toBe(false);
+            });
+          });
+
+          describe('Target Upstream Integrations (4.2.5.1)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate target upstream integrations via byId for plan', () => {
+              const validData = [{ trigger: 'User action', inputData: 'Receives userId' }];
+              expect(byId['4.2.5.1'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate target upstream integrations via byId for task', () => {
+              const validData = [{ trigger: 'Task creation event', inputData: 'Receives taskId' }];
+              expect(byIdTask['4.2.5.1'].safeParse(validData).success).toBe(true);
+            });
+          });
+
+          describe('Target Downstream Integrations (4.2.5.2)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate target downstream integrations via byId for plan', () => {
+              const validData = [{ trigger: 'Process complete', inputData: 'Emits result' }];
+              expect(byId['4.2.5.2'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate target downstream integrations via byId for task', () => {
+              const validData = [{ trigger: 'Task completion event', inputData: 'Emits result' }];
+              expect(byIdTask['4.2.5.2'].safeParse(validData).success).toBe(true);
+            });
+          });
+        });
+
+        describe('Non-Functional Requirements Subsections', () => {
+          describe('Performance (4.4.1)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate performance requirements via byId for plan', () => {
+              const validData = [{ id: 'PERF-01', requirement: 'API response < 200ms', priority: 'High' }];
+              expect(byId['4.4.1'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate performance requirements via byId for task', () => {
+              const validData = [{ id: 'PERF-01', requirement: 'Task processing < 5 seconds', priority: 'High' }];
+              expect(byIdTask['4.4.1'].safeParse(validData).success).toBe(true);
+            });
+          });
+
+          describe('Security (4.4.2)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate security requirements via byId for plan', () => {
+              const validData = [{ id: 'SEC-01', requirement: 'Encrypt data at rest', priority: 'High' }];
+              expect(byId['4.4.2'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate security requirements via byId for task', () => {
+              const validData = [{ id: 'SEC-01', requirement: 'Encrypt task data in transit', priority: 'High' }];
+              expect(byIdTask['4.4.2'].safeParse(validData).success).toBe(true);
+            });
+          });
+
+          describe('Reliability (4.4.3)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate reliability requirements via byId for plan', () => {
+              const validData = [{ id: 'REL-01', requirement: '99.9% uptime', priority: 'High' }];
+              expect(byId['4.4.3'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate reliability requirements via byId for task', () => {
+              const validData = [{ id: 'REL-01', requirement: 'Task processing must be idempotent', priority: 'High' }];
+              expect(byIdTask['4.4.3'].safeParse(validData).success).toBe(true);
+            });
+          });
+
+          describe('Permission Model (4.4.4)', () => {
+            const byId = (planSchema as any).__byId as Record<string, z.ZodTypeAny>;
+            const byIdTask = (taskSchema as any).__byId as Record<string, z.ZodTypeAny>;
+
+            it('should validate permission model via byId for plan', () => {
+              const validData = [{ role: 'Admin', permissions: ['Full CRUD access'], notes: 'For administrators' }];
+              expect(byId['4.4.4'].safeParse(validData).success).toBe(true);
+            });
+
+            it('should validate permission model via byId for task', () => {
+              const validData = [{ role: 'Developer', permissions: ['Can create tasks'], notes: 'For developers' }];
+              expect(byIdTask['4.4.4'].safeParse(validData).success).toBe(true);
+            });
+          });
+        });
+      });
+
+      describe('Section Coverage Verification', () => {
+        it('should log available byId sections for plan', () => {
+          const planSchema = createHighLevelDesignSchema('plan') as any;
+          const byId = planSchema.__byId as Record<string, z.ZodTypeAny>;
+          console.log('Available plan byId keys:', Object.keys(byId).sort());
+        });
+
+        it('should log available byId sections for task', () => {
+          const taskSchema = createHighLevelDesignSchema('task') as any;
+          const byId = taskSchema.__byId as Record<string, z.ZodTypeAny>;
+          console.log('Available task byId keys:', Object.keys(byId).sort());
         });
       });
     });

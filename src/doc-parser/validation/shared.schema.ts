@@ -435,7 +435,8 @@ export function createSectionSchemaWithApplicability(
   sectionId: string,
   docType: DocumentType,
   schema: z.ZodTypeAny,
-  jsonContent: any
+  jsonContent: any,
+  byId?: Record<string, z.ZodTypeAny>
 ): z.ZodTypeAny {
   const sectionDef = jsonContent.sections.find((s: any) => s.id === sectionId);
   if (!sectionDef) {
@@ -445,8 +446,32 @@ export function createSectionSchemaWithApplicability(
   const applicability = getApplicability(sectionDef.applicability, docType);
 
   if (applicability === 'omitted') {
-    return z.never();
+    const omitted = z.never().describe(`${sectionId}`);
+    if (byId) {
+      registerSchema(byId, sectionId, omitted);
+    }
+    return omitted;
   }
 
-  return applicability === 'optional' ? schema.optional() : schema;
+  const tagged = schema.describe(`${sectionId}`);
+  const result = applicability === 'optional' ? tagged.optional().describe(`${sectionId}`) : tagged;
+  if (byId) {
+    registerSchema(byId, sectionId, result);
+  }
+  return result;
+}
+
+/**
+ * Registers a schema under a section ID into a provided index map, skipping omitted (`ZodNever`) schemas.
+ * Returns the same schema to allow inline use.
+ */
+export function registerSchema(
+  index: Record<string, z.ZodTypeAny>,
+  sectionId: string,
+  schema: z.ZodTypeAny
+): z.ZodTypeAny {
+  if (!(schema instanceof z.ZodNever)) {
+    index[sectionId] = schema;
+  }
+  return schema;
 }

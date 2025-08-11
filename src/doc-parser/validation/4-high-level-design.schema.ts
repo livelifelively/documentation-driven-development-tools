@@ -4,6 +4,7 @@ import {
   DocumentType,
   getApplicability,
   createSectionSchemaWithApplicability,
+  registerSchema,
   createMermaidWithTextSchema,
 } from './shared.schema.js';
 import { loadDDDSchemaJsonFile } from '../../index.js';
@@ -44,78 +45,103 @@ const permissionRoleSchema = z.object({
 
 // --- Section-Level Factory Functions ---
 
-const createGuidingPrinciplesSchema = (docType: DocumentType) => {
+const createGuidingPrinciplesSchema = (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = guidingPrinciplesSchema;
-  return createSectionSchemaWithApplicability('4.0', docType, schema, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability('4.0', docType, schema, highLevelDesignContent, byId);
+  return section;
 };
 
 // --- Reusable Architectural Component Factories ---
 
-const createDataModelsSchema = (sectionId: string, docType: DocumentType) => {
+const createDataModelsSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = createMermaidWithTextSchema('erDiagram', {
     diagramRequired: true,
     textRequired: false,
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
 };
 
-const createComponentsSchema = (sectionId: string, docType: DocumentType) => {
+const createComponentsSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = createMermaidWithTextSchema('classDiagram', {
     diagramRequired: true,
     textRequired: false,
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
 };
 
-const createDataFlowSchema = (sectionId: string, docType: DocumentType) => {
+const createDataFlowSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = createMermaidWithTextSchema('graph', {
     diagramRequired: true,
     textRequired: false,
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
 };
 
-const createControlFlowSchema = (sectionId: string, docType: DocumentType) => {
+const createControlFlowSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = createMermaidWithTextSchema('sequenceDiagram', {
     diagramRequired: true,
     textRequired: false,
     allowTextOnly: false,
     allowDiagramOnly: true,
   });
-  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
 };
 
-const createIntegrationPointsSchema = (sectionId: string, docType: DocumentType) => {
+// Individual Integration Points subsection factories
+const createUpstreamIntegrationsSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = z.array(integrationPointSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createDownstreamIntegrationsSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = z.array(integrationPointSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createIntegrationPointsSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
   const schema = z.object({
-    upstream: z.array(integrationPointSchema).min(1).optional(),
-    downstream: z.array(integrationPointSchema).min(1).optional(),
+    upstream: createUpstreamIntegrationsSchema(`${sectionId}.1`, docType, byId),
+    downstream: createDownstreamIntegrationsSchema(`${sectionId}.2`, docType, byId),
   });
-  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
 };
 
-const createExposedAPISchema = (docType: DocumentType) => {
+const createExposedAPISchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.string().min(1); // OpenAPI/Swagger content or markdown table
-  return createSectionSchemaWithApplicability('4.2.6', docType, schema, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+  return section;
 };
 
 // --- Architecture Section Schemas ---
 
-const createCurrentArchitectureSchema = (docType: DocumentType) => {
+const createCurrentArchitectureSchema = (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   // Define the internal shape with optional subsections to allow for the refine logic.
   const internalShape = z
     .object({
       text: z.array(z.string()).optional(),
-      dataModels: createDataModelsSchema('4.1.1', docType),
-      components: createComponentsSchema('4.1.2', docType),
-      dataFlow: createDataFlowSchema('4.1.3', docType),
-      controlFlow: createControlFlowSchema('4.1.4', docType),
-      integrationPoints: createIntegrationPointsSchema('4.1.5', docType),
+      dataModels: createDataModelsSchema('4.1.1', docType, byId),
+      components: createComponentsSchema('4.1.2', docType, byId),
+      dataFlow: createDataFlowSchema('4.1.3', docType, byId),
+      controlFlow: createControlFlowSchema('4.1.4', docType, byId),
+      integrationPoints: createIntegrationPointsSchema('4.1.5', docType, byId),
     })
     .partial()
     .strict()
@@ -133,10 +159,11 @@ const createCurrentArchitectureSchema = (docType: DocumentType) => {
     );
 
   // The wrapper function will now correctly apply 'optional' to this entire block for plans.
-  return createSectionSchemaWithApplicability('4.1', docType, internalShape, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability('4.1', docType, internalShape, highLevelDesignContent, byId);
+  return section;
 };
 
-const createTargetArchitectureSchema = (docType: DocumentType) => {
+const createTargetArchitectureSchema = (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   // Define the two valid shapes for the content
   const textOnlySchema = z
     .object({
@@ -146,38 +173,62 @@ const createTargetArchitectureSchema = (docType: DocumentType) => {
 
   const subsectionsSchema = z
     .object({
-      dataModels: createDataModelsSchema('4.2.1', docType),
-      components: createComponentsSchema('4.2.2', docType),
-      dataFlow: createDataFlowSchema('4.2.3', docType),
-      controlFlow: createControlFlowSchema('4.2.4', docType),
-      integrationPoints: createIntegrationPointsSchema('4.2.5', docType),
-      exposedAPI: createExposedAPISchema(docType),
+      dataModels: createDataModelsSchema('4.2.1', docType, byId),
+      components: createComponentsSchema('4.2.2', docType, byId),
+      dataFlow: createDataFlowSchema('4.2.3', docType, byId),
+      controlFlow: createControlFlowSchema('4.2.4', docType, byId),
+      integrationPoints: createIntegrationPointsSchema('4.2.5', docType, byId),
+      exposedAPI: createExposedAPISchema('4.2.6', docType, byId),
     })
     .strict();
 
   // The content must match one of these two shapes, or both
   const internalShape = z.union([textOnlySchema, subsectionsSchema, textOnlySchema.merge(subsectionsSchema)]);
 
-  return createSectionSchemaWithApplicability('4.2', docType, internalShape, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability('4.2', docType, internalShape, highLevelDesignContent, byId);
+  return section;
 };
 
-const createTechStackDeploymentSchema = (docType: DocumentType) => {
+const createTechStackDeploymentSchema = (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.array(techStackItemSchema).min(1);
-  return createSectionSchemaWithApplicability('4.3', docType, schema, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability('4.3', docType, schema, highLevelDesignContent, byId);
+  return section;
 };
 
-const createNonFunctionalRequirementsSchema = (docType: DocumentType) => {
+// Individual Non-Functional Requirements subsection factories
+const createPerformanceSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = z.array(nonFunctionalRequirementSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createSecuritySchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = z.array(nonFunctionalRequirementSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createReliabilitySchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = z.array(nonFunctionalRequirementSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createPermissionModelSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = z.array(permissionRoleSchema).min(1);
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, highLevelDesignContent, byId);
+};
+
+const createNonFunctionalRequirementsSchema = (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
   const schema = z.object({
-    performance: z.array(nonFunctionalRequirementSchema).min(1).optional(),
-    security: z.array(nonFunctionalRequirementSchema).min(1).optional(),
-    reliability: z.array(nonFunctionalRequirementSchema).min(1).optional(),
-    permissionModel: z.array(permissionRoleSchema).min(1).optional(),
+    performance: createPerformanceSchema('4.4.1', docType, byId),
+    security: createSecuritySchema('4.4.2', docType, byId),
+    reliability: createReliabilitySchema('4.4.3', docType, byId),
+    permissionModel: createPermissionModelSchema('4.4.4', docType, byId),
   });
-  return createSectionSchemaWithApplicability('4.4', docType, schema, highLevelDesignContent);
+  const section = createSectionSchemaWithApplicability('4.4', docType, schema, highLevelDesignContent, byId);
+  return section;
 };
 
 // --- Section Factory Map ---
-const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+const sectionFactories: Record<string, (docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny> = {
   '4.0': createGuidingPrinciplesSchema,
   '4.1': createCurrentArchitectureSchema,
   '4.2': createTargetArchitectureSchema,
@@ -194,8 +245,13 @@ const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> 
  * @param docType - The document type ('plan' or 'task').
  * @returns A Zod schema for the High-Level Design family.
  */
-export const createHighLevelDesignSchema = (docType: DocumentType) => {
+export const createHighLevelDesignSchema = (
+  docType: DocumentType
+): z.ZodObject<Record<string, z.ZodTypeAny>> & {
+  __byId: Record<string, z.ZodTypeAny>;
+} => {
   const familyShape: Record<string, z.ZodTypeAny> = {};
+  const byId: Record<string, z.ZodTypeAny> = {};
 
   for (const section of highLevelDesignContent.sections) {
     // Only process top-level sections (IDs like "4.0", "4.1", etc.)
@@ -222,7 +278,7 @@ export const createHighLevelDesignSchema = (docType: DocumentType) => {
       continue;
     }
 
-    const schema = factory(docType);
+    const schema = factory(docType, byId);
 
     // The factory for omitted sections returns z.never(), so we check for that
     if (schema instanceof z.ZodNever) {
@@ -231,9 +287,18 @@ export const createHighLevelDesignSchema = (docType: DocumentType) => {
 
     const sectionName = camelCase(section.name);
     familyShape[sectionName] = schema; // The factory already handles optionality
+    // Also register top-level section IDs to byId index when available
+    if (section.id) {
+      registerSchema(byId, section.id, schema);
+    }
   }
 
-  return z.object(familyShape).strict();
+  const composed = z.object(familyShape).strict();
+  // Attach non-enumerable index for consumers that need lookup
+  Object.defineProperty(composed, '__byId', { value: byId, enumerable: false, configurable: false, writable: false });
+  return composed as unknown as z.ZodObject<Record<string, z.ZodTypeAny>> & {
+    __byId: Record<string, z.ZodTypeAny>;
+  };
 };
 
 // --- Convenience Functions for Backward Compatibility ---
