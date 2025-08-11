@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createMetaGovernanceSchema } from '../1-meta-governance.schema.js';
+import { createMetaGovernanceSchema } from '../../1-meta-governance.schema.js';
 import { z } from 'zod';
 
 describe('Meta & Governance Schema Validation', () => {
