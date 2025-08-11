@@ -8,7 +8,6 @@ import {
   DocumentType,
   getApplicability,
   createSectionSchemaWithApplicability,
-  createSmartMermaidSchema,
   createMermaidWithTextSchema,
 } from './shared.schema.js';
 import { loadDDDSchemaJsonFile } from '../../index.js';
@@ -41,9 +40,6 @@ const dependencySchema = z.object({
   affectedPlansTasks: z.array(z.string().min(1)).min(1), // e.g., ["p1-frontend", "p3-reporting"]
   notes: z.string().min(1),
 });
-
-// Enhanced decomposition graph schema using smart Mermaid parser
-const decompositionGraphSchema = createSmartMermaidSchema('graph');
 
 // --- Section-Level Factory Functions ---
 
