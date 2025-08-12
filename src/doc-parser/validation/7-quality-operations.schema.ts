@@ -18,8 +18,17 @@ const LocalTestCommandsSchema = z.array(z.string().min(1)).min(1);
 // ---- Pattern-based, JSON-driven section factories ----
 
 // 7.1 container (no direct content)
-const createTestingStrategyRequirementsSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.1', docType, z.object({}), qualityOperationsContent);
+const createTestingStrategyRequirementsSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(sectionId, docType, z.object({}), qualityOperationsContent);
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.1.1 Unit & Integration Tests
 const TestingScenarioRowSchema = z.object({
@@ -29,22 +38,40 @@ const TestingScenarioRowSchema = z.object({
   toolsRunner: z.string().min(1),
   notes: z.string().min(1),
 });
-const createUnitIntegrationTestsSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability(
-    '7.1.1',
+const createUnitIntegrationTestsSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
     docType,
     z.array(TestingScenarioRowSchema).min(1),
     qualityOperationsContent
   );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.1.2 End-to-End (E2E) Testing Strategy
-const createEndToEndE2ETestingStrategySection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability(
-    '7.1.2',
+const createEndToEndE2ETestingStrategySection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
     docType,
     z.array(TestingScenarioRowSchema).min(1),
     qualityOperationsContent
   );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.2 Configuration (per JSON example: includes id and default)
 const ConfigurationRowJsonSchema = z.object({
@@ -55,17 +82,35 @@ const ConfigurationRowJsonSchema = z.object({
   overrideMethod: z.string().min(1),
   notes: z.string().min(1),
 });
-const createConfigurationSectionJson = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability(
-    '7.2',
+const createConfigurationSectionJson = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
     docType,
     z.array(ConfigurationRowJsonSchema).min(1),
     qualityOperationsContent
   );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.3 container (no direct content)
-const createAlertingResponseContainerSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.3', docType, z.object({}), qualityOperationsContent);
+const createAlertingResponseContainerSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(sectionId, docType, z.object({}), qualityOperationsContent);
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.3.1 Event-Based Alerting
 const EventBasedAlertRowSchema = z.object({
@@ -75,31 +120,95 @@ const EventBasedAlertRowSchema = z.object({
   consumerResponse: z.string().min(1),
   notes: z.string().min(1),
 });
-const createEventBasedAlertingSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability(
-    '7.3.1',
+const createEventBasedAlertingSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
     docType,
     z.array(EventBasedAlertRowSchema).min(1),
     qualityOperationsContent
   );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.3.2 Consumer Response Strategies
-const createConsumerResponseStrategiesSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.3.2', docType, z.array(z.string().min(1)).min(1), qualityOperationsContent);
+const createConsumerResponseStrategiesSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
+    docType,
+    z.array(z.string().min(1)).min(1),
+    qualityOperationsContent
+  );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.3.3 Error Recovery
-const createErrorRecoverySection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.3.3', docType, z.array(z.string().min(1)).min(1), qualityOperationsContent);
+const createErrorRecoverySection = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
+    docType,
+    z.array(z.string().min(1)).min(1),
+    qualityOperationsContent
+  );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.4 Deployment Steps
-const createDeploymentStepsSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.4', docType, DeploymentStepsSchema, qualityOperationsContent);
+const createDeploymentStepsSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
+    docType,
+    DeploymentStepsSchema,
+    qualityOperationsContent
+  );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
 // 7.5 Local Test Commands
-const createLocalTestCommandsSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('7.5', docType, LocalTestCommandsSchema, qualityOperationsContent);
+const createLocalTestCommandsSection = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = createSectionSchemaWithApplicability(
+    sectionId,
+    docType,
+    LocalTestCommandsSchema,
+    qualityOperationsContent
+  );
+  if (byId) {
+    byId[sectionId] = schema;
+  }
+  return schema;
+};
 
-const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+const sectionFactories: Record<
+  string,
+  (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny
+> = {
   '7.1': createTestingStrategyRequirementsSection,
   '7.1.1': createUnitIntegrationTestsSection,
   '7.1.2': createEndToEndE2ETestingStrategySection,
@@ -114,6 +223,8 @@ const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> 
 
 export const createQualityOperationsSchema = (docType: DocumentType) => {
   const shape: Record<string, z.ZodTypeAny> = {};
+  const byId: Record<string, z.ZodTypeAny> = {};
+
   for (const section of qualityOperationsContent.sections) {
     const applicability = getApplicability(section.applicability, docType);
     if (applicability === 'omitted') continue;
@@ -121,11 +232,14 @@ export const createQualityOperationsSchema = (docType: DocumentType) => {
     if (!factory) {
       throw new Error(`Schema mismatch: No factory found for section ID "${section.id}" (${section.name}).`);
     }
-    const base = factory(docType);
+    const base = factory(section.id, docType, byId);
     const key = camelCase(section.name);
     shape[key] = applicability === 'optional' ? base.optional() : base;
   }
-  return z.object(shape).strict();
+
+  const schema = z.object(shape).strict();
+  (schema as any).__byId = byId;
+  return schema;
 };
 
 export const getQualityOperationsPlanSchema = () => createQualityOperationsSchema('plan');
