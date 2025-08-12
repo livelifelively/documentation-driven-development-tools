@@ -31,21 +31,30 @@ const LoggingMonitoringSchema = z.array(LoggingMonitoringRowSchema).min(1);
 
 // --- Section-Level Factory Functions ---
 
-// 5.1 Current Maintenance and Monitoring (Plan: required, Task: omitted)
-const createCurrentMaintenanceMonitoringSchema = (docType: DocumentType) => {
-  const currentErrorHandlingSchema = createSectionSchemaWithApplicability(
-    '5.1.1',
-    docType,
-    ErrorHandlingTableSchema,
-    maintenanceMonitoringContent
-  );
+// 5.1.1 Error Handling (Plan: required, Task: omitted)
+const createErrorHandlingSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = ErrorHandlingTableSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, maintenanceMonitoringContent, byId);
+};
 
-  const currentLoggingMonitoringSchema = createSectionSchemaWithApplicability(
-    '5.1.2',
-    docType,
-    LoggingMonitoringSchema,
-    maintenanceMonitoringContent
-  );
+// 5.1.2 Logging & Monitoring (Plan: required, Task: omitted)
+const createLoggingMonitoringSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = LoggingMonitoringSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, maintenanceMonitoringContent, byId);
+};
+
+// 5.1 Current Maintenance and Monitoring (Plan: required, Task: omitted)
+const createCurrentMaintenanceMonitoringSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const currentErrorHandlingSchema = createErrorHandlingSchema('5.1.1', docType, byId);
+  const currentLoggingMonitoringSchema = createLoggingMonitoringSchema('5.1.2', docType, byId);
 
   const internalShape = z
     .object({
@@ -54,24 +63,37 @@ const createCurrentMaintenanceMonitoringSchema = (docType: DocumentType) => {
     })
     .strict();
 
-  return createSectionSchemaWithApplicability('5.1', docType, internalShape, maintenanceMonitoringContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, internalShape, maintenanceMonitoringContent, byId);
+};
+
+// 5.2.1 Error Handling (Plan: required, Task: required)
+const createTargetErrorHandlingSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = ErrorHandlingTableSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, maintenanceMonitoringContent, byId);
+};
+
+// 5.2.2 Logging & Monitoring (Plan: required, Task: required)
+const createTargetLoggingMonitoringSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = LoggingMonitoringSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, maintenanceMonitoringContent, byId);
 };
 
 // 5.2 Target Maintenance and Monitoring (Plan/Task: required)
-const createTargetMaintenanceMonitoringSchema = (docType: DocumentType) => {
-  const errorHandlingSchema = createSectionSchemaWithApplicability(
-    '5.2.1',
-    docType,
-    ErrorHandlingTableSchema,
-    maintenanceMonitoringContent
-  );
-
-  const loggingMonitoringSchema = createSectionSchemaWithApplicability(
-    '5.2.2',
-    docType,
-    LoggingMonitoringSchema,
-    maintenanceMonitoringContent
-  );
+const createTargetMaintenanceMonitoringSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const errorHandlingSchema = createTargetErrorHandlingSchema('5.2.1', docType, byId);
+  const loggingMonitoringSchema = createTargetLoggingMonitoringSchema('5.2.2', docType, byId);
 
   const internalShape = z
     .object({
@@ -80,11 +102,14 @@ const createTargetMaintenanceMonitoringSchema = (docType: DocumentType) => {
     })
     .strict();
 
-  return createSectionSchemaWithApplicability('5.2', docType, internalShape, maintenanceMonitoringContent);
+  return createSectionSchemaWithApplicability(sectionId, docType, internalShape, maintenanceMonitoringContent, byId);
 };
 
 // --- Section Factory Map (top-level only) ---
-const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> = {
+const sectionFactories: Record<
+  string,
+  (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny
+> = {
   '5.1': createCurrentMaintenanceMonitoringSchema,
   '5.2': createTargetMaintenanceMonitoringSchema,
 };
@@ -92,6 +117,7 @@ const sectionFactories: Record<string, (docType: DocumentType) => z.ZodTypeAny> 
 // --- Family-Level Factory Function ---
 
 export const createMaintenanceMonitoringSchema = (docType: DocumentType) => {
+  const byId: Record<string, z.ZodTypeAny> = {};
   const familyShape: Record<string, z.ZodTypeAny> = {};
 
   for (const section of maintenanceMonitoringContent.sections) {
@@ -107,7 +133,7 @@ export const createMaintenanceMonitoringSchema = (docType: DocumentType) => {
       );
     }
 
-    const schema = factory(docType);
+    const schema = factory(section.id, docType, byId);
     if (schema instanceof z.ZodNever) {
       continue;
     }
@@ -116,7 +142,12 @@ export const createMaintenanceMonitoringSchema = (docType: DocumentType) => {
     familyShape[sectionName] = schema; // optionality handled within factories
   }
 
-  return z.object(familyShape).strict();
+  const schema = z.object(familyShape).strict();
+
+  // Add byId index to the schema
+  (schema as any).__byId = byId;
+
+  return schema;
 };
 
 // --- Convenience Functions ---
