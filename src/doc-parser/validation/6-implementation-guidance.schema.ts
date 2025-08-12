@@ -34,66 +34,102 @@ const PromptsSchema = z
   )
   .min(1);
 
-// ---- Section-level factories with applicability wrappers ----
+// ---- Section-Level Factory Functions ----
 
-const createImplementationPlanSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('6.1', docType, ImplementationPlanSchema, implementationGuidanceContent);
-
-const createImplementationLogStepsSection = (docType: DocumentType) =>
-  // JSON has duplicate id "6.1" for Log/Steps; disambiguate by name when iterating
-  createSectionSchemaWithApplicability('6.1', docType, ImplementationLogStepsSchema, implementationGuidanceContent);
-
-const createInitialSituationSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('6.1.1', docType, InitialSituationSchema, implementationGuidanceContent);
-
-const createFilesChangeLogSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('6.1.2', docType, FilesChangeLogSchema, implementationGuidanceContent);
-
-const createPromptsSection = (docType: DocumentType) =>
-  createSectionSchemaWithApplicability('6.2', docType, PromptsSchema, implementationGuidanceContent);
-
-// Resolve factory for a given section definition from JSON
-const getSectionFactory = (section: { id: string; name: string }) => {
-  if (section.id === '6.1') {
-    return section.name.toLowerCase().includes('log')
-      ? createImplementationLogStepsSection
-      : createImplementationPlanSection;
-  }
-  switch (section.id) {
-    case '6.1.1':
-      return createInitialSituationSection;
-    case '6.1.2':
-      return createFilesChangeLogSection;
-    case '6.2':
-      return createPromptsSection;
-    default:
-      return undefined;
-  }
+const createImplementationPlanSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = ImplementationPlanSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, implementationGuidanceContent, byId);
 };
 
-// Family-level factory following established pattern
+const createImplementationLogStepsSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = ImplementationLogStepsSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, implementationGuidanceContent, byId);
+};
+
+const createInitialSituationSchema = (
+  sectionId: string,
+  docType: DocumentType,
+  byId?: Record<string, z.ZodTypeAny>
+) => {
+  const schema = InitialSituationSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, implementationGuidanceContent, byId);
+};
+
+const createFilesChangeLogSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = FilesChangeLogSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, implementationGuidanceContent, byId);
+};
+
+const createPromptsSchema = (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => {
+  const schema = PromptsSchema;
+  return createSectionSchemaWithApplicability(sectionId, docType, schema, implementationGuidanceContent, byId);
+};
+
+// ---- Section Factory Map ----
+const sectionFactories: Record<
+  string,
+  (sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny
+> = {
+  '6.1.1': createInitialSituationSchema,
+  '6.1.2': createFilesChangeLogSchema,
+  '6.2': createPromptsSchema,
+};
+
+// ---- Family-Level Factory Function ----
+
 export const createImplementationGuidanceSchema = (docType: DocumentType) => {
-  const shape: Record<string, z.ZodTypeAny> = {};
+  const byId: Record<string, z.ZodTypeAny> = {};
+  const familyShape: Record<string, z.ZodTypeAny> = {};
 
   for (const section of implementationGuidanceContent.sections) {
     const applicability = getApplicability(section.applicability, docType);
-    if (applicability === 'omitted') continue;
-
-    const factory = getSectionFactory(section);
-    if (!factory) {
-      throw new Error(`Schema mismatch: No factory found for section ID "${section.id}" (${section.name}).`);
+    if (applicability === 'omitted') {
+      continue;
     }
 
-    const base = factory(docType);
-    const key = camelCase(section.name);
-    shape[key] = applicability === 'optional' ? base.optional() : base;
+    let factory:
+      | ((sectionId: string, docType: DocumentType, byId?: Record<string, z.ZodTypeAny>) => z.ZodTypeAny)
+      | undefined;
+
+    // Handle duplicate section ID 6.1 by checking the section name
+    if (section.id === '6.1') {
+      if (section.name.toLowerCase().includes('log') || section.name.toLowerCase().includes('steps')) {
+        factory = createImplementationLogStepsSchema;
+      } else {
+        factory = createImplementationPlanSchema;
+      }
+    } else {
+      factory = sectionFactories[section.id];
+    }
+
+    if (!factory) {
+      throw new Error(
+        `Schema mismatch: No factory found for section ID "${section.id}" (${section.name}). This indicates a mismatch between the schema definition and JSON files.`
+      );
+    }
+
+    const schema = factory(section.id, docType, byId);
+    const sectionName = camelCase(section.name);
+    familyShape[sectionName] = applicability === 'optional' ? schema.optional() : schema;
   }
 
-  return z.object(shape).strict();
+  const schema = z.object(familyShape).strict();
+
+  // Add byId index to the schema
+  (schema as any).__byId = byId;
+
+  return schema;
 };
 
-// Convenience doc-type specific schemas
+// ---- Convenience Functions ----
+
 export const getImplementationGuidancePlanSchema = () => createImplementationGuidanceSchema('plan');
 export const getImplementationGuidanceTaskSchema = () => createImplementationGuidanceSchema('task');
-
-// Functions-only API; no constant or type exports
